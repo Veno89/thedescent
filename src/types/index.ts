@@ -33,6 +33,13 @@ export interface Card {
   upgraded: boolean;
   targetType: TargetType;
   effects: CardEffect[];
+
+  // Card keywords/mechanics
+  exhaust?: boolean;      // Card is removed from combat when played
+  retain?: boolean;       // Card is kept in hand at end of turn
+  innate?: boolean;       // Card starts in your hand
+  ethereal?: boolean;     // Card is exhausted if not played this turn
+  isXCost?: boolean;      // Card costs all remaining energy
 }
 
 export interface CardEffect {

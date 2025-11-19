@@ -104,6 +104,26 @@ export class CardSprite extends Phaser.GameObjects.Container {
     this.descriptionText.setOrigin(0.5);
     this.add(this.descriptionText);
 
+    // Keywords (Exhaust, Retain, Ethereal, Innate)
+    const keywords = this.getKeywords();
+    if (keywords.length > 0) {
+      const keywordText = this.scene.add.text(0, 105, keywords.join('. ') + '.', {
+        fontSize: '11px',
+        color: '#ffaa00',
+        fontStyle: 'italic',
+        fontFamily: 'monospace',
+        align: 'center',
+        wordWrap: { width: this.CARD_WIDTH - 30 },
+      });
+      keywordText.setOrigin(0.5);
+      this.add(keywordText);
+    }
+
+    // X-cost indicator
+    if (this.card.isXCost) {
+      this.costText.setText('X');
+    }
+
     // Upgrade indicator
     if (this.card.upgraded) {
       const upgradeBadge = this.scene.add.text(75, -105, '+', {
@@ -115,6 +135,18 @@ export class CardSprite extends Phaser.GameObjects.Container {
       upgradeBadge.setOrigin(0.5);
       this.add(upgradeBadge);
     }
+  }
+
+  /**
+   * Get list of keywords for this card
+   */
+  private getKeywords(): string[] {
+    const keywords: string[] = [];
+    if (this.card.exhaust) keywords.push('Exhaust');
+    if (this.card.retain) keywords.push('Retain');
+    if (this.card.ethereal) keywords.push('Ethereal');
+    if (this.card.innate) keywords.push('Innate');
+    return keywords;
   }
 
   /**

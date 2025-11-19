@@ -1,6 +1,7 @@
 import { Card } from '@/types';
 import { Enemy } from '@/entities/Enemy';
 import starterCards from '@/data/cards/starter.json';
+import advancedCards from '@/data/cards/advanced.json';
 import act1Enemies from '@/data/enemies/act1.json';
 
 /**
@@ -17,8 +18,14 @@ export class DataLoader {
   static initialize(): void {
     if (this.initialized) return;
 
-    // Load cards
+    // Load starter cards
     starterCards.cards.forEach((cardData) => {
+      const card = this.parseCard(cardData);
+      this.cardCache.set(card.id, card);
+    });
+
+    // Load advanced cards
+    advancedCards.cards.forEach((cardData) => {
       const card = this.parseCard(cardData);
       this.cardCache.set(card.id, card);
     });
@@ -109,7 +116,7 @@ export class DataLoader {
   static createStarterDeck(): Card[] {
     const deck: Card[] = [];
 
-    // 5 Strikes, 4 Defends, 1 Bash (typical starter deck)
+    // 5 Strikes, 4 Defends (reduced to make room for advanced cards)
     for (let i = 0; i < 5; i++) {
       const strike = this.createCard('strike');
       if (strike) deck.push(strike);
@@ -120,8 +127,27 @@ export class DataLoader {
       if (defend) deck.push(defend);
     }
 
+    // Add some advanced cards for testing different mechanics
     const bash = this.createCard('bash');
     if (bash) deck.push(bash);
+
+    const battleTrance = this.createCard('battle_trance');
+    if (battleTrance) deck.push(battleTrance);
+
+    const sentinel = this.createCard('sentinel');
+    if (sentinel) deck.push(sentinel);
+
+    const deepBreath = this.createCard('deep_breath'); // Retain
+    if (deepBreath) deck.push(deepBreath);
+
+    const carnage = this.createCard('carnage'); // Ethereal
+    if (carnage) deck.push(carnage);
+
+    const dramaticEntrance = this.createCard('dramatic_entrance'); // Innate + Exhaust
+    if (dramaticEntrance) deck.push(dramaticEntrance);
+
+    const whirlwind = this.createCard('whirlwind'); // X-cost
+    if (whirlwind) deck.push(whirlwind);
 
     return deck;
   }

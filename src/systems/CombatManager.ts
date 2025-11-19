@@ -47,14 +47,35 @@ export class CombatManager {
     this.combatEnded = false;
     this.victory = false;
 
-    // Initialize draw pile from player's deck
-    this.drawPile = this.shuffleArray([...this.player.deck]);
+    // Initialize piles
     this.hand = [];
     this.discardPile = [];
     this.exhaustPile = [];
 
-    // Draw starting hand
-    this.drawCards(this.HAND_SIZE);
+    // Separate innate cards from the rest
+    const innateCards: Card[] = [];
+    const regularCards: Card[] = [];
+
+    this.player.deck.forEach((card) => {
+      if (card.innate) {
+        innateCards.push(card);
+      } else {
+        regularCards.push(card);
+      }
+    });
+
+    // Shuffle regular cards into draw pile
+    this.drawPile = this.shuffleArray(regularCards);
+
+    // Add innate cards to hand first
+    innateCards.forEach((card) => {
+      this.hand.push(card);
+      this.onCardDrawn?.(card);
+    });
+
+    // Draw remaining cards to fill hand
+    const cardsToDraw = Math.max(0, this.HAND_SIZE - this.hand.length);
+    this.drawCards(cardsToDraw);
 
     console.log('Combat started!');
   }
@@ -67,13 +88,36 @@ export class CombatManager {
     this.isPlayerTurn = true;
     this.player.startTurn();
 
-    // Discard hand
-    while (this.hand.length > 0) {
-      this.discardCard(this.hand[0]);
-    }
+    // Handle end of turn card effects
+    const cardsToKeep: Card[] = [];
+    const cardsToDiscard: Card[] = [];
 
-    // Draw new hand
-    this.drawCards(this.HAND_SIZE);
+    this.hand.forEach((card) => {
+      if (card.retain) {
+        // Retain cards stay in hand
+        cardsToKeep.push(card);
+      } else if (card.ethereal) {
+        // Ethereal cards are exhausted if not played
+        this.exhaustCard(card);
+        console.log(`${card.name} (Ethereal) was exhausted`);
+      } else {
+        // Normal cards are discarded
+        cardsToDiscard.push(card);
+      }
+    });
+
+    // Clear hand and add back retained cards
+    this.hand = [...cardsToKeep];
+
+    // Discard non-retained cards
+    cardsToDiscard.forEach((card) => {
+      this.discardPile.push(card);
+      this.onCardDiscarded?.(card);
+    });
+
+    // Draw new cards to fill hand
+    const cardsToDraw = Math.max(0, this.HAND_SIZE - this.hand.length);
+    this.drawCards(cardsToDraw);
 
     console.log(`Turn ${this.turn} - Player turn`);
   }
@@ -161,10 +205,20 @@ export class CombatManager {
     const cardIndex = this.hand.indexOf(card);
     if (cardIndex === -1) return false;
 
-    // Check if player has enough energy
-    if (!this.player.spendEnergy(card.cost)) {
-      console.log('Not enough energy!');
-      return false;
+    // Handle X-cost cards
+    let energySpent = 0;
+
+    if (card.isXCost) {
+      // X-cost cards consume all available energy
+      energySpent = this.player.energy;
+      this.player.energy = 0;
+    } else {
+      // Normal cost cards
+      if (!this.player.spendEnergy(card.cost)) {
+        console.log('Not enough energy!');
+        return false;
+      }
+      energySpent = card.cost;
     }
 
     // Validate target
@@ -176,8 +230,8 @@ export class CombatManager {
     // Remove from hand
     this.hand.splice(cardIndex, 1);
 
-    // Execute card effects
-    this.executeCardEffects(card, target);
+    // Execute card effects (pass energySpent for X-cost cards)
+    this.executeCardEffects(card, target, energySpent);
 
     // Discard or exhaust card
     if (this.shouldExhaust(card)) {
@@ -199,65 +253,68 @@ export class CombatManager {
   /**
    * Execute all effects of a card
    */
-  private executeCardEffects(card: Card, target?: Enemy): void {
+  private executeCardEffects(card: Card, target?: Enemy, energySpent = 0): void {
     card.effects.forEach((effect) => {
-      this.executeEffect(effect, target);
+      this.executeEffect(effect, target, energySpent);
     });
   }
 
   /**
    * Execute a single card effect
    */
-  private executeEffect(effect: CardEffect, target?: Enemy): void {
+  private executeEffect(effect: CardEffect, target?: Enemy, energySpent = 0): void {
+    // For X-cost cards, use energySpent as the value if effect value is 0
+    const effectValue = effect.value === 0 && energySpent > 0 ? energySpent : effect.value;
+
     switch (effect.type) {
       case 'DAMAGE':
         if (target) {
-          this.dealDamageToEnemy(target, effect.value);
+          this.dealDamageToEnemy(target, effectValue);
         } else if (effect.target === 'ALL_ENEMIES') {
           this.enemies.forEach((enemy) => {
             if (!enemy.isDead()) {
-              this.dealDamageToEnemy(enemy, effect.value);
+              this.dealDamageToEnemy(enemy, effectValue);
             }
           });
         }
         break;
 
       case 'BLOCK':
-        this.player.addBlock(effect.value);
+        this.player.addBlock(effectValue);
         break;
 
       case 'DRAW':
-        this.drawCards(effect.value);
+        this.drawCards(effectValue);
         break;
 
       case 'APPLY_VULNERABLE':
         if (target) {
-          target.applyVulnerable(effect.value);
+          target.applyVulnerable(effectValue);
         }
         break;
 
       case 'APPLY_WEAK':
         if (target) {
-          target.applyWeak(effect.value);
+          target.applyWeak(effectValue);
         }
         break;
 
       case 'APPLY_STRENGTH':
-        this.player.strength += effect.value;
+        this.player.strength += effectValue;
         break;
 
       case 'APPLY_POISON':
         if (target) {
-          target.applyPoison(effect.value);
+          target.applyPoison(effectValue);
         }
         break;
 
       case 'GAIN_ENERGY':
-        this.player.gainEnergy(effect.value);
+        this.player.gainEnergy(effectValue);
         break;
 
       case 'LOSE_HP':
-        this.player.loseHp(effect.value);
+        this.player.loseHp(effectValue);
         break;
 
       case 'DAMAGE_EQUAL_BLOCK':
@@ -331,9 +388,8 @@ export class CombatManager {
   /**
    * Check if card should be exhausted
    */
-  private shouldExhaust(_card: Card): boolean {
-    // TODO: Add exhaust mechanic to card data
-    return false;
+  private shouldExhaust(card: Card): boolean {
+    return card.exhaust === true;
   }
 
   /**
