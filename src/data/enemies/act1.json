@@ -1,0 +1,201 @@
+{
+  "enemies": [
+    {
+      "id": "cultist",
+      "name": "Cultist",
+      "maxHp": 50,
+      "moves": [
+        {
+          "name": "Incantation",
+          "intent": {
+            "type": "BUFF",
+            "value": 3
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_RITUAL",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "name": "Dark Strike",
+          "intent": {
+            "type": "ATTACK",
+            "value": 6
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jaw_worm",
+      "name": "Jaw Worm",
+      "maxHp": 42,
+      "moves": [
+        {
+          "name": "Chomp",
+          "intent": {
+            "type": "ATTACK",
+            "value": 11
+          },
+          "weight": 3,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 11
+            }
+          ]
+        },
+        {
+          "name": "Thrash",
+          "intent": {
+            "type": "ATTACK",
+            "value": 7
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 7
+            },
+            {
+              "type": "APPLY_BLOCK_SELF",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "name": "Bellow",
+          "intent": {
+            "type": "BUFF",
+            "value": 3
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_STRENGTH_SELF",
+              "value": 3
+            },
+            {
+              "type": "APPLY_BLOCK_SELF",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "louse_red",
+      "name": "Red Louse",
+      "maxHp": 12,
+      "moves": [
+        {
+          "name": "Bite",
+          "intent": {
+            "type": "ATTACK",
+            "value": 6
+          },
+          "weight": 3,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 6
+            }
+          ]
+        },
+        {
+          "name": "Grow",
+          "intent": {
+            "type": "BUFF",
+            "value": 3
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_STRENGTH_SELF",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "louse_green",
+      "name": "Green Louse",
+      "maxHp": 12,
+      "moves": [
+        {
+          "name": "Bite",
+          "intent": {
+            "type": "ATTACK",
+            "value": 5
+          },
+          "weight": 3,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "name": "Spit Web",
+          "intent": {
+            "type": "DEBUFF",
+            "value": 2
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_WEAK",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fungi_beast",
+      "name": "Fungi Beast",
+      "maxHp": 28,
+      "moves": [
+        {
+          "name": "Bite",
+          "intent": {
+            "type": "ATTACK",
+            "value": 6
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 6
+            }
+          ]
+        },
+        {
+          "name": "Grow",
+          "intent": {
+            "type": "BUFF",
+            "value": 3
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_STRENGTH_SELF",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

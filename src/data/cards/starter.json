@@ -1,0 +1,287 @@
+{
+  "cards": [
+    {
+      "id": "strike",
+      "name": "Strike",
+      "description": "Deal {0} damage.",
+      "type": "ATTACK",
+      "rarity": "STARTER",
+      "cost": 1,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 6
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "DAMAGE",
+            "value": 9
+          }
+        ]
+      }
+    },
+    {
+      "id": "defend",
+      "name": "Defend",
+      "description": "Gain {0} Block.",
+      "type": "SKILL",
+      "rarity": "STARTER",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "BLOCK",
+          "value": 5
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "BLOCK",
+            "value": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "bash",
+      "name": "Bash",
+      "description": "Deal {0} damage. Apply 2 Vulnerable.",
+      "type": "ATTACK",
+      "rarity": "COMMON",
+      "cost": 2,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 8
+        },
+        {
+          "type": "APPLY_VULNERABLE",
+          "value": 2
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "DAMAGE",
+            "value": 10
+          },
+          {
+            "type": "APPLY_VULNERABLE",
+            "value": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "cleave",
+      "name": "Cleave",
+      "description": "Deal {0} damage to ALL enemies.",
+      "type": "ATTACK",
+      "rarity": "COMMON",
+      "cost": 1,
+      "targetType": "ALL_ENEMIES",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 8
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "DAMAGE",
+            "value": 11
+          }
+        ]
+      }
+    },
+    {
+      "id": "inflame",
+      "name": "Inflame",
+      "description": "Gain {0} Strength.",
+      "type": "POWER",
+      "rarity": "UNCOMMON",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "APPLY_STRENGTH",
+          "value": 2
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "APPLY_STRENGTH",
+            "value": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "iron_wave",
+      "name": "Iron Wave",
+      "description": "Gain {0} Block. Deal {1} damage.",
+      "type": "ATTACK",
+      "rarity": "COMMON",
+      "cost": 1,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "BLOCK",
+          "value": 5
+        },
+        {
+          "type": "DAMAGE",
+          "value": 5
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "BLOCK",
+            "value": 7
+          },
+          {
+            "type": "DAMAGE",
+            "value": 7
+          }
+        ]
+      }
+    },
+    {
+      "id": "shrug_it_off",
+      "name": "Shrug It Off",
+      "description": "Gain {0} Block. Draw 1 card.",
+      "type": "SKILL",
+      "rarity": "COMMON",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "BLOCK",
+          "value": 8
+        },
+        {
+          "type": "DRAW",
+          "value": 1
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "BLOCK",
+            "value": 11
+          },
+          {
+            "type": "DRAW",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "body_slam",
+      "name": "Body Slam",
+      "description": "Deal damage equal to your current Block.",
+      "type": "ATTACK",
+      "rarity": "RARE",
+      "cost": 1,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "DAMAGE_EQUAL_BLOCK",
+          "value": 0
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "cost": 0
+      }
+    },
+    {
+      "id": "offering",
+      "name": "Offering",
+      "description": "Lose 6 HP. Gain 2 Energy. Draw 3 cards.",
+      "type": "SKILL",
+      "rarity": "RARE",
+      "cost": 0,
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "LOSE_HP",
+          "value": 6
+        },
+        {
+          "type": "GAIN_ENERGY",
+          "value": 2
+        },
+        {
+          "type": "DRAW",
+          "value": 3
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "LOSE_HP",
+            "value": 6
+          },
+          {
+            "type": "GAIN_ENERGY",
+            "value": 2
+          },
+          {
+            "type": "DRAW",
+            "value": 5
+          }
+        ]
+      }
+    },
+    {
+      "id": "pommel_strike",
+      "name": "Pommel Strike",
+      "description": "Deal {0} damage. Draw 1 card.",
+      "type": "ATTACK",
+      "rarity": "COMMON",
+      "cost": 1,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 9
+        },
+        {
+          "type": "DRAW",
+          "value": 1
+        }
+      ],
+      "upgraded": false,
+      "upgradedStats": {
+        "effects": [
+          {
+            "type": "DAMAGE",
+            "value": 10
+          },
+          {
+            "type": "DRAW",
+            "value": 2
+          }
+        ]
+      }
+    }
+  ]
+}
