@@ -7,6 +7,7 @@ import { RewardScene } from './scenes/RewardScene';
 import { RestScene } from './scenes/RestScene';
 import { EventScene } from './scenes/EventScene';
 import { MerchantScene } from './scenes/MerchantScene';
+import { CardSelectionScene } from './scenes/CardSelectionScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -18,7 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, MainMenuScene, MapScene, CombatScene, RewardScene, RestScene, EventScene, MerchantScene],
+  scene: [BootScene, MainMenuScene, MapScene, CombatScene, RewardScene, RestScene, EventScene, MerchantScene, CardSelectionScene],
   physics: {
     default: 'arcade',
     arcade: {

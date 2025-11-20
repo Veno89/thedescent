@@ -19,14 +19,42 @@ export class MerchantScene extends Phaser.Scene {
   private gameState!: GameStateManager;
   private shopItems: ShopItem[] = [];
   private goldText!: Phaser.GameObjects.Text;
+  private removalPrice: number = 0;
+  private removalServiceUsed: boolean = false;
 
   constructor() {
     super({ key: 'MerchantScene' });
   }
 
-  init(data: { gameState: GameStateManager }) {
+  init(data: {
+    gameState: GameStateManager;
+    selectedCardIndex?: number;
+    cancelled?: boolean;
+    removalPrice?: number;
+    removalServiceUsed?: boolean;
+  }) {
     this.gameState = data.gameState;
-    this.shopItems = [];
+    this.removalServiceUsed = data.removalServiceUsed || false;
+
+    // Check if returning from CardSelectionScene
+    if (data.selectedCardIndex !== undefined && data.removalPrice !== undefined) {
+      this.removalPrice = data.removalPrice;
+
+      // Handle card removal if a card was selected
+      if (!data.cancelled && data.selectedCardIndex >= 0) {
+        const removedCard = this.gameState.player.deck[data.selectedCardIndex];
+        this.gameState.player.deck.splice(data.selectedCardIndex, 1);
+        this.gameState.player.spendGold(this.removalPrice);
+        this.removalServiceUsed = true;
+
+        // Show success message when shop is displayed
+        this.time.delayedCall(100, () => {
+          this.showMessage(`Removed ${removedCard.name} from deck!`, 0xff4444);
+        });
+      }
+    } else {
+      this.shopItems = [];
+    }
   }
 
   create(): void {
@@ -118,7 +146,7 @@ export class MerchantScene extends Phaser.Scene {
     this.shopItems.push({
       type: 'REMOVE',
       price: this.calculateRemovalPrice(floor),
-      sold: false,
+      sold: this.removalServiceUsed, // Mark as sold if already used
     });
   }
 
@@ -599,19 +627,20 @@ export class MerchantScene extends Phaser.Scene {
       return;
     }
 
-    // TODO: Show card selection screen
-    // For now: remove a random card
-    const randomIndex = Math.floor(Math.random() * player.deck.length);
-    const removedCard = player.deck[randomIndex];
-    player.deck.splice(randomIndex, 1);
-    player.spendGold(item.price);
-
-    this.showMessage(`Removed ${removedCard.name} from deck!`, 0xff4444);
-
-    // Mark as used
-    item.sold = true;
-    this.goldText.setText(`Gold: ${player.gold}`);
-    this.refreshShop();
+    // Launch CardSelectionScene
+    this.scene.start('CardSelectionScene', {
+      gameState: this.gameState,
+      mode: 'REMOVE',
+      title: 'Remove a Card',
+      description: 'Select a card to permanently remove from your deck',
+      returnScene: 'MerchantScene',
+      returnData: {
+        gameState: this.gameState,
+        removalPrice: item.price,
+        removalServiceUsed: this.removalServiceUsed,
+      },
+      canCancel: true,
+    });
   }
 
   /**

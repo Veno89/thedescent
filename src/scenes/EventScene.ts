@@ -11,19 +11,54 @@ export class EventScene extends Phaser.Scene {
   private event!: GameEvent;
   private chosenOutcomes: EventOutcome[] = [];
   private outcomeIndex: number = 0;
+  private pendingOutcome?: EventOutcome;
+  private selectedCardIndex: number = -1;
 
   constructor() {
     super({ key: 'EventScene' });
   }
 
-  init(data: { gameState: GameStateManager; event?: GameEvent }) {
+  init(data: {
+    gameState: GameStateManager;
+    event?: GameEvent;
+    chosenOutcomes?: EventOutcome[];
+    outcomeIndex?: number;
+    pendingOutcome?: EventOutcome;
+    selectedCardIndex?: number;
+    cancelled?: boolean;
+  }) {
     this.gameState = data.gameState;
-    this.event = data.event || DataLoader.getRandomEvent()!;
-    this.chosenOutcomes = [];
-    this.outcomeIndex = 0;
+
+    // If returning from CardSelectionScene
+    if (data.pendingOutcome && data.selectedCardIndex !== undefined) {
+      this.chosenOutcomes = data.chosenOutcomes || [];
+      this.outcomeIndex = data.outcomeIndex || 0;
+      this.pendingOutcome = data.pendingOutcome;
+      this.selectedCardIndex = data.selectedCardIndex;
+
+      // Apply the card operation if a card was selected
+      if (!data.cancelled && this.selectedCardIndex >= 0) {
+        this.applyCardOperation(this.pendingOutcome, this.selectedCardIndex);
+      }
+      this.pendingOutcome = undefined;
+    } else {
+      // Normal initialization
+      this.event = data.event || DataLoader.getRandomEvent()!;
+      this.chosenOutcomes = [];
+      this.outcomeIndex = 0;
+      this.pendingOutcome = undefined;
+      this.selectedCardIndex = -1;
+    }
   }
 
   create(): void {
+    // If returning from card selection, continue displaying outcomes
+    if (this.chosenOutcomes.length > 0) {
+      this.displayNextOutcome();
+      return;
+    }
+
+    // Otherwise, show the normal event screen
     const width = this.cameras.main.width;
 
     // Title
@@ -136,6 +171,13 @@ export class EventScene extends Phaser.Scene {
     }
 
     const outcome = this.chosenOutcomes[this.outcomeIndex];
+
+    // Check if this outcome requires card selection
+    if (this.requiresCardSelection(outcome)) {
+      this.launchCardSelection(outcome);
+      return;
+    }
+
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
@@ -348,6 +390,86 @@ export class EventScene extends Phaser.Scene {
 
       default:
         console.warn(`Unknown outcome type: ${outcome.type}`);
+    }
+  }
+
+  /**
+   * Check if an outcome requires card selection
+   */
+  private requiresCardSelection(outcome: EventOutcome): boolean {
+    return outcome.type === 'REMOVE_CARD' || outcome.type === 'TRANSFORM_CARD';
+  }
+
+  /**
+   * Launch CardSelectionScene for card selection outcomes
+   */
+  private launchCardSelection(outcome: EventOutcome): void {
+    const player = this.gameState.player;
+
+    if (player.deck.length === 0) {
+      // No cards to select, skip this outcome
+      this.outcomeIndex++;
+      this.displayNextOutcome();
+      return;
+    }
+
+    let mode: 'REMOVE' | 'TRANSFORM';
+    let title: string;
+    let description: string;
+
+    switch (outcome.type) {
+      case 'REMOVE_CARD':
+        mode = 'REMOVE';
+        title = 'Remove a Card';
+        description = 'Select a card to permanently remove from your deck';
+        break;
+      case 'TRANSFORM_CARD':
+        mode = 'TRANSFORM';
+        title = 'Transform a Card';
+        description = 'Select a card to transform into a random card';
+        break;
+      default:
+        return;
+    }
+
+    this.scene.start('CardSelectionScene', {
+      gameState: this.gameState,
+      mode,
+      title,
+      description,
+      returnScene: 'EventScene',
+      returnData: {
+        gameState: this.gameState,
+        chosenOutcomes: this.chosenOutcomes,
+        outcomeIndex: this.outcomeIndex,
+        pendingOutcome: outcome,
+      },
+      canCancel: false,
+    });
+  }
+
+  /**
+   * Apply card operation after selection
+   */
+  private applyCardOperation(outcome: EventOutcome, cardIndex: number): void {
+    const player = this.gameState.player;
+
+    if (cardIndex < 0 || cardIndex >= player.deck.length) {
+      return;
+    }
+
+    switch (outcome.type) {
+      case 'REMOVE_CARD':
+        player.deck.splice(cardIndex, 1);
+        break;
+
+      case 'TRANSFORM_CARD':
+        const allCards = DataLoader.getAllCards();
+        const newCard = allCards[Math.floor(Math.random() * allCards.length)];
+        if (newCard) {
+          player.deck[cardIndex] = { ...newCard };
+        }
+        break;
     }
   }
 

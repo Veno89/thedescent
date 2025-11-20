@@ -7,13 +7,33 @@ import { Card } from '@/types';
  */
 export class RestScene extends Phaser.Scene {
   private gameState!: GameStateManager;
+  private choiceMade: boolean = false;
+  private selectedCardIndex: number = -1;
 
   constructor() {
     super({ key: 'RestScene' });
   }
 
-  init(data: { gameState: GameStateManager }) {
+  init(data: { gameState: GameStateManager; selectedCardIndex?: number; cancelled?: boolean }) {
     this.gameState = data.gameState;
+
+    // Check if returning from CardSelectionScene
+    if (data.selectedCardIndex !== undefined) {
+      this.selectedCardIndex = data.selectedCardIndex;
+      this.choiceMade = true;
+
+      // Handle card upgrade if a card was selected
+      if (!data.cancelled && this.selectedCardIndex >= 0) {
+        const card = this.gameState.player.deck[this.selectedCardIndex];
+        if (card && !card.upgraded) {
+          card.upgraded = true;
+          card.name = `${card.name}+`;
+        }
+      }
+    } else {
+      this.choiceMade = false;
+      this.selectedCardIndex = -1;
+    }
   }
 
   create(): void {
@@ -31,6 +51,30 @@ export class RestScene extends Phaser.Scene {
       fontFamily: 'monospace',
     }).setOrigin(0.5);
 
+    // If returning from card selection with a card upgraded
+    if (this.choiceMade && this.selectedCardIndex >= 0) {
+      const card = this.gameState.player.deck[this.selectedCardIndex];
+      if (card) {
+        // Show feedback
+        const feedback = this.add.text(
+          width / 2,
+          300,
+          `Upgraded ${card.name}!`,
+          {
+            fontSize: '32px',
+            color: '#00ff00',
+            fontStyle: 'bold',
+            fontFamily: 'monospace',
+          }
+        );
+        feedback.setOrigin(0.5);
+
+        this.showContinueButton();
+        return;
+      }
+    }
+
+    // Show normal rest site UI if no choice made yet
     // Description
     this.add.text(width / 2, 180, 'Choose one:', {
       fontSize: '24px',
@@ -170,30 +214,17 @@ export class RestScene extends Phaser.Scene {
    * Handle upgrade selection
    */
   private onUpgradeSelected(): void {
-    // For now, automatically upgrade a random card
-    // TODO: Show card selection screen
-    const upgradeableCards = this.getUpgradeableCards();
-    if (upgradeableCards.length > 0) {
-      const randomCard = upgradeableCards[Math.floor(Math.random() * upgradeableCards.length)];
-      randomCard.upgraded = true;
-      randomCard.name = `${randomCard.name}+`;
-
-      // Show feedback
-      const feedback = this.add.text(
-        this.cameras.main.width / 2,
-        600,
-        `Upgraded ${randomCard.name}!`,
-        {
-          fontSize: '28px',
-          color: '#00ff00',
-          fontStyle: 'bold',
-          fontFamily: 'monospace',
-        }
-      );
-      feedback.setOrigin(0.5);
-    }
-
-    this.showContinueButton();
+    // Launch CardSelectionScene for the player to choose a card to upgrade
+    this.scene.start('CardSelectionScene', {
+      gameState: this.gameState,
+      mode: 'UPGRADE',
+      title: 'Upgrade a Card',
+      description: 'Select a card to upgrade',
+      returnScene: 'RestScene',
+      returnData: { gameState: this.gameState },
+      filter: (card: Card) => !card.upgraded,
+      canCancel: true,
+    });
   }
 
   /**
