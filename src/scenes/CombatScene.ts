@@ -234,18 +234,61 @@ export class CombatScene extends Phaser.Scene {
       }
     });
 
-    // Draw pile counter
+    // Draw pile counter (clickable)
     this.drawPileText = this.add.text(100, height - 300, '', {
       fontSize: '18px',
-      color: '#cccccc',
+      color: '#4a9eff',
       fontFamily: 'monospace',
+      backgroundColor: '#1a1a1a',
+      padding: { x: 10, y: 5 },
+    });
+    this.drawPileText.setInteractive({ useHandCursor: true });
+    this.drawPileText.on('pointerover', () => {
+      this.drawPileText.setStyle({ backgroundColor: '#2a2a4a', color: '#ffd700' });
+    });
+    this.drawPileText.on('pointerout', () => {
+      this.drawPileText.setStyle({ backgroundColor: '#1a1a1a', color: '#4a9eff' });
+    });
+    this.drawPileText.on('pointerdown', () => {
+      this.openDeckView('DRAW');
     });
 
-    // Discard pile counter
+    // Discard pile counter (clickable)
     this.discardPileText = this.add.text(100, height - 270, '', {
       fontSize: '18px',
-      color: '#cccccc',
+      color: '#4a9eff',
       fontFamily: 'monospace',
+      backgroundColor: '#1a1a1a',
+      padding: { x: 10, y: 5 },
+    });
+    this.discardPileText.setInteractive({ useHandCursor: true });
+    this.discardPileText.on('pointerover', () => {
+      this.discardPileText.setStyle({ backgroundColor: '#2a2a4a', color: '#ffd700' });
+    });
+    this.discardPileText.on('pointerout', () => {
+      this.discardPileText.setStyle({ backgroundColor: '#1a1a1a', color: '#4a9eff' });
+    });
+    this.discardPileText.on('pointerdown', () => {
+      this.openDeckView('DISCARD');
+    });
+
+    // View Deck button
+    const viewDeckButton = this.add.text(100, height - 240, 'View Deck', {
+      fontSize: '18px',
+      color: '#00ff00',
+      fontFamily: 'monospace',
+      backgroundColor: '#1a1a1a',
+      padding: { x: 10, y: 5 },
+    });
+    viewDeckButton.setInteractive({ useHandCursor: true });
+    viewDeckButton.on('pointerover', () => {
+      viewDeckButton.setStyle({ backgroundColor: '#2a2a4a', color: '#ffd700' });
+    });
+    viewDeckButton.on('pointerout', () => {
+      viewDeckButton.setStyle({ backgroundColor: '#1a1a1a', color: '#00ff00' });
+    });
+    viewDeckButton.on('pointerdown', () => {
+      this.openDeckView('DECK');
     });
 
     // Player area background
@@ -597,6 +640,23 @@ export class CombatScene extends Phaser.Scene {
       alpha: 1,
       duration: 500,
       ease: 'Power2',
+    });
+  }
+
+  /**
+   * Open deck view scene
+   */
+  private openDeckView(mode: 'DECK' | 'DRAW' | 'DISCARD' | 'EXHAUST'): void {
+    if (this.combat.combatEnded) return;
+
+    this.scene.pause();
+    this.scene.launch('DeckViewScene', {
+      cards: this.player.deck,
+      discardPile: this.combat.discardPile,
+      drawPile: this.combat.drawPile,
+      exhaustPile: this.combat.exhaustPile,
+      returnScene: 'CombatScene',
+      viewMode: mode,
     });
   }
 
