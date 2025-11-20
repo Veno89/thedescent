@@ -151,3 +151,26 @@ export interface MapNode {
   room: Room;
   availablePaths: number[];
 }
+
+// Event system types
+export interface EventChoice {
+  text: string;
+  outcomes: EventOutcome[];
+}
+
+export interface EventOutcome {
+  type: string; // e.g., 'HEAL', 'LOSE_HP', 'GAIN_GOLD', 'LOSE_GOLD', 'ADD_CARD', 'REMOVE_CARD', 'GAIN_RELIC', 'TRANSFORM_CARD', 'UPGRADE_CARD'
+  value?: number;
+  text: string; // Description of what happens
+  cardId?: string; // For ADD_CARD outcome
+  relicId?: string; // For GAIN_RELIC outcome
+  weight?: number; // For random outcomes (default: 1)
+}
+
+export interface GameEvent {
+  id: string;
+  name: string;
+  description: string;
+  image?: string; // Placeholder for future image support
+  choices: EventChoice[];
+}

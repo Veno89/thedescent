@@ -1,0 +1,826 @@
+{
+  "events": [
+    {
+      "id": "golden_shrine",
+      "name": "Golden Shrine",
+      "description": "You encounter a golden shrine. It radiates power but demands a price.",
+      "choices": [
+        {
+          "text": "Pray at the shrine (Lose 25% Max HP, gain a random relic)",
+          "outcomes": [
+            {
+              "type": "LOSE_MAX_HP_PERCENT",
+              "value": 25,
+              "text": "You feel your life force drain away..."
+            },
+            {
+              "type": "GAIN_RANDOM_RELIC",
+              "text": "The shrine bestows a powerful relic upon you!"
+            }
+          ]
+        },
+        {
+          "text": "Destroy the shrine (Gain 250 gold)",
+          "outcomes": [
+            {
+              "type": "GAIN_GOLD",
+              "value": 250,
+              "text": "Gold coins spill from the shattered shrine!"
+            }
+          ]
+        },
+        {
+          "text": "Leave it alone",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You walk away from the shrine."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mysterious_sphere",
+      "name": "Mysterious Sphere",
+      "description": "A floating sphere pulses with energy. Touch it?",
+      "choices": [
+        {
+          "text": "Touch the sphere",
+          "outcomes": [
+            {
+              "type": "HEAL_PERCENT",
+              "value": 50,
+              "text": "Warm energy flows through you!",
+              "weight": 33
+            },
+            {
+              "type": "LOSE_HP_PERCENT",
+              "value": 50,
+              "text": "Dark energy saps your strength!",
+              "weight": 33
+            },
+            {
+              "type": "GAIN_GOLD",
+              "value": 150,
+              "text": "The sphere transforms into gold!",
+              "weight": 34
+            }
+          ]
+        },
+        {
+          "text": "Leave it alone",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You decide not to risk it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "match_and_keep",
+      "name": "Match and Keep!",
+      "description": "A strange merchant offers you a game. Match the card, keep your money. Lose and pay the price!",
+      "choices": [
+        {
+          "text": "Play (50 gold buy-in)",
+          "outcomes": [
+            {
+              "type": "LOSE_GOLD",
+              "value": 50,
+              "text": "You pay the entry fee..."
+            },
+            {
+              "type": "UPGRADE_RANDOM_CARD",
+              "text": "You won! Your card is upgraded!",
+              "weight": 50
+            },
+            {
+              "type": "LOSE_HP",
+              "value": 15,
+              "text": "You lost! The merchant cackles as pain shoots through you.",
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "text": "Refuse to play",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "The merchant shrugs and disappears."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wing_statue",
+      "name": "Wing Statue",
+      "description": "A statue of a winged figure. You sense you could pray for aid or smash it for immediate gains.",
+      "choices": [
+        {
+          "text": "Pray for flight (Remove a card from your deck)",
+          "outcomes": [
+            {
+              "type": "REMOVE_CARD",
+              "text": "The statue glows and a card lifts from your deck, dissolving into light."
+            }
+          ]
+        },
+        {
+          "text": "Smash for treasure (Gain 75 gold)",
+          "outcomes": [
+            {
+              "type": "GAIN_GOLD",
+              "value": 75,
+              "text": "The statue crumbles, revealing hidden gold!"
+            }
+          ]
+        },
+        {
+          "text": "Leave it be",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You respectfully leave the statue intact."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fountain_of_cleansing",
+      "name": "Fountain of Cleansing",
+      "description": "A pristine fountain offers purification at a price.",
+      "choices": [
+        {
+          "text": "Drink deeply (Lose 25 HP, remove 2 cards)",
+          "outcomes": [
+            {
+              "type": "LOSE_HP",
+              "value": 25,
+              "text": "The water burns going down..."
+            },
+            {
+              "type": "REMOVE_CARD",
+              "text": "A card dissolves from your deck."
+            },
+            {
+              "type": "REMOVE_CARD",
+              "text": "Another card fades away."
+            }
+          ]
+        },
+        {
+          "text": "Sip carefully (Lose 10 HP, remove 1 card)",
+          "outcomes": [
+            {
+              "type": "LOSE_HP",
+              "value": 10,
+              "text": "The water stings slightly..."
+            },
+            {
+              "type": "REMOVE_CARD",
+              "text": "A card vanishes from your deck."
+            }
+          ]
+        },
+        {
+          "text": "Walk away",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You leave the fountain untouched."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "world_of_goop",
+      "name": "World of Goop",
+      "description": "You're covered in sticky goop! It will slow you down unless you remove it.",
+      "choices": [
+        {
+          "text": "Remove the goop (Lose 75 gold)",
+          "outcomes": [
+            {
+              "type": "LOSE_GOLD",
+              "value": 75,
+              "text": "You scrape off the goop. Much better!"
+            }
+          ]
+        },
+        {
+          "text": "Keep it (Your deck is now full of SLIMED cards)",
+          "outcomes": [
+            {
+              "type": "ADD_CURSE",
+              "value": 2,
+              "text": "The goop seeps into your deck, adding Slimed cards!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "the_cleric",
+      "name": "The Cleric",
+      "description": "A mysterious cleric offers healing... for a price.",
+      "choices": [
+        {
+          "text": "Heal to full (Cost: 75 gold)",
+          "outcomes": [
+            {
+              "type": "LOSE_GOLD",
+              "value": 75,
+              "text": "You pay the cleric..."
+            },
+            {
+              "type": "HEAL_FULL",
+              "text": "The cleric's magic restores you completely!"
+            }
+          ]
+        },
+        {
+          "text": "Heal 50% (Cost: 35 gold)",
+          "outcomes": [
+            {
+              "type": "LOSE_GOLD",
+              "value": 35,
+              "text": "You pay the cleric..."
+            },
+            {
+              "type": "HEAL_PERCENT",
+              "value": 50,
+              "text": "The cleric heals your wounds."
+            }
+          ]
+        },
+        {
+          "text": "Refuse",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "The cleric nods and continues on their way."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scrap_ooze",
+      "name": "Scrap Ooze",
+      "description": "A strange ooze offers to transform one of your cards into something better... or worse.",
+      "choices": [
+        {
+          "text": "Transform a card",
+          "outcomes": [
+            {
+              "type": "TRANSFORM_CARD",
+              "text": "The ooze absorbs your card and spits out a different one!"
+            }
+          ]
+        },
+        {
+          "text": "Leave",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You back away slowly from the ooze."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knowing_skull",
+      "name": "Knowing Skull",
+      "description": "An ancient skull speaks: 'I can show you secrets... if you dare.'",
+      "choices": [
+        {
+          "text": "Learn its secrets (Lose 6 HP, gain a rare card)",
+          "outcomes": [
+            {
+              "type": "LOSE_HP",
+              "value": 6,
+              "text": "Knowledge comes with pain..."
+            },
+            {
+              "type": "ADD_RARE_CARD",
+              "text": "The skull imparts forbidden knowledge!"
+            }
+          ]
+        },
+        {
+          "text": "Refuse",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "The skull's eyes dim in disappointment."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accursed_blacksmith",
+      "name": "Accursed Blacksmith",
+      "description": "A blacksmith offers to forge your cards into something greater, but warns of a curse.",
+      "choices": [
+        {
+          "text": "Upgrade all Strike and Defend cards",
+          "outcomes": [
+            {
+              "type": "UPGRADE_STRIKES_AND_DEFENDS",
+              "text": "Your basic cards are reforged into superior versions!"
+            },
+            {
+              "type": "ADD_CURSE",
+              "value": 1,
+              "text": "But a curse seeps into your deck..."
+            }
+          ]
+        },
+        {
+          "text": "Decline",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You politely decline the blacksmith's offer."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vampires",
+      "name": "Vampires",
+      "description": "Vampires offer you their power in exchange for your vitality.",
+      "choices": [
+        {
+          "text": "Accept their offer (Lose 30% Max HP, remove all Strike cards, gain 5 Bites)",
+          "outcomes": [
+            {
+              "type": "LOSE_MAX_HP_PERCENT",
+              "value": 30,
+              "text": "You feel weaker, but also... different."
+            },
+            {
+              "type": "REMOVE_ALL_STRIKES",
+              "text": "Your Strike cards dissolve..."
+            },
+            {
+              "type": "ADD_CARD",
+              "value": 5,
+              "cardId": "bite",
+              "text": "The vampires grant you Bite cards!"
+            }
+          ]
+        },
+        {
+          "text": "Refuse",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You reject their offer and leave quickly."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dead_adventurer",
+      "name": "Dead Adventurer",
+      "description": "You find the body of a fallen adventurer. Their belongings lie scattered.",
+      "choices": [
+        {
+          "text": "Search the body",
+          "outcomes": [
+            {
+              "type": "GAIN_GOLD",
+              "value": 100,
+              "text": "You find gold!",
+              "weight": 40
+            },
+            {
+              "type": "GAIN_RANDOM_POTION",
+              "text": "You find a potion!",
+              "weight": 30
+            },
+            {
+              "type": "GAIN_RANDOM_RELIC",
+              "text": "You find a relic!",
+              "weight": 20
+            },
+            {
+              "type": "ADD_CURSE",
+              "value": 1,
+              "text": "The body was cursed! A curse enters your deck.",
+              "weight": 10
+            }
+          ]
+        },
+        {
+          "text": "Leave them in peace",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You respectfully leave the adventurer undisturbed."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "library",
+      "name": "The Library",
+      "description": "An ancient library full of knowledge. You could spend time studying...",
+      "choices": [
+        {
+          "text": "Study intensely (Lose 20% Max HP, gain 2 rare cards)",
+          "outcomes": [
+            {
+              "type": "LOSE_MAX_HP_PERCENT",
+              "value": 20,
+              "text": "The intense study exhausts you..."
+            },
+            {
+              "type": "ADD_RARE_CARD",
+              "text": "You master a powerful technique!"
+            },
+            {
+              "type": "ADD_RARE_CARD",
+              "text": "You learn another secret art!"
+            }
+          ]
+        },
+        {
+          "text": "Browse casually (Upgrade a random card)",
+          "outcomes": [
+            {
+              "type": "UPGRADE_RANDOM_CARD",
+              "text": "You find useful notes that improve one of your techniques."
+            }
+          ]
+        },
+        {
+          "text": "Leave",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You don't have time for books right now."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bonfire_spirits",
+      "name": "Bonfire Spirits",
+      "description": "Spirits dance around a bonfire. They beckon you to join them.",
+      "choices": [
+        {
+          "text": "Dance with the spirits (Upgrade all cards in your hand)",
+          "outcomes": [
+            {
+              "type": "UPGRADE_ALL_HAND",
+              "text": "The spirits enhance your techniques!"
+            }
+          ]
+        },
+        {
+          "text": "Watch from afar",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You watch the mesmerizing dance but don't participate."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lab",
+      "name": "The Lab",
+      "description": "An abandoned laboratory. Potions bubble on workbenches.",
+      "choices": [
+        {
+          "text": "Take the potions (Gain 2 random potions)",
+          "outcomes": [
+            {
+              "type": "GAIN_RANDOM_POTION",
+              "text": "You pocket a mysterious potion."
+            },
+            {
+              "type": "GAIN_RANDOM_POTION",
+              "text": "You take another one for good measure."
+            }
+          ]
+        },
+        {
+          "text": "Experiment with equipment (Transform 2 cards)",
+          "outcomes": [
+            {
+              "type": "TRANSFORM_CARD",
+              "text": "One of your cards is altered by strange energies!"
+            },
+            {
+              "type": "TRANSFORM_CARD",
+              "text": "Another card undergoes a bizarre transformation!"
+            }
+          ]
+        },
+        {
+          "text": "Leave quickly",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "This place gives you the creeps. You leave."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shining_light",
+      "name": "Shining Light",
+      "description": "A beam of pure light descends from above. Its warmth is inviting.",
+      "choices": [
+        {
+          "text": "Step into the light (Upgrade 2 random cards)",
+          "outcomes": [
+            {
+              "type": "UPGRADE_RANDOM_CARD",
+              "text": "The light refines your abilities!"
+            },
+            {
+              "type": "UPGRADE_RANDOM_CARD",
+              "text": "Your techniques are further enhanced!"
+            }
+          ]
+        },
+        {
+          "text": "Stay back",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You admire the light from a distance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mushrooms",
+      "name": "Mushrooms",
+      "description": "Colorful mushrooms grow in a circle. They look... interesting.",
+      "choices": [
+        {
+          "text": "Eat the mushrooms",
+          "outcomes": [
+            {
+              "type": "HEAL_FULL",
+              "text": "You feel amazing! Full health restored!",
+              "weight": 25
+            },
+            {
+              "type": "LOSE_HP_PERCENT",
+              "value": 50,
+              "text": "Bad idea. You feel sick.",
+              "weight": 35
+            },
+            {
+              "type": "GAIN_MAX_HP",
+              "value": 10,
+              "text": "Your body adapts! Max HP increased!",
+              "weight": 20
+            },
+            {
+              "type": "ADD_CURSE",
+              "value": 2,
+              "text": "The mushrooms were cursed! Parasites infest your deck.",
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "text": "Don't eat them",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "Probably wise."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "face_trader",
+      "name": "Face Trader",
+      "description": "A masked figure offers to trade faces with you. They claim it will make you stronger.",
+      "choices": [
+        {
+          "text": "Trade faces (Transform 3 cards)",
+          "outcomes": [
+            {
+              "type": "TRANSFORM_CARD",
+              "text": "Your identity shifts... a card changes!"
+            },
+            {
+              "type": "TRANSFORM_CARD",
+              "text": "Another aspect of you transforms!"
+            },
+            {
+              "type": "TRANSFORM_CARD",
+              "text": "You barely recognize yourself. Another card altered!"
+            }
+          ]
+        },
+        {
+          "text": "Refuse",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You like your face just the way it is."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "beggar",
+      "name": "The Beggar",
+      "description": "A beggar asks for spare change.",
+      "choices": [
+        {
+          "text": "Give generously (Lose 75 gold)",
+          "outcomes": [
+            {
+              "type": "LOSE_GOLD",
+              "value": 75,
+              "text": "The beggar thanks you profusely..."
+            },
+            {
+              "type": "GAIN_RANDOM_RELIC",
+              "text": "They give you a strange trinket in return!",
+              "weight": 30
+            },
+            {
+              "type": "NOTHING",
+              "text": "They shuffle away happily.",
+              "weight": 70
+            }
+          ]
+        },
+        {
+          "text": "Give a little (Lose 25 gold)",
+          "outcomes": [
+            {
+              "type": "LOSE_GOLD",
+              "value": 25,
+              "text": "The beggar nods appreciatively."
+            }
+          ]
+        },
+        {
+          "text": "Ignore them",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You walk past without making eye contact."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ancient_writing",
+      "name": "Ancient Writing",
+      "description": "Strange symbols are carved into the wall. They seem to pulse with power.",
+      "choices": [
+        {
+          "text": "Try to read them (Lose 10 HP, upgrade all Strike and Defend cards)",
+          "outcomes": [
+            {
+              "type": "LOSE_HP",
+              "value": 10,
+              "text": "The knowledge burns your mind..."
+            },
+            {
+              "type": "UPGRADE_STRIKES_AND_DEFENDS",
+              "text": "But your basic techniques are refined!"
+            }
+          ]
+        },
+        {
+          "text": "Ignore them",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "Best not to meddle with ancient magic."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "augmenter",
+      "name": "The Augmenter",
+      "description": "A strange device offers to enhance your abilities permanently.",
+      "choices": [
+        {
+          "text": "Use the device (Gain 20 Max HP, add a Wound to your deck)",
+          "outcomes": [
+            {
+              "type": "GAIN_MAX_HP",
+              "value": 20,
+              "text": "You feel stronger!"
+            },
+            {
+              "type": "ADD_CURSE",
+              "value": 1,
+              "text": "But the procedure leaves you wounded..."
+            }
+          ]
+        },
+        {
+          "text": "Reject it",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You don't trust the device."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "purifier",
+      "name": "The Purifier",
+      "description": "An ethereal being offers to purge your deck of weakness.",
+      "choices": [
+        {
+          "text": "Accept purification (Remove 2 cards)",
+          "outcomes": [
+            {
+              "type": "REMOVE_CARD",
+              "text": "A card is purged from your deck."
+            },
+            {
+              "type": "REMOVE_CARD",
+              "text": "Another card dissolves away."
+            }
+          ]
+        },
+        {
+          "text": "Decline",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You decide to keep your deck as is."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nest",
+      "name": "The Nest",
+      "description": "You discover a nest with glowing eggs. You could take one... or destroy the nest.",
+      "choices": [
+        {
+          "text": "Take an egg (Gain a random relic)",
+          "outcomes": [
+            {
+              "type": "GAIN_RANDOM_RELIC",
+              "text": "The egg hatches into something useful!"
+            }
+          ]
+        },
+        {
+          "text": "Destroy the nest (Gain 150 gold)",
+          "outcomes": [
+            {
+              "type": "GAIN_GOLD",
+              "value": 150,
+              "text": "You feel guilty, but the gold is nice."
+            }
+          ]
+        },
+        {
+          "text": "Leave it alone",
+          "outcomes": [
+            {
+              "type": "NOTHING",
+              "text": "You let nature take its course."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

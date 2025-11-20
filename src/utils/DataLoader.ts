@@ -1,4 +1,4 @@
-import { Card } from '@/types';
+import { Card, GameEvent } from '@/types';
 import { Enemy } from '@/entities/Enemy';
 import { Relic } from '@/entities/Relic';
 import { Potion } from '@/entities/Potion';
@@ -7,6 +7,7 @@ import advancedCards from '@/data/cards/advanced.json';
 import act1Enemies from '@/data/enemies/act1.json';
 import relicsData from '@/data/relics/relics.json';
 import potionsData from '@/data/potions/potions.json';
+import eventsData from '@/data/events/events.json';
 
 /**
  * DataLoader handles loading and caching game data from JSON files
@@ -16,6 +17,7 @@ export class DataLoader {
   private static enemyCache: Map<string, Enemy> = new Map();
   private static relicCache: Map<string, Relic> = new Map();
   private static potionCache: Map<string, Potion> = new Map();
+  private static eventCache: Map<string, GameEvent> = new Map();
   private static initialized = false;
 
   /**
@@ -54,10 +56,16 @@ export class DataLoader {
       this.potionCache.set(potion.id, potion);
     });
 
+    // Load events
+    eventsData.events.forEach((eventData: any) => {
+      const event = this.parseEvent(eventData);
+      this.eventCache.set(event.id, event);
+    });
+
     this.initialized = true;
     console.log(
       `Loaded ${this.cardCache.size} cards, ${this.enemyCache.size} enemies, ` +
-      `${this.relicCache.size} relics, and ${this.potionCache.size} potions`
+      `${this.relicCache.size} relics, ${this.potionCache.size} potions, and ${this.eventCache.size} events`
     );
   }
 
@@ -242,6 +250,34 @@ export class DataLoader {
   }
 
   /**
+   * Get an event by ID
+   */
+  static getEvent(id: string): GameEvent | undefined {
+    if (!this.initialized) this.initialize();
+    return this.eventCache.get(id);
+  }
+
+  /**
+   * Get all events
+   */
+  static getAllEvents(): GameEvent[] {
+    if (!this.initialized) this.initialize();
+    return Array.from(this.eventCache.values());
+  }
+
+  /**
+   * Get a random event
+   */
+  static getRandomEvent(): GameEvent | undefined {
+    if (!this.initialized) this.initialize();
+    const events = Array.from(this.eventCache.values());
+    if (events.length === 0) return undefined;
+
+    const randomIndex = Math.floor(Math.random() * events.length);
+    return events[randomIndex];
+  }
+
+  /**
    * Create a card instance from data (with optional upgrade)
    */
   static createCard(id: string, upgraded = false): Card | undefined {
@@ -366,5 +402,15 @@ export class DataLoader {
       targetType: data.targetType,
       effects: data.effects,
     });
+  }
+
+  private static parseEvent(data: any): GameEvent {
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      choices: data.choices,
+    };
   }
 }
