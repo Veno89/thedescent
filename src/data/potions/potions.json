@@ -1,0 +1,208 @@
+{
+  "potions": [
+    {
+      "id": "healing_potion",
+      "name": "Healing Potion",
+      "description": "Heal 20 HP.",
+      "rarity": "COMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "HEAL",
+          "value": 20
+        }
+      ]
+    },
+    {
+      "id": "block_potion",
+      "name": "Block Potion",
+      "description": "Gain 12 Block.",
+      "rarity": "COMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "BLOCK",
+          "value": 12
+        }
+      ]
+    },
+    {
+      "id": "energy_potion",
+      "name": "Energy Potion",
+      "description": "Gain 2 Energy.",
+      "rarity": "COMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "GAIN_ENERGY",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "fire_potion",
+      "name": "Fire Potion",
+      "description": "Deal 20 damage to a target enemy.",
+      "rarity": "COMMON",
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 20
+        }
+      ]
+    },
+    {
+      "id": "explosive_potion",
+      "name": "Explosive Potion",
+      "description": "Deal 10 damage to ALL enemies.",
+      "rarity": "UNCOMMON",
+      "targetType": "ALL_ENEMIES",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 10,
+          "target": "ALL_ENEMIES"
+        }
+      ]
+    },
+    {
+      "id": "strength_potion",
+      "name": "Strength Potion",
+      "description": "Gain 2 Strength.",
+      "rarity": "COMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "APPLY_STRENGTH",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "dexterity_potion",
+      "name": "Dexterity Potion",
+      "description": "Gain 2 Dexterity.",
+      "rarity": "COMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "GAIN_DEXTERITY",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "poison_potion",
+      "name": "Poison Potion",
+      "description": "Apply 6 Poison to a target enemy.",
+      "rarity": "COMMON",
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "APPLY_POISON",
+          "value": 6
+        }
+      ]
+    },
+    {
+      "id": "weak_potion",
+      "name": "Weak Potion",
+      "description": "Apply 3 Weak to a target enemy.",
+      "rarity": "COMMON",
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "APPLY_WEAK",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "vulnerable_potion",
+      "name": "Vulnerable Potion",
+      "description": "Apply 3 Vulnerable to a target enemy.",
+      "rarity": "COMMON",
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        {
+          "type": "APPLY_VULNERABLE",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "greater_healing_potion",
+      "name": "Greater Healing Potion",
+      "description": "Heal 40 HP.",
+      "rarity": "UNCOMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "HEAL",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "id": "ancient_potion",
+      "name": "Ancient Potion",
+      "description": "Gain 1 Artifact.",
+      "rarity": "RARE",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "GAIN_ARTIFACT",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "focus_potion",
+      "name": "Focus Potion",
+      "description": "Draw 3 cards.",
+      "rarity": "UNCOMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "DRAW",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "swift_potion",
+      "name": "Swift Potion",
+      "description": "Draw 2 cards and gain 1 Energy.",
+      "rarity": "RARE",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "DRAW",
+          "value": 2
+        },
+        {
+          "type": "GAIN_ENERGY",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "liquid_bronze",
+      "name": "Liquid Bronze",
+      "description": "Gain 15 Block and 3 Plated Armor.",
+      "rarity": "UNCOMMON",
+      "targetType": "SELF",
+      "effects": [
+        {
+          "type": "BLOCK",
+          "value": 15
+        },
+        {
+          "type": "GAIN_PLATED_ARMOR",
+          "value": 3
+        }
+      ]
+    }
+  ]
+}

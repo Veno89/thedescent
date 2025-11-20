@@ -1,10 +1,12 @@
 import { Card } from '@/types';
 import { Enemy } from '@/entities/Enemy';
 import { Relic } from '@/entities/Relic';
+import { Potion } from '@/entities/Potion';
 import starterCards from '@/data/cards/starter.json';
 import advancedCards from '@/data/cards/advanced.json';
 import act1Enemies from '@/data/enemies/act1.json';
 import relicsData from '@/data/relics/relics.json';
+import potionsData from '@/data/potions/potions.json';
 
 /**
  * DataLoader handles loading and caching game data from JSON files
@@ -13,6 +15,7 @@ export class DataLoader {
   private static cardCache: Map<string, Card> = new Map();
   private static enemyCache: Map<string, Enemy> = new Map();
   private static relicCache: Map<string, Relic> = new Map();
+  private static potionCache: Map<string, Potion> = new Map();
   private static initialized = false;
 
   /**
@@ -45,8 +48,17 @@ export class DataLoader {
       this.relicCache.set(relic.id, relic);
     });
 
+    // Load potions
+    potionsData.potions.forEach((potionData) => {
+      const potion = this.parsePotion(potionData);
+      this.potionCache.set(potion.id, potion);
+    });
+
     this.initialized = true;
-    console.log(`Loaded ${this.cardCache.size} cards, ${this.enemyCache.size} enemies, and ${this.relicCache.size} relics`);
+    console.log(
+      `Loaded ${this.cardCache.size} cards, ${this.enemyCache.size} enemies, ` +
+      `${this.relicCache.size} relics, and ${this.potionCache.size} potions`
+    );
   }
 
   /**
@@ -156,6 +168,73 @@ export class DataLoader {
     if (filtered.length === 0) {
       // Fallback to any relic
       return this.getRandomRelic();
+    }
+
+    const randomIndex = Math.floor(Math.random() * filtered.length);
+    return filtered[randomIndex];
+  }
+
+  /**
+   * Get a potion by ID
+   */
+  static getPotion(id: string): Potion | undefined {
+    if (!this.initialized) this.initialize();
+    const template = this.potionCache.get(id);
+    return template ? template.clone() : undefined;
+  }
+
+  /**
+   * Get all potions
+   */
+  static getAllPotions(): Potion[] {
+    if (!this.initialized) this.initialize();
+    return Array.from(this.potionCache.values()).map(p => p.clone());
+  }
+
+  /**
+   * Get potions by rarity
+   */
+  static getPotionsByRarity(rarity: string): Potion[] {
+    if (!this.initialized) this.initialize();
+    return Array.from(this.potionCache.values())
+      .filter((potion) => potion.rarity === rarity)
+      .map(p => p.clone());
+  }
+
+  /**
+   * Get a random potion
+   */
+  static getRandomPotion(): Potion | undefined {
+    if (!this.initialized) this.initialize();
+    const potions = Array.from(this.potionCache.values());
+    if (potions.length === 0) return undefined;
+
+    const randomIndex = Math.floor(Math.random() * potions.length);
+    return potions[randomIndex].clone();
+  }
+
+  /**
+   * Get a random potion with rarity weighting
+   * COMMON: 70%, UNCOMMON: 25%, RARE: 5%
+   */
+  static getRandomWeightedPotion(): Potion | undefined {
+    if (!this.initialized) this.initialize();
+
+    const roll = Math.random();
+    let targetRarity: string;
+
+    if (roll < 0.7) {
+      targetRarity = 'COMMON';
+    } else if (roll < 0.95) {
+      targetRarity = 'UNCOMMON';
+    } else {
+      targetRarity = 'RARE';
+    }
+
+    const filtered = this.getPotionsByRarity(targetRarity);
+    if (filtered.length === 0) {
+      // Fallback to any potion
+      return this.getRandomPotion();
     }
 
     const randomIndex = Math.floor(Math.random() * filtered.length);
@@ -274,6 +353,17 @@ export class DataLoader {
       name: data.name,
       description: data.description,
       rarity: data.rarity,
+      effects: data.effects,
+    });
+  }
+
+  private static parsePotion(data: any): Potion {
+    return new Potion({
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      rarity: data.rarity,
+      targetType: data.targetType,
       effects: data.effects,
     });
   }
