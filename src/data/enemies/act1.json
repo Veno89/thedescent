@@ -4,6 +4,7 @@
       "id": "cultist",
       "name": "Cultist",
       "maxHp": 50,
+      "type": "normal",
       "moves": [
         {
           "name": "Incantation",
@@ -39,6 +40,7 @@
       "id": "jaw_worm",
       "name": "Jaw Worm",
       "maxHp": 42,
+      "type": "normal",
       "moves": [
         {
           "name": "Chomp",
@@ -96,6 +98,7 @@
       "id": "louse_red",
       "name": "Red Louse",
       "maxHp": 12,
+      "type": "normal",
       "moves": [
         {
           "name": "Bite",
@@ -131,6 +134,7 @@
       "id": "louse_green",
       "name": "Green Louse",
       "maxHp": 12,
+      "type": "normal",
       "moves": [
         {
           "name": "Bite",
@@ -166,6 +170,7 @@
       "id": "fungi_beast",
       "name": "Fungi Beast",
       "maxHp": 28,
+      "type": "normal",
       "moves": [
         {
           "name": "Bite",
@@ -192,6 +197,288 @@
             {
               "type": "APPLY_STRENGTH_SELF",
               "value": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gremlin_nob",
+      "name": "Gremlin Nob",
+      "maxHp": 85,
+      "type": "elite",
+      "moves": [
+        {
+          "name": "Skull Bash",
+          "intent": {
+            "type": "ATTACK",
+            "value": 6
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 6
+            },
+            {
+              "type": "APPLY_VULNERABLE",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "name": "Bellow",
+          "intent": {
+            "type": "BUFF",
+            "value": 2
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_STRENGTH_SELF",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "name": "Rush",
+          "intent": {
+            "type": "ATTACK",
+            "value": 14
+          },
+          "weight": 3,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lagavulin",
+      "name": "Lagavulin",
+      "maxHp": 109,
+      "type": "elite",
+      "moves": [
+        {
+          "name": "Attack",
+          "intent": {
+            "type": "ATTACK",
+            "value": 18
+          },
+          "weight": 3,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 18
+            }
+          ]
+        },
+        {
+          "name": "Siphon Soul",
+          "intent": {
+            "type": "DEBUFF",
+            "value": 1
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_STRENGTH",
+              "value": -1
+            },
+            {
+              "type": "APPLY_DEXTERITY",
+              "value": -1
+            }
+          ]
+        },
+        {
+          "name": "Stunned",
+          "intent": {
+            "type": "STUN",
+            "value": 0
+          },
+          "weight": 1,
+          "actions": []
+        }
+      ]
+    },
+    {
+      "id": "sentry",
+      "name": "Sentry",
+      "maxHp": 38,
+      "type": "elite",
+      "moves": [
+        {
+          "name": "Beam",
+          "intent": {
+            "type": "ATTACK",
+            "value": 9
+          },
+          "weight": 3,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 9
+            }
+          ]
+        },
+        {
+          "name": "Bolt",
+          "intent": {
+            "type": "ATTACK",
+            "value": 7
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 7
+            },
+            {
+              "type": "APPLY_WEAK",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "slime_boss",
+      "name": "Slime Boss",
+      "maxHp": 140,
+      "type": "boss",
+      "moves": [
+        {
+          "name": "Slam",
+          "intent": {
+            "type": "ATTACK",
+            "value": 35
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 35
+            }
+          ]
+        },
+        {
+          "name": "Corrosive Spit",
+          "intent": {
+            "type": "ATTACK",
+            "value": 11
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 11
+            },
+            {
+              "type": "APPLY_WEAK",
+              "value": 2
+            },
+            {
+              "type": "APPLY_VULNERABLE",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "name": "Preparing",
+          "intent": {
+            "type": "UNKNOWN",
+            "value": 0
+          },
+          "weight": 1,
+          "actions": []
+        },
+        {
+          "name": "Goop Spray",
+          "intent": {
+            "type": "DEBUFF",
+            "value": 3
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_WEAK",
+              "value": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "the_guardian",
+      "name": "The Guardian",
+      "maxHp": 240,
+      "type": "boss",
+      "moves": [
+        {
+          "name": "Fierce Bash",
+          "intent": {
+            "type": "ATTACK",
+            "value": 32
+          },
+          "weight": 2,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 32
+            }
+          ]
+        },
+        {
+          "name": "Vent Steam",
+          "intent": {
+            "type": "ATTACK",
+            "value": 6
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "DAMAGE",
+              "value": 6
+            },
+            {
+              "type": "APPLY_WEAK",
+              "value": 2
+            },
+            {
+              "type": "APPLY_VULNERABLE",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "name": "Charging Up",
+          "intent": {
+            "type": "BUFF",
+            "value": 4
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_STRENGTH_SELF",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "name": "Defensive Mode",
+          "intent": {
+            "type": "BUFF",
+            "value": 9
+          },
+          "weight": 1,
+          "actions": [
+            {
+              "type": "APPLY_BLOCK_SELF",
+              "value": 9
             }
           ]
         }

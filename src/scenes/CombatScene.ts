@@ -95,25 +95,36 @@ export class CombatScene extends Phaser.Scene {
     const enemies: Enemy[] = [];
 
     if (this.isBoss) {
-      // TODO: Create boss enemy
-      const bossTemplate = DataLoader.getEnemy('jaw_worm');
-      if (bossTemplate) {
-        enemies.push(bossTemplate);
+      // Boss: 1 boss enemy
+      const boss = DataLoader.getRandomEnemyByType('boss');
+      if (boss) {
+        enemies.push(boss);
       }
     } else if (this.isElite) {
-      // Elite: 1 tough enemy
-      const eliteTemplate = DataLoader.getEnemy('jaw_worm');
-      if (eliteTemplate) {
-        enemies.push(eliteTemplate);
+      // Elite: 1-3 elite enemies (sentries come in packs)
+      const elite = DataLoader.getRandomEnemyByType('elite');
+      if (elite) {
+        if (elite.id === 'sentry') {
+          // Sentries come in groups of 3
+          for (let i = 0; i < 3; i++) {
+            const sentry = DataLoader.getEnemy('sentry');
+            if (sentry) enemies.push(sentry);
+          }
+        } else {
+          enemies.push(elite);
+        }
       }
     } else {
-      // Normal: 1-2 random enemies
-      const enemyCount = Math.random() < 0.5 ? 1 : 2;
-      const allEnemies = DataLoader.getAllEnemies();
+      // Normal: 1-3 random normal enemies
+      const enemyCount = Math.floor(Math.random() * 3) + 1; // 1-3 enemies
+      const normalEnemies = DataLoader.getEnemiesByType('normal');
 
       for (let i = 0; i < enemyCount; i++) {
-        const randomEnemy = allEnemies[Math.floor(Math.random() * allEnemies.length)];
-        enemies.push(DataLoader.getEnemy(randomEnemy.id) || randomEnemy);
+        if (normalEnemies.length > 0) {
+          const randomEnemy = normalEnemies[Math.floor(Math.random() * normalEnemies.length)];
+          const enemy = DataLoader.getEnemy(randomEnemy.id);
+          if (enemy) enemies.push(enemy);
+        }
       }
     }
 

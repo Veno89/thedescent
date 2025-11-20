@@ -147,6 +147,28 @@ export class DataLoader {
   }
 
   /**
+   * Get enemies by type (normal, elite, boss)
+   */
+  static getEnemiesByType(type: string): Enemy[] {
+    if (!this.initialized) this.initialize();
+    return Array.from(this.enemyCache.values()).filter(
+      (enemy) => (enemy as any).type === type
+    );
+  }
+
+  /**
+   * Get a random enemy of a specific type
+   */
+  static getRandomEnemyByType(type: string): Enemy | undefined {
+    if (!this.initialized) this.initialize();
+    const enemies = this.getEnemiesByType(type);
+    if (enemies.length === 0) return undefined;
+
+    const randomIndex = Math.floor(Math.random() * enemies.length);
+    return this.getEnemy(enemies[randomIndex].id);
+  }
+
+  /**
    * Get a relic by ID
    */
   static getRelic(id: string): Relic | undefined {
