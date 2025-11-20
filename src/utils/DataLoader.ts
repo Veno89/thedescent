@@ -1,8 +1,10 @@
 import { Card } from '@/types';
 import { Enemy } from '@/entities/Enemy';
+import { Relic } from '@/entities/Relic';
 import starterCards from '@/data/cards/starter.json';
 import advancedCards from '@/data/cards/advanced.json';
 import act1Enemies from '@/data/enemies/act1.json';
+import relicsData from '@/data/relics/relics.json';
 
 /**
  * DataLoader handles loading and caching game data from JSON files
@@ -10,6 +12,7 @@ import act1Enemies from '@/data/enemies/act1.json';
 export class DataLoader {
   private static cardCache: Map<string, Card> = new Map();
   private static enemyCache: Map<string, Enemy> = new Map();
+  private static relicCache: Map<string, Relic> = new Map();
   private static initialized = false;
 
   /**
@@ -36,8 +39,14 @@ export class DataLoader {
       this.enemyCache.set(enemy.id, enemy);
     });
 
+    // Load relics
+    relicsData.relics.forEach((relicData) => {
+      const relic = this.parseRelic(relicData);
+      this.relicCache.set(relic.id, relic);
+    });
+
     this.initialized = true;
-    console.log(`Loaded ${this.cardCache.size} cards and ${this.enemyCache.size} enemies`);
+    console.log(`Loaded ${this.cardCache.size} cards, ${this.enemyCache.size} enemies, and ${this.relicCache.size} relics`);
   }
 
   /**
@@ -84,6 +93,73 @@ export class DataLoader {
   static getAllEnemies(): Enemy[] {
     if (!this.initialized) this.initialize();
     return Array.from(this.enemyCache.values());
+  }
+
+  /**
+   * Get a relic by ID
+   */
+  static getRelic(id: string): Relic | undefined {
+    if (!this.initialized) this.initialize();
+    const template = this.relicCache.get(id);
+    return template ? template.clone() : undefined;
+  }
+
+  /**
+   * Get all relics
+   */
+  static getAllRelics(): Relic[] {
+    if (!this.initialized) this.initialize();
+    return Array.from(this.relicCache.values()).map(r => r.clone());
+  }
+
+  /**
+   * Get relics by rarity
+   */
+  static getRelicsByRarity(rarity: string): Relic[] {
+    if (!this.initialized) this.initialize();
+    return Array.from(this.relicCache.values())
+      .filter((relic) => relic.rarity === rarity)
+      .map(r => r.clone());
+  }
+
+  /**
+   * Get a random relic
+   */
+  static getRandomRelic(): Relic | undefined {
+    if (!this.initialized) this.initialize();
+    const relics = Array.from(this.relicCache.values());
+    if (relics.length === 0) return undefined;
+
+    const randomIndex = Math.floor(Math.random() * relics.length);
+    return relics[randomIndex].clone();
+  }
+
+  /**
+   * Get a random relic with rarity weighting
+   * COMMON: 60%, UNCOMMON: 30%, RARE: 10%
+   */
+  static getRandomWeightedRelic(): Relic | undefined {
+    if (!this.initialized) this.initialize();
+
+    const roll = Math.random();
+    let targetRarity: string;
+
+    if (roll < 0.6) {
+      targetRarity = 'COMMON';
+    } else if (roll < 0.9) {
+      targetRarity = 'UNCOMMON';
+    } else {
+      targetRarity = 'RARE';
+    }
+
+    const filtered = this.getRelicsByRarity(targetRarity);
+    if (filtered.length === 0) {
+      // Fallback to any relic
+      return this.getRandomRelic();
+    }
+
+    const randomIndex = Math.floor(Math.random() * filtered.length);
+    return filtered[randomIndex];
   }
 
   /**
@@ -190,5 +266,15 @@ export class DataLoader {
       randomHp,
       [...template.moves]
     );
+  }
+
+  private static parseRelic(data: any): Relic {
+    return new Relic({
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      rarity: data.rarity,
+      effects: data.effects,
+    });
   }
 }

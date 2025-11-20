@@ -1,0 +1,548 @@
+{
+  "relics": [
+    {
+      "id": "burning_blood",
+      "name": "Burning Blood",
+      "description": "At the end of combat, heal 6 HP.",
+      "rarity": "STARTER",
+      "effects": [
+        {
+          "trigger": "onCombatEnd",
+          "action": "HEAL",
+          "value": 6
+        }
+      ]
+    },
+    {
+      "id": "akabeko",
+      "name": "Akabeko",
+      "description": "Your first Attack each combat deals 8 additional damage.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onFirstAttack",
+          "action": "BONUS_DAMAGE",
+          "value": 8
+        }
+      ]
+    },
+    {
+      "id": "ancient_tea_set",
+      "name": "Ancient Tea Set",
+      "description": "Whenever you enter a Rest Site, start the next combat with 2 extra Energy.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onRest",
+          "action": "ENERGY_NEXT_COMBAT",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "bag_of_preparation",
+      "name": "Bag of Preparation",
+      "description": "At the start of each combat, draw 2 additional cards.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onCombatStart",
+          "action": "DRAW",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "blood_vial",
+      "name": "Blood Vial",
+      "description": "At the start of each combat, heal 2 HP.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onCombatStart",
+          "action": "HEAL",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "bronze_scales",
+      "name": "Bronze Scales",
+      "description": "Whenever you take damage, deal 3 damage back.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onDamageTaken",
+          "action": "THORNS",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "happy_flower",
+      "name": "Happy Flower",
+      "description": "Every 3 turns, gain 1 Energy.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onTurnStart",
+          "action": "ENERGY_EVERY_N_TURNS",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "anchor",
+      "name": "Anchor",
+      "description": "Start each combat with 10 Block.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onCombatStart",
+          "action": "BLOCK",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "lantern",
+      "name": "Lantern",
+      "description": "Gain 1 Energy at the start of your first turn.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onFirstTurn",
+          "action": "GAIN_ENERGY",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "meal_ticket",
+      "name": "Meal Ticket",
+      "description": "Whenever you enter a Merchant, heal 15 HP.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onMerchant",
+          "action": "HEAL",
+          "value": 15
+        }
+      ]
+    },
+    {
+      "id": "oddly_smooth_stone",
+      "name": "Oddly Smooth Stone",
+      "description": "At the start of each combat, gain 1 Dexterity.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "onCombatStart",
+          "action": "GAIN_DEXTERITY",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "preserved_insect",
+      "name": "Preserved Insect",
+      "description": "Elite enemies drop an additional relic.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "ELITE_BONUS_RELIC"
+        }
+      ]
+    },
+    {
+      "id": "tiny_chest",
+      "name": "Tiny Chest",
+      "description": "Every 4th ? room is a Treasure room.",
+      "rarity": "COMMON",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "EVENT_TO_TREASURE"
+        }
+      ]
+    },
+    {
+      "id": "blue_candle",
+      "name": "Blue Candle",
+      "description": "Curses can now be played. Playing a Curse exhausts it.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "CURSES_PLAYABLE"
+        }
+      ]
+    },
+    {
+      "id": "horn_cleat",
+      "name": "Horn Cleat",
+      "description": "At the start of your turn, gain 14 Block.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onTurnStart",
+          "action": "BLOCK",
+          "value": 14
+        }
+      ]
+    },
+    {
+      "id": "ink_bottle",
+      "name": "Ink Bottle",
+      "description": "Every 10 cards you play, draw 1 card.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onCardPlayed",
+          "action": "DRAW_EVERY_N",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "kunai",
+      "name": "Kunai",
+      "description": "Every 3 Attacks you play, gain 1 Dexterity.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onAttackPlayed",
+          "action": "DEXTERITY_EVERY_N",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "letter_opener",
+      "name": "Letter Opener",
+      "description": "Every 3 Skills you play, deal 5 damage to ALL enemies.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onSkillPlayed",
+          "action": "DAMAGE_ALL_EVERY_N",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "mummified_hand",
+      "name": "Mummified Hand",
+      "description": "Whenever you play a Power card, a random card in your hand costs 0 this turn.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onPowerPlayed",
+          "action": "REDUCE_RANDOM_COST",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "ornamental_fan",
+      "name": "Ornamental Fan",
+      "description": "Every 3 Attacks you play, gain 4 Block.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onAttackPlayed",
+          "action": "BLOCK_EVERY_N",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "paper_frog",
+      "name": "Paper Frog",
+      "description": "Enemies with Vulnerable take 75% more damage instead of 50%.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "VULNERABLE_BONUS"
+        }
+      ]
+    },
+    {
+      "id": "pear",
+      "name": "Pear",
+      "description": "Raise your Max HP by 10.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onObtain",
+          "action": "MAX_HP",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "question_card",
+      "name": "Question Card",
+      "description": "? rooms contain more options.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "MORE_EVENT_OPTIONS"
+        }
+      ]
+    },
+    {
+      "id": "shuriken",
+      "name": "Shuriken",
+      "description": "Every 3 Attacks you play, gain 1 Strength.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onAttackPlayed",
+          "action": "STRENGTH_EVERY_N",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "sundial",
+      "name": "Sundial",
+      "description": "Every 3 times you shuffle your deck, gain 2 Energy.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onShuffle",
+          "action": "ENERGY_EVERY_N",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "the_courier",
+      "name": "The Courier",
+      "description": "Merchants sell a Potion and a card removal service.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "MERCHANT_BONUS"
+        }
+      ]
+    },
+    {
+      "id": "toxic_egg",
+      "name": "Toxic Egg",
+      "description": "Whenever you add a Skill card to your deck, upgrade it.",
+      "rarity": "UNCOMMON",
+      "effects": [
+        {
+          "trigger": "onCardAdded",
+          "action": "AUTO_UPGRADE_SKILLS"
+        }
+      ]
+    },
+    {
+      "id": "bird_faced_urn",
+      "name": "Bird-Faced Urn",
+      "description": "Whenever you play a Power card, heal 2 HP.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onPowerPlayed",
+          "action": "HEAL",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "dead_branch",
+      "name": "Dead Branch",
+      "description": "Whenever you Exhaust a card, add a random card to your hand.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onCardExhaust",
+          "action": "ADD_RANDOM_CARD"
+        }
+      ]
+    },
+    {
+      "id": "frozen_egg",
+      "name": "Frozen Egg",
+      "description": "Whenever you add a Power card to your deck, upgrade it.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onCardAdded",
+          "action": "AUTO_UPGRADE_POWERS"
+        }
+      ]
+    },
+    {
+      "id": "gambling_chip",
+      "name": "Gambling Chip",
+      "description": "At the start of each combat, discard any number of cards then draw that many.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onCombatStart",
+          "action": "DISCARD_DRAW"
+        }
+      ]
+    },
+    {
+      "id": "ice_cream",
+      "name": "Ice Cream",
+      "description": "Energy is retained between turns.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "RETAIN_ENERGY"
+        }
+      ]
+    },
+    {
+      "id": "incense_burner",
+      "name": "Incense Burner",
+      "description": "Every 6 turns, gain 1 Intangible.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onTurnStart",
+          "action": "INTANGIBLE_EVERY_N",
+          "value": 6
+        }
+      ]
+    },
+    {
+      "id": "lizard_tail",
+      "name": "Lizard Tail",
+      "description": "When you would die, heal to 50% of your Max HP instead. (Once per combat)",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onDeath",
+          "action": "REVIVE",
+          "value": 50
+        }
+      ]
+    },
+    {
+      "id": "mango",
+      "name": "Mango",
+      "description": "Raise your Max HP by 14.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onObtain",
+          "action": "MAX_HP",
+          "value": 14
+        }
+      ]
+    },
+    {
+      "id": "old_coin",
+      "name": "Old Coin",
+      "description": "Gain 300 Gold.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onObtain",
+          "action": "GAIN_GOLD",
+          "value": 300
+        }
+      ]
+    },
+    {
+      "id": "peace_pipe",
+      "name": "Peace Pipe",
+      "description": "At Rest Sites, you may remove a card from your deck.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "REST_REMOVE_CARD"
+        }
+      ]
+    },
+    {
+      "id": "pocketwatch",
+      "name": "Pocketwatch",
+      "description": "Whenever you play 3 or more Attacks in a single turn, draw 3 cards.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onTurnEnd",
+          "action": "DRAW_IF_ATTACKS",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "prayer_wheel",
+      "name": "Prayer Wheel",
+      "description": "Normal combat rewards have an additional card reward.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "EXTRA_CARD_REWARD"
+        }
+      ]
+    },
+    {
+      "id": "shovel",
+      "name": "Shovel",
+      "description": "At Rest Sites, you may dig for a random relic.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "REST_DIG"
+        }
+      ]
+    },
+    {
+      "id": "tingsha",
+      "name": "Tingsha",
+      "description": "Whenever you discard a card, deal 3 damage to a random enemy.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onCardDiscarded",
+          "action": "DAMAGE_RANDOM",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "torii",
+      "name": "Torii",
+      "description": "Whenever you would receive 5 or less unblocked damage, reduce it to 1.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "passive",
+          "action": "REDUCE_SMALL_DAMAGE"
+        }
+      ]
+    },
+    {
+      "id": "turnip",
+      "name": "Turnip",
+      "description": "Raise your Max HP by 7.",
+      "rarity": "RARE",
+      "effects": [
+        {
+          "trigger": "onObtain",
+          "action": "MAX_HP",
+          "value": 7
+        }
+      ]
+    }
+  ]
+}

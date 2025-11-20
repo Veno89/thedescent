@@ -2,18 +2,24 @@ import Phaser from 'phaser';
 import { Player } from '@/entities/Player';
 import { Enemy } from '@/entities/Enemy';
 import { CombatManager } from '@/systems/CombatManager';
+import { GameStateManager } from '@/systems/GameStateManager';
 import { DataLoader } from '@/utils/DataLoader';
 import { CardSprite } from '@/ui/CardSprite';
 import { EnemySprite } from '@/ui/EnemySprite';
+import { RelicSprite } from '@/ui/RelicSprite';
 
 export class CombatScene extends Phaser.Scene {
   // Game entities
   private player!: Player;
   private combat!: CombatManager;
+  private gameState: GameStateManager | null = null;
+  private isElite = false;
+  private isBoss = false;
 
   // UI Elements
   private cardSprites: CardSprite[] = [];
   private enemySprites: EnemySprite[] = [];
+  private relicSprites: RelicSprite[] = [];
 
   // UI Text
   private playerHpText!: Phaser.GameObjects.Text;
@@ -28,6 +34,12 @@ export class CombatScene extends Phaser.Scene {
     super({ key: 'CombatScene' });
   }
 
+  init(data: { gameState?: GameStateManager; isElite?: boolean; isBoss?: boolean }) {
+    this.gameState = data.gameState || null;
+    this.isElite = data.isElite || false;
+    this.isBoss = data.isBoss || false;
+  }
+
   create(): void {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
@@ -35,12 +47,16 @@ export class CombatScene extends Phaser.Scene {
     // Initialize data
     DataLoader.initialize();
 
-    // Create player
-    this.player = new Player(80, 99);
-    this.player.deck = DataLoader.createStarterDeck();
+    // Use player from game state, or create test player
+    if (this.gameState) {
+      this.player = this.gameState.player;
+    } else {
+      this.player = new Player(80, 99);
+      this.player.deck = DataLoader.createStarterDeck();
+    }
 
-    // Create enemies (1-2 random Act 1 enemies for now)
-    const enemies = this.createTestEnemies();
+    // Create enemies based on difficulty
+    const enemies = this.createEnemies();
 
     // Create combat manager
     this.combat = new CombatManager(this.player, enemies);
@@ -51,6 +67,7 @@ export class CombatScene extends Phaser.Scene {
     // Create UI
     this.createUI(width, height);
     this.createEnemySprites(width);
+    this.createRelicSprites();
 
     // Start combat
     this.combat.startCombat();
@@ -66,15 +83,32 @@ export class CombatScene extends Phaser.Scene {
   }
 
   /**
-   * Create test enemies for combat
+   * Create enemies for combat based on difficulty
    */
-  private createTestEnemies(): Enemy[] {
+  private createEnemies(): Enemy[] {
     const enemies: Enemy[] = [];
 
-    // Load a random enemy
-    const enemyTemplate = DataLoader.getEnemy('jaw_worm');
-    if (enemyTemplate) {
-      enemies.push(enemyTemplate);
+    if (this.isBoss) {
+      // TODO: Create boss enemy
+      const bossTemplate = DataLoader.getEnemy('jaw_worm');
+      if (bossTemplate) {
+        enemies.push(bossTemplate);
+      }
+    } else if (this.isElite) {
+      // Elite: 1 tough enemy
+      const eliteTemplate = DataLoader.getEnemy('jaw_worm');
+      if (eliteTemplate) {
+        enemies.push(eliteTemplate);
+      }
+    } else {
+      // Normal: 1-2 random enemies
+      const enemyCount = Math.random() < 0.5 ? 1 : 2;
+      const allEnemies = DataLoader.getAllEnemies();
+
+      for (let i = 0; i < enemyCount; i++) {
+        const randomEnemy = allEnemies[Math.floor(Math.random() * allEnemies.length)];
+        enemies.push(DataLoader.getEnemy(randomEnemy.id) || randomEnemy);
+      }
     }
 
     return enemies;
@@ -236,6 +270,21 @@ export class CombatScene extends Phaser.Scene {
   }
 
   /**
+   * Create relic sprites
+   */
+  private createRelicSprites(): void {
+    const relics = this.player.relics;
+    const spacing = 70;
+    const startX = 100;
+    const y = 110;
+
+    relics.forEach((relic, index) => {
+      const sprite = new RelicSprite(this, startX + index * spacing, y, relic);
+      this.relicSprites.push(sprite);
+    });
+  }
+
+  /**
    * Update UI elements
    */
   private updateUI(): void {
@@ -383,24 +432,33 @@ export class CombatScene extends Phaser.Scene {
    * Show combat end screen
    */
   private showCombatEndScreen(victory: boolean): void {
+    if (victory) {
+      // Calculate rewards
+      const goldReward = this.calculateGoldReward();
+
+      // Delay before transitioning to rewards
+      this.time.delayedCall(1000, () => {
+        if (this.gameState) {
+          this.scene.start('RewardScene', { gameState: this.gameState, goldReward });
+        } else {
+          // Test mode: just go back to menu
+          this.scene.start('MainMenuScene');
+        }
+      });
+    } else {
+      // Defeat: return to menu
+      this.time.delayedCall(2000, () => {
+        this.scene.start('MainMenuScene');
+      });
+    }
+
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
-
-    // Overlay
-    const overlay = this.add.rectangle(
-      width / 2,
-      height / 2,
-      width,
-      height,
-      0x000000,
-      0.8
-    );
-    overlay.setDepth(1000);
 
     // Result text
     const resultText = this.add.text(
       width / 2,
-      height / 2 - 100,
+      height / 2,
       victory ? 'VICTORY!' : 'DEFEAT',
       {
         fontSize: '72px',
@@ -412,38 +470,36 @@ export class CombatScene extends Phaser.Scene {
     resultText.setOrigin(0.5);
     resultText.setDepth(1001);
 
-    // Continue button
-    const continueButton = this.add.text(
-      width / 2,
-      height / 2 + 50,
-      victory ? 'Continue' : 'Return to Menu',
-      {
-        fontSize: '32px',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-        backgroundColor: '#333333',
-        padding: { x: 20, y: 10 },
-      }
-    );
-    continueButton.setOrigin(0.5);
-    continueButton.setDepth(1001);
-    continueButton.setInteractive({ useHandCursor: true });
+    // Fade in effect
+    resultText.setAlpha(0);
+    this.tweens.add({
+      targets: resultText,
+      alpha: 1,
+      duration: 500,
+      ease: 'Power2',
+    });
+  }
 
-    continueButton.on('pointerover', () => {
-      continueButton.setStyle({ color: '#ffff00' });
+  /**
+   * Calculate gold reward based on enemies
+   */
+  private calculateGoldReward(): number {
+    let gold = 0;
+
+    this.combat.enemies.forEach(_enemy => {
+      // Base gold per enemy
+      gold += 10 + Math.floor(Math.random() * 10);
     });
 
-    continueButton.on('pointerout', () => {
-      continueButton.setStyle({ color: '#ffffff' });
-    });
+    // Bonus for elite/boss
+    if (this.isElite) gold = Math.floor(gold * 1.5);
+    if (this.isBoss) gold = Math.floor(gold * 2);
 
-    continueButton.on('pointerdown', () => {
-      if (victory) {
-        // TODO: Go to reward screen
-        this.scene.start('MainMenuScene');
-      } else {
-        this.scene.start('MainMenuScene');
-      }
-    });
+    // Floor bonus
+    if (this.gameState) {
+      gold += this.gameState.currentFloor * 2;
+    }
+
+    return gold;
   }
 }

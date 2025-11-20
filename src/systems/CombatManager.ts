@@ -1,6 +1,8 @@
-import { Card, CardEffect } from '@/types';
+import { Card, CardEffect, CardType } from '@/types';
 import { Player } from '@/entities/Player';
 import { Enemy } from '@/entities/Enemy';
+import { Relic } from '@/entities/Relic';
+import { DataLoader } from '@/utils/DataLoader';
 
 /**
  * CombatManager handles all combat logic and state
@@ -20,6 +22,15 @@ export class CombatManager {
   public isPlayerTurn: boolean = true;
   public combatEnded: boolean = false;
   public victory: boolean = false;
+
+  // Relic tracking
+  private cardsPlayedThisCombat: number = 0;
+  private attacksPlayedThisTurn: number = 0;
+  private skillsPlayedThisTurn: number = 0;
+  private powersPlayedThisCombat: number = 0;
+  private shufflesThisCombat: number = 0;
+  private firstAttackThisCombat: boolean = true;
+  private bonusEnergyNextCombat: number = 0;
 
   // Constants
   private readonly HAND_SIZE = 5;
@@ -47,6 +58,14 @@ export class CombatManager {
     this.combatEnded = false;
     this.victory = false;
 
+    // Reset relic tracking
+    this.cardsPlayedThisCombat = 0;
+    this.attacksPlayedThisTurn = 0;
+    this.skillsPlayedThisTurn = 0;
+    this.powersPlayedThisCombat = 0;
+    this.shufflesThisCombat = 0;
+    this.firstAttackThisCombat = true;
+
     // Initialize piles
     this.hand = [];
     this.discardPile = [];
@@ -67,6 +86,15 @@ export class CombatManager {
     // Shuffle regular cards into draw pile
     this.drawPile = this.shuffleArray(regularCards);
 
+    // Apply bonus energy from relics (e.g., Ancient Tea Set)
+    if (this.bonusEnergyNextCombat > 0) {
+      this.player.gainEnergy(this.bonusEnergyNextCombat);
+      this.bonusEnergyNextCombat = 0;
+    }
+
+    // Trigger onCombatStart relics
+    this.triggerRelics('onCombatStart');
+
     // Add innate cards to hand first
     innateCards.forEach((card) => {
       this.hand.push(card);
@@ -86,7 +114,15 @@ export class CombatManager {
   startPlayerTurn(): void {
     this.turn++;
     this.isPlayerTurn = true;
+
+    // Reset turn tracking
+    this.attacksPlayedThisTurn = 0;
+    this.skillsPlayedThisTurn = 0;
+
     this.player.startTurn();
+
+    // Trigger onTurnStart relics
+    this.triggerRelics('onTurnStart');
 
     // Handle end of turn card effects
     const cardsToKeep: Card[] = [];
@@ -118,6 +154,11 @@ export class CombatManager {
     // Draw new cards to fill hand
     const cardsToDraw = Math.max(0, this.HAND_SIZE - this.hand.length);
     this.drawCards(cardsToDraw);
+
+    // Trigger first turn relic (Lantern)
+    if (this.turn === 1) {
+      this.triggerRelics('onFirstTurn');
+    }
 
     console.log(`Turn ${this.turn} - Player turn`);
   }
@@ -230,12 +271,35 @@ export class CombatManager {
     // Remove from hand
     this.hand.splice(cardIndex, 1);
 
+    // Track card plays for relics
+    this.cardsPlayedThisCombat++;
+
+    // Track card type for relics
+    if (card.type === CardType.ATTACK) {
+      this.attacksPlayedThisTurn++;
+      if (this.firstAttackThisCombat) {
+        this.triggerRelics('onFirstAttack');
+        this.firstAttackThisCombat = false;
+      }
+      this.triggerRelics('onAttackPlayed', { card });
+    } else if (card.type === CardType.SKILL) {
+      this.skillsPlayedThisTurn++;
+      this.triggerRelics('onSkillPlayed', { card });
+    } else if (card.type === CardType.POWER) {
+      this.powersPlayedThisCombat++;
+      this.triggerRelics('onPowerPlayed', { card });
+    }
+
     // Execute card effects (pass energySpent for X-cost cards)
     this.executeCardEffects(card, target, energySpent);
+
+    // Trigger general onCardPlayed relics (like Ink Bottle)
+    this.triggerRelics('onCardPlayed', { card });
 
     // Discard or exhaust card
     if (this.shouldExhaust(card)) {
       this.exhaustCard(card);
+      this.triggerRelics('onCardExhaust', { card });
     } else {
       this.discardPile.push(card);
       this.onCardDiscarded?.(card);
@@ -445,6 +509,10 @@ export class CombatManager {
     console.log('Shuffling discard pile into draw pile');
     this.drawPile = this.shuffleArray(this.discardPile);
     this.discardPile = [];
+
+    // Track shuffles for relics
+    this.shufflesThisCombat++;
+    this.triggerRelics('onShuffle');
   }
 
   /**
@@ -482,6 +550,12 @@ export class CombatManager {
   private endCombat(victory: boolean): void {
     this.combatEnded = true;
     this.victory = victory;
+
+    // Trigger onCombatEnd relics (like Burning Blood for healing)
+    if (victory) {
+      this.triggerRelics('onCombatEnd', { victory });
+    }
+
     console.log(victory ? 'Victory!' : 'Defeat!');
     this.onCombatEnd?.(victory);
   }
@@ -491,5 +565,210 @@ export class CombatManager {
    */
   getAliveEnemies(): Enemy[] {
     return this.enemies.filter((enemy) => !enemy.isDead());
+  }
+
+  /**
+   * Trigger relic effects
+   */
+  private triggerRelics(trigger: string, context?: any): void {
+    this.player.relics.forEach((relic) => {
+      const effects = relic.getEffectsForTrigger(trigger);
+
+      effects.forEach((effect) => {
+        this.executeRelicEffect(relic, effect, context);
+      });
+    });
+  }
+
+  /**
+   * Execute a single relic effect
+   */
+  private executeRelicEffect(relic: Relic, effect: any, context?: any): void {
+    const action = effect.action;
+    const value = effect.value || 0;
+
+    switch (action) {
+      // Simple effects
+      case 'HEAL':
+        this.player.heal(value);
+        console.log(`${relic.name}: Healed ${value} HP`);
+        break;
+
+      case 'BLOCK':
+        this.player.addBlock(value);
+        console.log(`${relic.name}: Gained ${value} Block`);
+        break;
+
+      case 'DRAW':
+        this.drawCards(value);
+        console.log(`${relic.name}: Drew ${value} cards`);
+        break;
+
+      case 'GAIN_ENERGY':
+        this.player.gainEnergy(value);
+        console.log(`${relic.name}: Gained ${value} Energy`);
+        break;
+
+      case 'GAIN_DEXTERITY':
+        this.player.dexterity += value;
+        console.log(`${relic.name}: Gained ${value} Dexterity`);
+        break;
+
+      case 'BONUS_DAMAGE':
+        // Handled in damage calculation (Akabeko)
+        console.log(`${relic.name}: First attack bonus damage active`);
+        break;
+
+      case 'THORNS':
+        // Deal damage back when taking damage (Bronze Scales)
+        if (context) {
+          const aliveEnemies = this.getAliveEnemies();
+          if (aliveEnemies.length > 0) {
+            const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+            const damage = randomEnemy.takeDamage(value);
+            console.log(`${relic.name}: Dealt ${damage} thorns damage to ${randomEnemy.name}`);
+          }
+        }
+        break;
+
+      // Counter-based effects
+      case 'ENERGY_EVERY_N_TURNS':
+        // Happy Flower: Every 3 turns gain 1 energy
+        if (this.turn % value === 0) {
+          this.player.gainEnergy(1);
+          console.log(`${relic.name}: Gained 1 Energy (every ${value} turns)`);
+        }
+        break;
+
+      case 'DRAW_EVERY_N':
+        // Ink Bottle: Every 10 cards played, draw 1
+        relic.incrementCounter();
+        if (relic.counter >= value) {
+          this.drawCards(1);
+          relic.resetCounter();
+          console.log(`${relic.name}: Drew 1 card (every ${value} cards played)`);
+        }
+        break;
+
+      case 'DEXTERITY_EVERY_N':
+        // Kunai: Every 3 attacks, gain 1 dexterity
+        relic.incrementCounter();
+        if (relic.counter >= value) {
+          this.player.dexterity += 1;
+          relic.resetCounter();
+          console.log(`${relic.name}: Gained 1 Dexterity (every ${value} attacks)`);
+        }
+        break;
+
+      case 'STRENGTH_EVERY_N':
+        // Shuriken: Every 3 attacks, gain 1 strength
+        relic.incrementCounter();
+        if (relic.counter >= value) {
+          this.player.strength += 1;
+          relic.resetCounter();
+          console.log(`${relic.name}: Gained 1 Strength (every ${value} attacks)`);
+        }
+        break;
+
+      case 'BLOCK_EVERY_N':
+        // Ornamental Fan: Every 3 attacks, gain 4 block
+        relic.incrementCounter();
+        if (relic.counter >= value) {
+          this.player.addBlock(4);
+          relic.resetCounter();
+          console.log(`${relic.name}: Gained 4 Block (every ${value} attacks)`);
+        }
+        break;
+
+      case 'DAMAGE_ALL_EVERY_N':
+        // Letter Opener: Every 3 skills, deal 5 damage to all
+        relic.incrementCounter();
+        if (relic.counter >= value) {
+          this.getAliveEnemies().forEach((enemy) => {
+            const damage = enemy.takeDamage(5);
+            console.log(`${relic.name}: Dealt ${damage} damage to ${enemy.name}`);
+          });
+          relic.resetCounter();
+        }
+        break;
+
+      case 'ENERGY_EVERY_N':
+        // Sundial: Every 3 shuffles, gain 2 energy
+        relic.incrementCounter();
+        if (relic.counter >= value) {
+          this.player.gainEnergy(2);
+          relic.resetCounter();
+          console.log(`${relic.name}: Gained 2 Energy (every ${value} shuffles)`);
+        }
+        break;
+
+      case 'ENERGY_NEXT_COMBAT':
+        // Ancient Tea Set: After rest, gain energy next combat
+        this.bonusEnergyNextCombat = value;
+        console.log(`${relic.name}: Will start next combat with +${value} Energy`);
+        break;
+
+      case 'ADD_RANDOM_CARD':
+        // Dead Branch: When exhausting, add random card to hand
+        if (this.hand.length < this.MAX_HAND_SIZE) {
+          const randomCard = DataLoader.getAllCards()[
+            Math.floor(Math.random() * DataLoader.getAllCards().length)
+          ];
+          if (randomCard) {
+            this.hand.push(randomCard);
+            this.onCardDrawn?.(randomCard);
+            console.log(`${relic.name}: Added ${randomCard.name} to hand`);
+          }
+        }
+        break;
+
+      case 'DAMAGE_RANDOM':
+        // Tingsha: When discarding, deal 3 damage to random enemy
+        const aliveEnemies = this.getAliveEnemies();
+        if (aliveEnemies.length > 0) {
+          const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+          const damage = randomEnemy.takeDamage(value);
+          console.log(`${relic.name}: Dealt ${damage} damage to ${randomEnemy.name}`);
+        }
+        break;
+
+      case 'DRAW_IF_ATTACKS':
+        // Pocketwatch: If 3+ attacks played this turn, draw 3 cards at end of turn
+        if (this.attacksPlayedThisTurn >= value) {
+          this.drawCards(value);
+          console.log(`${relic.name}: Drew ${value} cards (${this.attacksPlayedThisTurn} attacks played)`);
+        }
+        break;
+
+      // Passive effects (handled elsewhere)
+      case 'ELITE_BONUS_RELIC':
+      case 'CURSES_PLAYABLE':
+      case 'VULNERABLE_BONUS':
+      case 'MORE_EVENT_OPTIONS':
+      case 'MERCHANT_BONUS':
+      case 'EXTRA_CARD_REWARD':
+      case 'REST_REMOVE_CARD':
+      case 'REST_DIG':
+      case 'REDUCE_SMALL_DAMAGE':
+      case 'RETAIN_ENERGY':
+      case 'EVENT_TO_TREASURE':
+      case 'INTANGIBLE_EVERY_N':
+      case 'REVIVE':
+      case 'AUTO_UPGRADE_SKILLS':
+      case 'AUTO_UPGRADE_POWERS':
+      case 'REDUCE_RANDOM_COST':
+      case 'DISCARD_DRAW':
+        // These are handled in other systems or have special logic
+        break;
+
+      // onObtain effects (handled when relic is obtained)
+      case 'MAX_HP':
+      case 'GAIN_GOLD':
+        // These execute immediately when relic is obtained
+        break;
+
+      default:
+        console.warn(`Unknown relic action: ${action}`);
+    }
   }
 }

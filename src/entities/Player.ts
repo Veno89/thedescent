@@ -1,4 +1,5 @@
-import { Card, Relic, Potion } from '@/types';
+import { Card, Potion } from '@/types';
+import { Relic } from '@/entities/Relic';
 
 /**
  * Player entity - manages player character state
@@ -158,6 +159,23 @@ export class Player {
    */
   addRelic(relic: Relic): void {
     this.relics.push(relic);
+
+    // Execute onObtain effects immediately
+    const obtainEffects = relic.getEffectsForTrigger('onObtain');
+    obtainEffects.forEach((effect: any) => {
+      switch (effect.action) {
+        case 'MAX_HP':
+          this.maxHp += effect.value || 0;
+          this.currentHp += effect.value || 0; // Also heal for the amount
+          console.log(`${relic.name}: Max HP increased by ${effect.value}`);
+          break;
+
+        case 'GAIN_GOLD':
+          this.addGold(effect.value || 0);
+          console.log(`${relic.name}: Gained ${effect.value} gold`);
+          break;
+      }
+    });
   }
 
   /**

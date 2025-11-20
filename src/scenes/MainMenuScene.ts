@@ -1,4 +1,7 @@
 import Phaser from 'phaser';
+import { Player } from '@/entities/Player';
+import { GameStateManager } from '@/systems/GameStateManager';
+import { DataLoader } from '@/utils/DataLoader';
 
 export class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -91,8 +94,26 @@ export class MainMenuScene extends Phaser.Scene {
 
   startNewRun(): void {
     console.log('Starting new run...');
-    // TODO: Initialize game state
-    this.scene.start('CombatScene');
+
+    // Initialize data
+    DataLoader.initialize();
+
+    // Create new player
+    const player = new Player(80, 99);
+    player.deck = DataLoader.createStarterDeck();
+
+    // Give starter relic
+    const burningBlood = DataLoader.getRelic('burning_blood');
+    if (burningBlood) {
+      player.addRelic(burningBlood);
+    }
+
+    // Create game state
+    const gameState = new GameStateManager(player);
+    gameState.startRun();
+
+    // Start at the map
+    this.scene.start('MapScene', { gameState });
   }
 
   continueRun(): void {

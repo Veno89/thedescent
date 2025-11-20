@@ -1,7 +1,10 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { MainMenuScene } from './scenes/MainMenuScene';
+import { MapScene } from './scenes/MapScene';
 import { CombatScene } from './scenes/CombatScene';
+import { RewardScene } from './scenes/RewardScene';
+import { RestScene } from './scenes/RestScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -13,7 +16,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, MainMenuScene, CombatScene],
+  scene: [BootScene, MainMenuScene, MapScene, CombatScene, RewardScene, RestScene],
   physics: {
     default: 'arcade',
     arcade: {
