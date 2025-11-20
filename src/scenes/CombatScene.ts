@@ -511,29 +511,53 @@ export class CombatScene extends Phaser.Scene {
    */
   private showCombatEndScreen(victory: boolean): void {
     if (victory) {
-      // Calculate rewards
-      const goldReward = this.calculateGoldReward();
+      // Check if this was a boss fight - if so, show victory screen
+      if (this.isBoss && this.gameState) {
+        this.time.delayedCall(1000, () => {
+          this.scene.start('VictoryScene', {
+            gameState: this.gameState
+          });
+        });
+      } else {
+        // Regular combat victory: calculate rewards
+        const goldReward = this.calculateGoldReward();
 
-      // Random potion drop (40% chance)
-      const potionDrop = Math.random() < 0.4 ? DataLoader.getRandomWeightedPotion() : null;
+        // Random potion drop (40% chance)
+        const potionDrop = Math.random() < 0.4 ? DataLoader.getRandomWeightedPotion() : null;
 
-      // Delay before transitioning to rewards
-      this.time.delayedCall(1000, () => {
+        // Delay before transitioning to rewards
+        this.time.delayedCall(1000, () => {
+          if (this.gameState) {
+            this.scene.start('RewardScene', {
+              gameState: this.gameState,
+              goldReward,
+              potionDrop
+            });
+          } else {
+            // Test mode: just go back to menu
+            this.scene.start('MainMenuScene');
+          }
+        });
+      }
+    } else {
+      // Defeat: determine what killed the player
+      let killedBy = 'Unknown';
+      const aliveEnemies = this.combat.enemies.filter(e => !e.isDead());
+      if (aliveEnemies.length > 0) {
+        killedBy = aliveEnemies[0].name;
+      }
+
+      // Delay before transitioning to defeat screen
+      this.time.delayedCall(2000, () => {
         if (this.gameState) {
-          this.scene.start('RewardScene', {
+          this.scene.start('DefeatScene', {
             gameState: this.gameState,
-            goldReward,
-            potionDrop
+            killedBy
           });
         } else {
           // Test mode: just go back to menu
           this.scene.start('MainMenuScene');
         }
-      });
-    } else {
-      // Defeat: return to menu
-      this.time.delayedCall(2000, () => {
-        this.scene.start('MainMenuScene');
       });
     }
 
