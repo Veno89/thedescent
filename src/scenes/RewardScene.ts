@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
 import { Card } from '@/types';
 import { Relic } from '@/entities/Relic';
+import { Potion } from '@/entities/Potion';
 import { GameStateManager } from '@/systems/GameStateManager';
 import { DataLoader } from '@/utils/DataLoader';
 import { CardSprite } from '@/ui/CardSprite';
 import { RelicSprite } from '@/ui/RelicSprite';
+import { PotionSprite } from '@/ui/PotionSprite';
 
 /**
  * RewardScene handles post-combat rewards
@@ -15,15 +17,22 @@ export class RewardScene extends Phaser.Scene {
   private goldReward = 0;
   private cardRewards: Card[] = [];
   private relicReward: Relic | null = null;
+  private potionDrop: Potion | null = null;
 
   constructor() {
     super({ key: 'RewardScene' });
   }
 
-  init(data: { gameState: GameStateManager; goldReward?: number; isTreasure?: boolean }) {
+  init(data: {
+    gameState: GameStateManager;
+    goldReward?: number;
+    isTreasure?: boolean;
+    potionDrop?: Potion | null;
+  }) {
     this.gameState = data.gameState;
     this.goldReward = data.goldReward || 0;
     this.isTreasure = data.isTreasure || false;
+    this.potionDrop = data.potionDrop || null;
   }
 
   create(): void {
@@ -76,6 +85,57 @@ export class RewardScene extends Phaser.Scene {
       // Add gold to player
       this.gameState.player.addGold(this.goldReward);
       currentY += 80;
+    }
+
+    // Display potion drop
+    if (this.potionDrop) {
+      this.add.text(width / 2, currentY, 'Potion Found!', {
+        fontSize: '24px',
+        color: '#4a9eff',
+        fontStyle: 'bold',
+        fontFamily: 'monospace',
+      }).setOrigin(0.5);
+
+      currentY += 50;
+
+      // Display potion
+      const potionSprite = new PotionSprite(this, width / 2, currentY, this.potionDrop, 0);
+      potionSprite.setScale(1.5); // Make it bigger for display
+
+      currentY += 60;
+
+      // Potion name
+      this.add.text(width / 2, currentY, this.potionDrop.name, {
+        fontSize: '20px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+        fontFamily: 'monospace',
+      }).setOrigin(0.5);
+
+      currentY += 30;
+
+      // Potion description
+      this.add.text(width / 2, currentY, this.potionDrop.description, {
+        fontSize: '14px',
+        color: '#cccccc',
+        fontFamily: 'monospace',
+        align: 'center',
+        wordWrap: { width: 500 },
+      }).setOrigin(0.5);
+
+      // Add potion to player if there's space
+      const success = this.gameState.player.addPotion(this.potionDrop);
+      if (!success) {
+        currentY += 25;
+        this.add.text(width / 2, currentY, '(Potion inventory full - discarded)', {
+          fontSize: '12px',
+          color: '#ff6666',
+          fontStyle: 'italic',
+          fontFamily: 'monospace',
+        }).setOrigin(0.5);
+      }
+
+      currentY += 70;
     }
 
     // Display relic reward (treasure rooms)

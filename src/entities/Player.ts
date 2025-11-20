@@ -1,5 +1,6 @@
-import { Card, Potion } from '@/types';
+import { Card } from '@/types';
 import { Relic } from '@/entities/Relic';
+import { Potion } from '@/entities/Potion';
 
 /**
  * Player entity - manages player character state

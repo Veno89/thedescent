@@ -7,6 +7,7 @@ import { DataLoader } from '@/utils/DataLoader';
 import { CardSprite } from '@/ui/CardSprite';
 import { EnemySprite } from '@/ui/EnemySprite';
 import { RelicSprite } from '@/ui/RelicSprite';
+import { PotionSprite } from '@/ui/PotionSprite';
 
 export class CombatScene extends Phaser.Scene {
   // Game entities
@@ -20,6 +21,10 @@ export class CombatScene extends Phaser.Scene {
   private cardSprites: CardSprite[] = [];
   private enemySprites: EnemySprite[] = [];
   private relicSprites: RelicSprite[] = [];
+  private potionSprites: PotionSprite[] = [];
+
+  // Selection state
+  private selectedPotionIndex: number | null = null;
 
   // UI Text
   private playerHpText!: Phaser.GameObjects.Text;
@@ -68,6 +73,7 @@ export class CombatScene extends Phaser.Scene {
     this.createUI(width, height);
     this.createEnemySprites(width);
     this.createRelicSprites();
+    this.createPotionSprites(width, height);
 
     // Start combat
     this.combat.startCombat();
@@ -285,6 +291,64 @@ export class CombatScene extends Phaser.Scene {
   }
 
   /**
+   * Create potion sprites
+   */
+  private createPotionSprites(width: number, height: number): void {
+    const spacing = 60;
+    const startX = width - 100;
+    const y = height - 350;
+
+    // Create slots for max potions
+    for (let i = 0; i < this.player.maxPotions; i++) {
+      const potion = this.player.potions[i] || null;
+      const sprite = new PotionSprite(this, startX, y + i * spacing, potion, i);
+      this.potionSprites.push(sprite);
+
+      // Handle potion clicks
+      sprite.on('potionClicked', (slotIndex: number) => {
+        this.onPotionClicked(slotIndex);
+      });
+    }
+  }
+
+  /**
+   * Handle potion click
+   */
+  private onPotionClicked(slotIndex: number): void {
+    if (this.combat.combatEnded || !this.combat.isPlayerTurn) return;
+
+    const potion = this.player.potions[slotIndex];
+    if (!potion) {
+      console.log('No potion in that slot');
+      return;
+    }
+
+    // Check if potion requires target
+    if (potion.requiresTarget()) {
+      // Set selected potion and wait for enemy click
+      this.selectedPotionIndex = slotIndex;
+      console.log(`Select an enemy to use ${potion.name}`);
+    } else {
+      // Use potion immediately (no target required)
+      const success = this.combat.usePotion(slotIndex);
+      if (success) {
+        this.updatePotionDisplay();
+        this.updateUI();
+      }
+    }
+  }
+
+  /**
+   * Update potion display
+   */
+  private updatePotionDisplay(): void {
+    this.potionSprites.forEach((sprite, index) => {
+      const potion = this.player.potions[index] || null;
+      sprite.updatePotion(potion);
+    });
+  }
+
+  /**
    * Update UI elements
    */
   private updateUI(): void {
@@ -398,6 +462,20 @@ export class CombatScene extends Phaser.Scene {
   private onEnemyClicked(enemySprite: EnemySprite): void {
     if (enemySprite.getEnemy().isDead()) return;
 
+    // Check if a potion is selected and waiting for a target
+    if (this.selectedPotionIndex !== null) {
+      // Use the potion on this enemy
+      const success = this.combat.usePotion(this.selectedPotionIndex, enemySprite.getEnemy());
+      if (success) {
+        this.updatePotionDisplay();
+        this.updateUI();
+      }
+
+      // Clear potion selection
+      this.selectedPotionIndex = null;
+      return;
+    }
+
     // Check if any card is awaiting a target
     const awaitingCard = this.cardSprites.find((sprite) => sprite.getData('awaitingTarget'));
 
@@ -436,10 +514,17 @@ export class CombatScene extends Phaser.Scene {
       // Calculate rewards
       const goldReward = this.calculateGoldReward();
 
+      // Random potion drop (40% chance)
+      const potionDrop = Math.random() < 0.4 ? DataLoader.getRandomWeightedPotion() : null;
+
       // Delay before transitioning to rewards
       this.time.delayedCall(1000, () => {
         if (this.gameState) {
-          this.scene.start('RewardScene', { gameState: this.gameState, goldReward });
+          this.scene.start('RewardScene', {
+            gameState: this.gameState,
+            goldReward,
+            potionDrop
+          });
         } else {
           // Test mode: just go back to menu
           this.scene.start('MainMenuScene');

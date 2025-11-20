@@ -2,6 +2,7 @@ import { Card, CardEffect, CardType } from '@/types';
 import { Player } from '@/entities/Player';
 import { Enemy } from '@/entities/Enemy';
 import { Relic } from '@/entities/Relic';
+import { Potion } from '@/entities/Potion';
 import { DataLoader } from '@/utils/DataLoader';
 
 /**
@@ -41,6 +42,7 @@ export class CombatManager {
   public onCardDrawn?: (card: Card) => void;
   public onCardDiscarded?: (card: Card) => void;
   public onDamageDealt?: (source: string, target: string, amount: number) => void;
+  public onPotionUsed?: (potion: Potion, target?: Enemy) => void;
   public onCombatEnd?: (victory: boolean) => void;
 
   constructor(player: Player, enemies: Enemy[]) {
@@ -492,6 +494,129 @@ export class CombatManager {
       this.hand.splice(index, 1);
       this.discardPile.push(card);
       this.onCardDiscarded?.(card);
+    }
+  }
+
+  /**
+   * Use a potion
+   */
+  usePotion(potionIndex: number, target?: Enemy): boolean {
+    if (this.combatEnded) return false;
+
+    // Get the potion from player's inventory
+    const potion = this.player.potions[potionIndex];
+    if (!potion) {
+      console.log('No potion in that slot!');
+      return false;
+    }
+
+    // Validate target if required
+    if (potion.requiresTarget()) {
+      if (!target || target.isDead()) {
+        console.log('Valid target required!');
+        return false;
+      }
+    }
+
+    console.log(`Using potion: ${potion.name}`);
+
+    // Execute potion effects
+    potion.effects.forEach((effect) => {
+      this.executePotionEffect(effect, target);
+    });
+
+    // Remove potion from inventory
+    this.player.usePotion(potionIndex);
+
+    // Callback
+    this.onPotionUsed?.(potion, target);
+
+    // Check for combat end
+    this.checkCombatEnd();
+
+    return true;
+  }
+
+  /**
+   * Execute a single potion effect
+   */
+  private executePotionEffect(effect: CardEffect, target?: Enemy): void {
+    switch (effect.type) {
+      case 'HEAL':
+        this.player.heal(effect.value);
+        console.log(`Healed ${effect.value} HP`);
+        break;
+
+      case 'BLOCK':
+        this.player.addBlock(effect.value);
+        console.log(`Gained ${effect.value} Block`);
+        break;
+
+      case 'GAIN_ENERGY':
+        this.player.gainEnergy(effect.value);
+        console.log(`Gained ${effect.value} Energy`);
+        break;
+
+      case 'DRAW':
+        this.drawCards(effect.value);
+        console.log(`Drew ${effect.value} cards`);
+        break;
+
+      case 'DAMAGE':
+        if (effect.target === 'ALL_ENEMIES') {
+          // AOE damage
+          this.getAliveEnemies().forEach((enemy) => {
+            this.dealDamageToEnemy(enemy, effect.value);
+          });
+        } else if (target) {
+          // Single target damage
+          this.dealDamageToEnemy(target, effect.value);
+        }
+        break;
+
+      case 'APPLY_STRENGTH':
+        this.player.strength += effect.value;
+        console.log(`Gained ${effect.value} Strength`);
+        break;
+
+      case 'GAIN_DEXTERITY':
+        this.player.dexterity += effect.value;
+        console.log(`Gained ${effect.value} Dexterity`);
+        break;
+
+      case 'APPLY_POISON':
+        if (target) {
+          target.applyPoison(effect.value);
+          console.log(`Applied ${effect.value} Poison to ${target.name}`);
+        }
+        break;
+
+      case 'APPLY_WEAK':
+        if (target) {
+          target.weak = Math.max(target.weak, effect.value);
+          console.log(`Applied ${effect.value} Weak to ${target.name}`);
+        }
+        break;
+
+      case 'APPLY_VULNERABLE':
+        if (target) {
+          target.vulnerable = Math.max(target.vulnerable, effect.value);
+          console.log(`Applied ${effect.value} Vulnerable to ${target.name}`);
+        }
+        break;
+
+      case 'GAIN_ARTIFACT':
+        // TODO: Implement artifact status effect
+        console.log(`Gained ${effect.value} Artifact (not yet implemented)`);
+        break;
+
+      case 'GAIN_PLATED_ARMOR':
+        // TODO: Implement plated armor status effect
+        console.log(`Gained ${effect.value} Plated Armor (not yet implemented)`);
+        break;
+
+      default:
+        console.warn(`Unknown potion effect type: ${effect.type}`);
     }
   }
 

@@ -108,6 +108,12 @@ export class MainMenuScene extends Phaser.Scene {
       player.addRelic(burningBlood);
     }
 
+    // Give starter potion (for testing)
+    const healingPotion = DataLoader.getPotion('healing_potion');
+    if (healingPotion) {
+      player.addPotion(healingPotion);
+    }
+
     // Create game state
     const gameState = new GameStateManager(player);
     gameState.startRun();
