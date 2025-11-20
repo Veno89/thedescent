@@ -270,8 +270,7 @@ export class MapScene extends Phaser.Scene {
         break;
 
       case RoomType.MERCHANT:
-        // TODO: Implement MerchantScene
-        console.log('Merchant not yet implemented');
+        this.scene.start('MerchantScene', { gameState: this.gameState });
         break;
 
       case RoomType.TREASURE:
@@ -279,8 +278,7 @@ export class MapScene extends Phaser.Scene {
         break;
 
       case RoomType.EVENT:
-        // TODO: Implement EventScene
-        console.log('Event not yet implemented');
+        this.scene.start('EventScene', { gameState: this.gameState });
         break;
     }
   }

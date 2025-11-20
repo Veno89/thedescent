@@ -96,6 +96,37 @@ export class DataLoader {
   }
 
   /**
+   * Get a random card with rarity weighting
+   * COMMON: 60%, UNCOMMON: 30%, RARE: 10%
+   */
+  static getRandomWeightedCard(): Card | undefined {
+    if (!this.initialized) this.initialize();
+
+    const roll = Math.random();
+    let targetRarity: string;
+
+    if (roll < 0.6) {
+      targetRarity = 'COMMON';
+    } else if (roll < 0.9) {
+      targetRarity = 'UNCOMMON';
+    } else {
+      targetRarity = 'RARE';
+    }
+
+    const filtered = this.getCardsByRarity(targetRarity);
+    if (filtered.length === 0) {
+      // Fallback to any card
+      const allCards = this.getAllCards();
+      if (allCards.length === 0) return undefined;
+      const randomIndex = Math.floor(Math.random() * allCards.length);
+      return allCards[randomIndex];
+    }
+
+    const randomIndex = Math.floor(Math.random() * filtered.length);
+    return filtered[randomIndex];
+  }
+
+  /**
    * Get an enemy by ID
    */
   static getEnemy(id: string): Enemy | undefined {
