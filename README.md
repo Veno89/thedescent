@@ -10,10 +10,24 @@ The Descent is a single-player deck-building roguelike where you battle enemies,
 
 ### Core Gameplay
 - **Turn-Based Card Combat**: Strategic deck-building combat system with energy management
+- **54 Unique Cards**: Diverse card pool with 10 starter, 44 advanced cards across all rarities
+- **3 Playable Characters**: Choose your playstyle with unique starting decks and relics
 - **Procedural Map Generation**: Each run features a unique path through multiple room types
-- **43 Unique Relics**: Passive items that modify your playstyle
+- **44 Unique Relics**: Passive items that dramatically modify your playstyle
 - **15 Potions**: Consumable items for emergency situations
 - **23 Random Events**: Interactive story moments with meaningful choices
+- **Progression System**: Unlock new cards and content as you play
+
+### Playable Characters
+- **The Warrior** 🗡️: Balanced fighter (80 HP) with solid offense and defense
+  - Starting Relic: Burning Blood (heal 6 HP after combat)
+  - Unique Starter: Bash (attack with vulnerable)
+- **The Rogue** 🗝️: Nimble fighter (70 HP) focused on card draw and quick strikes
+  - Starting Relic: Ring of the Snake (draw 2 extra cards at start of combat)
+  - Unique Starters: Quick Slash, Shrug It Off
+- **The Guardian** 🛡️: Defensive tank (95 HP) with high block and survivability
+  - Starting Relic: Anchor (gain block at start of turn)
+  - Unique Starters: Iron Wave, Armaments
 
 ### Enemy Variety
 - **5 Normal Enemies**: Standard encounters (Cultist, Jaw Worm, Red/Green Louse, Fungi Beast)
@@ -29,11 +43,15 @@ The Descent is a single-player deck-building roguelike where you battle enemies,
 - 📦 **Treasure**: Guaranteed relic reward
 - ❓ **Event**: Random events with choices and outcomes
 
-### Quality of Life Features
+### Progression & Polish
+- **Unlock System**: Progressive content unlocking based on achievements
+- **Persistent Statistics**: Track runs, enemies defeated, damage dealt, and more
+- **Achievement-Based Unlocks**: Earn new cards by completing challenges
 - **Deck Viewing System**: View your full deck, draw pile, discard pile, and exhaust pile during combat
 - **Card Selection UI**: Choose which cards to upgrade, remove, or transform
 - **Detailed Statistics**: Track your progress with comprehensive end-of-run stats
-- **Visual Feedback**: Floating damage numbers, screen shake, and smooth animations
+- **Visual Feedback**: Floating damage numbers, screen shake, and smooth combat animations
+- **Balanced Economy**: Carefully tuned gold rewards and shop prices for satisfying progression
 
 ## 🚀 Getting Started
 
@@ -150,8 +168,9 @@ src/
 
 ## 📊 Game Content Stats
 
+- **Characters**: 3 playable characters (Warrior, Rogue, Guardian)
 - **Cards**: 54 unique cards (10 starter, 44 advanced with diverse mechanics)
-- **Relics**: 43 unique relics (1 starter, 13 common, 14 uncommon, 15 rare)
+- **Relics**: 44 unique relics (3 starter, 13 common, 14 uncommon, 14 rare)
 - **Potions**: 15 different potions (10 common, 3 uncommon, 2 rare)
 - **Events**: 23 random events with multiple choices
 - **Enemies**: 10 unique enemies (5 normal, 3 elite, 2 boss)
@@ -166,24 +185,29 @@ This game uses text-based UI and emoji icons for a minimalist aesthetic. All gam
 - ✅ **Phase 1**: Core Combat System
 - ✅ **Phase 2**: Card Effects & Status System
 - ✅ **Phase 3**: Map & Progression System
-- ✅ **Phase 4**: Relics & Potions (43 relics, 15 potions)
+- ✅ **Phase 4**: Relics & Potions (44 relics, 15 potions)
 - ✅ **Phase 5**: Events & Merchant System (23 events, full shop)
 - ✅ **Phase 6**: Card Selection UI & Victory/Defeat Screens
 - ✅ **Phase 7**: Enemy Expansion (Elite & Boss enemies)
 - ✅ **Phase 8**: Deck View System & Combat Animations
+- ✅ **Phase 9**: Card Pool Expansion & Balance Pass (54 total cards, economy tuning)
+- ✅ **Phase 10**: Multiple Character System (3 playable characters)
+- ✅ **Phase 11**: Unlock System & Progression Tracking
 
 ## 🔮 Future Enhancements
 
-- Multiple playable characters with unique decks
-- Unlockable cards and relics
-- Achievement system
-- Save/load functionality
-- Run statistics and history
+- ~~Multiple playable characters with unique decks~~ ✅ **Completed**
+- ~~Unlockable cards and relics~~ ✅ **Completed**
+- ~~Run statistics and history~~ ✅ **Completed**
+- Save/load functionality for mid-run saves
+- Full achievement system with rewards
 - Sound effects and music
-- Additional acts and content
+- Additional acts and content (Act 2, Act 3)
+- More playable characters (4th, 5th character)
 - More card synergies and combos
-- Daily challenges
+- Daily challenges with leaderboards
 - Ascension mode for increased difficulty
+- Card and relic discovery (view all unlocked content)
 
 ## 🐛 Known Limitations
 
