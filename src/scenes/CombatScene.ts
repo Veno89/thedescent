@@ -150,7 +150,17 @@ export class CombatScene extends Phaser.Scene {
         );
         if (enemySprite) {
           enemySprite.animateDamage(amount);
+          // Show floating damage number
+          this.showDamageNumber(enemySprite.x, enemySprite.y - 50, amount, 0xff4444);
         }
+      } else {
+        // Player took damage
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        this.showDamageNumber(width / 2, height - 200, amount, 0xff0000);
+
+        // Screen shake on player damage
+        this.cameras.main.shake(200, 0.005);
       }
     };
 
@@ -657,6 +667,35 @@ export class CombatScene extends Phaser.Scene {
       exhaustPile: this.combat.exhaustPile,
       returnScene: 'CombatScene',
       viewMode: mode,
+    });
+  }
+
+  /**
+   * Show floating damage number
+   */
+  private showDamageNumber(x: number, y: number, amount: number, color: number): void {
+    const damageText = this.add.text(x, y, `-${amount}`, {
+      fontSize: '48px',
+      color: `#${color.toString(16).padStart(6, '0')}`,
+      fontStyle: 'bold',
+      fontFamily: 'monospace',
+      stroke: '#000000',
+      strokeThickness: 4,
+    });
+    damageText.setOrigin(0.5);
+    damageText.setDepth(1000);
+
+    // Animate floating up and fading out
+    this.tweens.add({
+      targets: damageText,
+      y: y - 100,
+      alpha: 0,
+      scale: 1.5,
+      duration: 1000,
+      ease: 'Power2',
+      onComplete: () => {
+        damageText.destroy();
+      },
     });
   }
 
