@@ -656,15 +656,22 @@ export class CombatManager {
    * Check if combat has ended
    */
   private checkCombatEnd(): void {
+    console.log(`checkCombatEnd: ${this.enemies.length} enemies total`);
+
     // Check if all enemies are dead
+    const aliveEnemies = this.enemies.filter(e => !e.isDead());
+    console.log(`Alive enemies: ${aliveEnemies.length}/${this.enemies.length}`);
+
     const allEnemiesDead = this.enemies.every((enemy) => enemy.isDead());
     if (allEnemiesDead) {
+      console.log('All enemies dead - Victory!');
       this.endCombat(true);
       return;
     }
 
     // Check if player is dead
     if (this.player.isDead()) {
+      console.log('Player dead - Defeat!');
       this.endCombat(false);
     }
   }

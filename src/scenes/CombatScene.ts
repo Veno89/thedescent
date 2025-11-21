@@ -55,23 +55,31 @@ export class CombatScene extends Phaser.Scene {
     // Use player from game state, or create test player
     if (this.gameState) {
       this.player = this.gameState.player;
+      console.log(`Using player from game state: HP=${this.player.currentHp}/${this.player.maxHp}`);
     } else {
       this.player = new Player(80, 99);
       this.player.deck = DataLoader.createStarterDeck();
+      console.log('Created test player');
     }
 
     // Create enemies based on difficulty
     const enemies = this.createEnemies();
+    console.log(`Created ${enemies.length} enemies for combat`);
 
     // Create combat manager
     this.combat = new CombatManager(this.player, enemies);
+    console.log(`CombatManager initialized with ${this.combat.enemies.length} enemies`);
 
     // Setup callbacks
     this.setupCombatCallbacks();
 
     // Create UI
     this.createUI(width, height);
+    console.log('UI created');
+
     this.createEnemySprites(width);
+    console.log(`After createEnemySprites: ${this.enemySprites.length} sprites`);
+
     this.createRelicSprites();
     this.createPotionSprites(width, height);
 

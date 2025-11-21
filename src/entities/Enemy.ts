@@ -35,6 +35,8 @@ export class Enemy {
     this.moves = moves;
     this.intent = { type: 'UNKNOWN' };
 
+    console.log(`Enemy created: ${name} with ${maxHp} HP, isDead=${this.currentHp <= 0}`);
+
     // Determine first move
     this.rollMove();
   }
