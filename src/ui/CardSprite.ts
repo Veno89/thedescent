@@ -222,6 +222,14 @@ export class CardSprite extends Phaser.GameObjects.Container {
    * Animate card being played
    */
   playAnimation(onComplete?: () => void): void {
+    // Safety check: ensure scene is still valid
+    if (!this.scene || !this.scene.tweens) {
+      console.warn('Cannot animate card: scene is destroyed');
+      this.destroy();
+      onComplete?.();
+      return;
+    }
+
     this.scene.tweens.add({
       targets: this,
       y: this.originalY - 200,
@@ -276,6 +284,9 @@ export class CardSprite extends Phaser.GameObjects.Container {
    * Disable interaction (when not playable)
    */
   setPlayable(playable: boolean): void {
+    // Safety check: don't try to interact with destroyed sprites
+    if (!this.scene) return;
+
     if (playable) {
       this.setAlpha(1);
       this.setInteractive();

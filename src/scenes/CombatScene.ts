@@ -77,8 +77,8 @@ export class CombatScene extends Phaser.Scene {
 
     // Start combat
     this.combat.startCombat();
-    this.updateUI();
-    this.updateHand();
+    this.updateHand(); // Create cards FIRST
+    this.updateUI();   // Then update UI
 
     // ESC to return to menu
     this.input.keyboard?.on('keydown-ESC', () => {
@@ -239,8 +239,8 @@ export class CombatScene extends Phaser.Scene {
     this.endTurnButton.on('pointerdown', () => {
       if (this.combat.isPlayerTurn && !this.combat.combatEnded) {
         this.combat.endPlayerTurn();
-        this.updateUI();
-        this.updateHand();
+        this.updateHand(); // Create cards FIRST
+        this.updateUI();   // Then update UI
       }
     });
 
@@ -481,6 +481,9 @@ export class CombatScene extends Phaser.Scene {
    */
   private updateCardPlayability(): void {
     this.cardSprites.forEach((sprite) => {
+      // Safety check: ensure sprite hasn't been destroyed
+      if (!sprite.scene) return;
+
       const card = sprite.getCard();
       const canAfford = this.combat.player.energy >= card.cost;
       sprite.setPlayable(canAfford && this.combat.isPlayerTurn);
@@ -562,11 +565,17 @@ export class CombatScene extends Phaser.Scene {
 
     if (success) {
       // Animate card being played
-      cardSprite.playAnimation(() => {
+      try {
+        cardSprite.playAnimation(() => {
+          this.updateHand();
+          this.updateUI();
+        });
+      } catch (error) {
+        // If animation fails, still update hand and UI
+        console.warn('Card animation failed:', error);
         this.updateHand();
-      });
-
-      this.updateUI();
+        this.updateUI();
+      }
     }
   }
 
