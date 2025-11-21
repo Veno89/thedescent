@@ -150,7 +150,7 @@ src/
 
 ## 📊 Game Content Stats
 
-- **Cards**: 30+ unique cards (starter + advanced)
+- **Cards**: 54 unique cards (10 starter, 44 advanced with diverse mechanics)
 - **Relics**: 43 unique relics (1 starter, 13 common, 14 uncommon, 15 rare)
 - **Potions**: 15 different potions (10 common, 3 uncommon, 2 rare)
 - **Events**: 23 random events with multiple choices
