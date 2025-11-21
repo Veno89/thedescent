@@ -24,10 +24,14 @@ export class EnemySprite extends Phaser.GameObjects.Container {
     super(scene, x, y);
     this.enemy = enemy;
 
+    console.log(`EnemySprite constructor: ${enemy.name} at (${x}, ${y})`);
+
     this.createEnemy();
     this.setupInteraction();
 
     scene.add.existing(this);
+
+    console.log(`EnemySprite added to scene: ${enemy.name}, visible=${this.visible}, alpha=${this.alpha}`);
   }
 
   /**

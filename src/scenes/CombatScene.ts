@@ -325,11 +325,17 @@ export class CombatScene extends Phaser.Scene {
    */
   private createEnemySprites(width: number): void {
     const enemies = this.combat.getAliveEnemies();
+    console.log(`Creating ${enemies.length} enemy sprites`);
+
     const spacing = 250;
     const startX = width / 2 - ((enemies.length - 1) * spacing) / 2;
 
     enemies.forEach((enemy, index) => {
-      const sprite = new EnemySprite(this, startX + index * spacing, 300, enemy);
+      const x = startX + index * spacing;
+      const y = 300;
+      console.log(`Creating enemy sprite for ${enemy.name} at (${x}, ${y})`);
+
+      const sprite = new EnemySprite(this, x, y, enemy);
       this.enemySprites.push(sprite);
 
       // Make enemy clickable for targeting
@@ -337,6 +343,8 @@ export class CombatScene extends Phaser.Scene {
         this.onEnemyClicked(sprite);
       });
     });
+
+    console.log(`Total enemy sprites created: ${this.enemySprites.length}`);
   }
 
   /**
