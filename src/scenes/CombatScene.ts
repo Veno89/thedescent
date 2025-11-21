@@ -706,17 +706,17 @@ export class CombatScene extends Phaser.Scene {
     let gold = 0;
 
     this.combat.enemies.forEach(_enemy => {
-      // Base gold per enemy
-      gold += 10 + Math.floor(Math.random() * 10);
+      // Base gold per enemy: 12-25 (increased from 10-20)
+      gold += 12 + Math.floor(Math.random() * 14);
     });
 
-    // Bonus for elite/boss
-    if (this.isElite) gold = Math.floor(gold * 1.5);
-    if (this.isBoss) gold = Math.floor(gold * 2);
+    // Bonus for elite/boss (increased multipliers)
+    if (this.isElite) gold = Math.floor(gold * 2); // Increased from 1.5x to 2x
+    if (this.isBoss) gold = Math.floor(gold * 3); // Increased from 2x to 3x
 
-    // Floor bonus
+    // Floor bonus (increased)
     if (this.gameState) {
-      gold += this.gameState.currentFloor * 2;
+      gold += this.gameState.currentFloor * 3; // Increased from 2 to 3
     }
 
     return gold;

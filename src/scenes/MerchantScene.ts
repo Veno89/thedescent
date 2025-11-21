@@ -712,14 +712,14 @@ export class MerchantScene extends Phaser.Scene {
   private calculateCardPrice(card: Card, floor: number): number {
     const basePrice = {
       [CardRarity.STARTER]: 25,
-      [CardRarity.COMMON]: 50,
-      [CardRarity.UNCOMMON]: 75,
-      [CardRarity.RARE]: 150,
-      [CardRarity.SPECIAL]: 200,
+      [CardRarity.COMMON]: 48,
+      [CardRarity.UNCOMMON]: 70,
+      [CardRarity.RARE]: 135,
+      [CardRarity.SPECIAL]: 180,
     };
 
-    const base = basePrice[card.rarity] || 50;
-    const floorMultiplier = 1 + floor * 0.1; // Prices increase with floor
+    const base = basePrice[card.rarity] || 48;
+    const floorMultiplier = 1 + floor * 0.08; // Slightly reduced floor scaling
     return Math.floor(base * floorMultiplier);
   }
 
@@ -761,8 +761,8 @@ export class MerchantScene extends Phaser.Scene {
    * Calculate card removal price based on floor
    */
   private calculateRemovalPrice(floor: number): number {
-    const basePrice = 75;
-    const floorMultiplier = 1 + floor * 0.15; // Removal gets more expensive faster
+    const basePrice = 70;
+    const floorMultiplier = 1 + floor * 0.12; // Slightly reduced removal price scaling
     return Math.floor(basePrice * floorMultiplier);
   }
 

@@ -97,7 +97,7 @@
     {
       "id": "louse_red",
       "name": "Red Louse",
-      "maxHp": 12,
+      "maxHp": 16,
       "type": "normal",
       "moves": [
         {
@@ -133,7 +133,7 @@
     {
       "id": "louse_green",
       "name": "Green Louse",
-      "maxHp": 12,
+      "maxHp": 15,
       "type": "normal",
       "moves": [
         {
@@ -169,7 +169,7 @@
     {
       "id": "fungi_beast",
       "name": "Fungi Beast",
-      "maxHp": 28,
+      "maxHp": 30,
       "type": "normal",
       "moves": [
         {
