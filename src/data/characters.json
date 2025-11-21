@@ -1,0 +1,68 @@
+{
+  "characters": [
+    {
+      "id": "warrior",
+      "name": "The Warrior",
+      "description": "A balanced fighter with solid attack and defense capabilities.",
+      "maxHp": 80,
+      "startingGold": 99,
+      "startingDeck": [
+        "strike",
+        "strike",
+        "strike",
+        "strike",
+        "strike",
+        "defend",
+        "defend",
+        "defend",
+        "defend",
+        "defend",
+        "bash"
+      ],
+      "startingRelic": "burning_blood"
+    },
+    {
+      "id": "rogue",
+      "name": "The Rogue",
+      "description": "A nimble fighter who excels at drawing cards and dealing quick damage.",
+      "maxHp": 70,
+      "startingGold": 99,
+      "startingDeck": [
+        "strike",
+        "strike",
+        "strike",
+        "strike",
+        "strike",
+        "defend",
+        "defend",
+        "defend",
+        "defend",
+        "shrug_it_off",
+        "quick_slash"
+      ],
+      "startingRelic": "ring_of_the_snake"
+    },
+    {
+      "id": "guardian",
+      "name": "The Guardian",
+      "description": "A defensive tank who starts with more HP and focuses on blocking damage.",
+      "maxHp": 95,
+      "startingGold": 99,
+      "startingDeck": [
+        "strike",
+        "strike",
+        "strike",
+        "strike",
+        "defend",
+        "defend",
+        "defend",
+        "defend",
+        "defend",
+        "defend",
+        "iron_wave",
+        "armaments"
+      ],
+      "startingRelic": "anchor"
+    }
+  ]
+}

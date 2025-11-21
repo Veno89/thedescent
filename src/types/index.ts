@@ -73,6 +73,16 @@ export interface Character {
   potions: Potion[];
 }
 
+export interface CharacterClass {
+  id: string;
+  name: string;
+  description: string;
+  maxHp: number;
+  startingGold: number;
+  startingDeck: string[]; // Card IDs
+  startingRelic: string; // Relic ID
+}
+
 export interface Enemy {
   id: string;
   name: string;

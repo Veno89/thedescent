@@ -1,6 +1,7 @@
-import { Card } from '@/types';
+import { Card, CharacterClass } from '@/types';
 import { Relic } from '@/entities/Relic';
 import { Potion } from '@/entities/Potion';
+import { DataLoader } from '@/utils/DataLoader';
 
 /**
  * Player entity - manages player character state
@@ -33,6 +34,39 @@ export class Player {
     this.maxHp = maxHp;
     this.currentHp = maxHp;
     this.gold = startingGold;
+  }
+
+  /**
+   * Create a player from a character class
+   */
+  static fromCharacterClass(characterClass: CharacterClass): Player {
+    const player = new Player(characterClass.maxHp, characterClass.startingGold);
+
+    // Add starting deck cards
+    characterClass.startingDeck.forEach((cardId) => {
+      const card = DataLoader.getCard(cardId);
+      if (card) {
+        player.addCardToDeck({...card});
+      } else {
+        console.warn(`Warning: Card ${cardId} not found for character ${characterClass.name}`);
+      }
+    });
+
+    // Add starting relic
+    const startingRelic = DataLoader.getRelic(characterClass.startingRelic);
+    if (startingRelic) {
+      player.addRelic(new Relic({
+        id: startingRelic.id,
+        name: startingRelic.name,
+        description: startingRelic.description,
+        rarity: startingRelic.rarity,
+        effects: startingRelic.effects,
+      }));
+    } else {
+      console.warn(`Warning: Starting relic ${characterClass.startingRelic} not found for character ${characterClass.name}`);
+    }
+
+    return player;
   }
 
   /**

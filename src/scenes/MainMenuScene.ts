@@ -1,6 +1,4 @@
 import Phaser from 'phaser';
-import { Player } from '@/entities/Player';
-import { GameStateManager } from '@/systems/GameStateManager';
 import { DataLoader } from '@/utils/DataLoader';
 
 export class MainMenuScene extends Phaser.Scene {
@@ -98,28 +96,8 @@ export class MainMenuScene extends Phaser.Scene {
     // Initialize data
     DataLoader.initialize();
 
-    // Create new player
-    const player = new Player(80, 99);
-    player.deck = DataLoader.createStarterDeck();
-
-    // Give starter relic
-    const burningBlood = DataLoader.getRelic('burning_blood');
-    if (burningBlood) {
-      player.addRelic(burningBlood);
-    }
-
-    // Give starter potion (for testing)
-    const healingPotion = DataLoader.getPotion('healing_potion');
-    if (healingPotion) {
-      player.addPotion(healingPotion);
-    }
-
-    // Create game state
-    const gameState = new GameStateManager(player);
-    gameState.startRun();
-
-    // Start at the map
-    this.scene.start('MapScene', { gameState });
+    // Go to character selection
+    this.scene.start('CharacterSelectionScene');
   }
 
   continueRun(): void {

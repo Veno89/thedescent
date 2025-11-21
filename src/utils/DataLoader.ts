@@ -1,4 +1,4 @@
-import { Card, GameEvent } from '@/types';
+import { Card, CharacterClass, GameEvent } from '@/types';
 import { Enemy } from '@/entities/Enemy';
 import { Relic } from '@/entities/Relic';
 import { Potion } from '@/entities/Potion';
@@ -8,6 +8,7 @@ import act1Enemies from '@/data/enemies/act1.json';
 import relicsData from '@/data/relics/relics.json';
 import potionsData from '@/data/potions/potions.json';
 import eventsData from '@/data/events/events.json';
+import charactersData from '@/data/characters.json';
 
 /**
  * DataLoader handles loading and caching game data from JSON files
@@ -18,6 +19,7 @@ export class DataLoader {
   private static relicCache: Map<string, Relic> = new Map();
   private static potionCache: Map<string, Potion> = new Map();
   private static eventCache: Map<string, GameEvent> = new Map();
+  private static characterCache: Map<string, CharacterClass> = new Map();
   private static initialized = false;
 
   /**
@@ -62,10 +64,16 @@ export class DataLoader {
       this.eventCache.set(event.id, event);
     });
 
+    // Load characters
+    charactersData.characters.forEach((charData: any) => {
+      this.characterCache.set(charData.id, charData as CharacterClass);
+    });
+
     this.initialized = true;
     console.log(
       `Loaded ${this.cardCache.size} cards, ${this.enemyCache.size} enemies, ` +
-      `${this.relicCache.size} relics, ${this.potionCache.size} potions, and ${this.eventCache.size} events`
+      `${this.relicCache.size} relics, ${this.potionCache.size} potions, ` +
+      `${this.eventCache.size} events, and ${this.characterCache.size} characters`
     );
   }
 
@@ -465,5 +473,21 @@ export class DataLoader {
       image: data.image,
       choices: data.choices,
     };
+  }
+
+  /**
+   * Get a character class by ID
+   */
+  static getCharacterClass(id: string): CharacterClass | undefined {
+    if (!this.initialized) this.initialize();
+    return this.characterCache.get(id);
+  }
+
+  /**
+   * Get all character classes
+   */
+  static getAllCharacterClasses(): CharacterClass[] {
+    if (!this.initialized) this.initialize();
+    return Array.from(this.characterCache.values());
   }
 }

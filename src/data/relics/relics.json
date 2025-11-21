@@ -14,6 +14,19 @@
       ]
     },
     {
+      "id": "ring_of_the_snake",
+      "name": "Ring of the Snake",
+      "description": "At the start of each combat, draw 2 additional cards.",
+      "rarity": "STARTER",
+      "effects": [
+        {
+          "trigger": "onCombatStart",
+          "action": "DRAW",
+          "value": 2
+        }
+      ]
+    },
+    {
       "id": "akabeko",
       "name": "Akabeko",
       "description": "Your first Attack each combat deals 8 additional damage.",
