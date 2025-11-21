@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GameStateManager } from '@/systems/GameStateManager';
+import { UnlockSystem } from '@/systems/UnlockSystem';
 
 /**
  * VictoryScene - Displayed when the player completes a run by defeating the boss
@@ -13,6 +14,18 @@ export class VictoryScene extends Phaser.Scene {
 
   init(data: { gameState: GameStateManager }) {
     this.gameState = data.gameState;
+
+    // Record run completion
+    UnlockSystem.recordRunComplete(
+      this.gameState.currentFloor,
+      this.gameState.player.gold
+    );
+
+    // Check for new unlocks
+    const newUnlocks = UnlockSystem.checkUnlockConditions();
+    if (newUnlocks.length > 0) {
+      console.log('New unlocks:', newUnlocks);
+    }
   }
 
   create(): void {

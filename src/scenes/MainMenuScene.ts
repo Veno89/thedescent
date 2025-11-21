@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { DataLoader } from '@/utils/DataLoader';
+import { UnlockSystem } from '@/systems/UnlockSystem';
 
 export class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -95,6 +96,10 @@ export class MainMenuScene extends Phaser.Scene {
 
     // Initialize data
     DataLoader.initialize();
+    UnlockSystem.initialize();
+
+    // Record run start
+    UnlockSystem.recordRunStart();
 
     // Go to character selection
     this.scene.start('CharacterSelectionScene');
