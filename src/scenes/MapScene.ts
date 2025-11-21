@@ -55,11 +55,11 @@ export class MapScene extends Phaser.Scene {
     const height = this.cameras.main.height;
     const map = this.gameState.map;
 
-    // Calculate layout parameters
+    // Calculate layout parameters - INCREASED vertical spacing
     const mapStartY = 150;
     const mapHeight = height - 200;
     const maxFloor = Math.max(...map.map(r => r.y));
-    const floorHeight = mapHeight / (maxFloor + 1);
+    const floorHeight = Math.min(120, mapHeight / (maxFloor + 1)); // Min 120px between floors
 
     // Group rooms by floor
     const roomsByFloor: Map<number, Room[]> = new Map();
@@ -70,12 +70,7 @@ export class MapScene extends Phaser.Scene {
       roomsByFloor.get(room.y)!.push(room);
     });
 
-    // Draw connections first (so they appear behind nodes)
-    map.forEach((room) => {
-      room.connections.forEach(targetIndex => {
-        this.drawConnection(room, map[targetIndex], width, mapStartY, floorHeight);
-      });
-    });
+    // NO CONNECTION LINES - Clean look!
 
     // Draw room nodes
     map.forEach((room, index) => {
@@ -89,10 +84,10 @@ export class MapScene extends Phaser.Scene {
   }
 
   /**
-   * Calculate X position for a room
+   * Calculate X position for a room - TIGHTER horizontal spacing
    */
   private calculateXPosition(roomX: number, roomsOnFloor: number, screenWidth: number): number {
-    const margin = 200;
+    const margin = 300; // Increased margins for tighter clustering
     const availableWidth = screenWidth - margin * 2;
 
     if (roomsOnFloor === 1) {
@@ -103,86 +98,121 @@ export class MapScene extends Phaser.Scene {
     return margin + roomX * spacing;
   }
 
-  /**
-   * Draw connection line between rooms
-   */
-  private drawConnection(
-    from: Room,
-    to: Room,
-    screenWidth: number,
-    mapStartY: number,
-    floorHeight: number
-  ): void {
-    const roomsByFloor: Map<number, Room[]> = new Map();
-    this.gameState.map.forEach(room => {
-      if (!roomsByFloor.has(room.y)) {
-        roomsByFloor.set(room.y, []);
-      }
-      roomsByFloor.get(room.y)!.push(room);
-    });
-
-    const fromX = this.calculateXPosition(from.x, roomsByFloor.get(from.y)!.length, screenWidth);
-    const fromY = mapStartY + from.y * floorHeight;
-    const toX = this.calculateXPosition(to.x, roomsByFloor.get(to.y)!.length, screenWidth);
-    const toY = mapStartY + to.y * floorHeight;
-
-    const line = this.add.line(
-      0, 0,
-      fromX, fromY + 20,
-      toX, toY - 20,
-      0x666666
-    );
-    line.setOrigin(0);
-    line.setLineWidth(2);
-    line.setDepth(0);
-  }
 
   /**
-   * Create a room node
+   * Create a room node with improved visual feedback
    */
   private createRoomNode(room: Room, index: number, x: number, y: number): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     container.setDepth(10);
 
+    const currentRoom = this.gameState.getCurrentRoom();
     const isCurrentRoom = index === this.gameState.currentRoomIndex;
     const isAvailable = this.isRoomAvailable(index);
-    const isVisited = room.visited;
+    const isPastFloor = room.y < currentRoom.y; // Grey out past floors
 
     // Room background
     const bgColor = this.getRoomColor(room.type);
-    const alpha = isVisited ? 1 : (isAvailable ? 0.8 : 0.3);
-    const size = isCurrentRoom ? 50 : 40;
+    let alpha = 1.0;
 
+    // Grey out past floors
+    if (isPastFloor) {
+      alpha = 0.3;
+    } else if (isCurrentRoom) {
+      alpha = 1.0;
+    } else if (isAvailable) {
+      alpha = 0.9;
+    } else {
+      alpha = 0.5;
+    }
+
+    const size = isCurrentRoom ? 55 : 45;
     const bg = this.add.circle(0, 0, size / 2, bgColor, alpha);
-    bg.setStrokeStyle(isCurrentRoom ? 4 : 2, isCurrentRoom ? 0xffff00 : 0xffffff);
+
+    // Current room gets special highlight
+    if (isCurrentRoom) {
+      bg.setStrokeStyle(5, 0xffff00);
+      // Add pulsing glow effect for current position
+      this.tweens.add({
+        targets: bg,
+        scaleX: 1.15,
+        scaleY: 1.15,
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    } else {
+      bg.setStrokeStyle(2, 0xffffff, isPastFloor ? 0.3 : 1);
+    }
+
     container.add(bg);
+
+    // Glow circle for hover effects (initially invisible)
+    const glowCircle = this.add.circle(0, 0, size / 2 + 10, 0xffffff, 0);
+    glowCircle.setStrokeStyle(0);
+    container.add(glowCircle);
 
     // Room icon
     const icon = this.getRoomIcon(room.type);
     const iconText = this.add.text(0, 0, icon, {
-      fontSize: isCurrentRoom ? '28px' : '24px',
+      fontSize: isCurrentRoom ? '32px' : '28px',
       color: '#ffffff',
       fontFamily: 'monospace',
     });
     iconText.setOrigin(0.5);
+    iconText.setAlpha(isPastFloor ? 0.3 : 1);
     container.add(iconText);
 
-    // Make clickable if available
-    if (isAvailable && !isCurrentRoom) {
-      bg.setInteractive({ useHandCursor: true });
+    // Make ALL nodes interactive for hover feedback
+    if (!isCurrentRoom && !isPastFloor) {
+      bg.setInteractive({ useHandCursor: isAvailable });
 
       bg.on('pointerover', () => {
-        bg.setScale(1.2);
-        bg.setStrokeStyle(4, 0xffff00);
+        if (isAvailable) {
+          // GREEN GLOW - can go here
+          glowCircle.setFillStyle(0x00ff00, 0.4);
+          glowCircle.setVisible(true);
+          this.tweens.add({
+            targets: glowCircle,
+            scale: 1.3,
+            alpha: 0,
+            duration: 500,
+            repeat: -1,
+            ease: 'Power2'
+          });
+          bg.setScale(1.15);
+          bg.setStrokeStyle(3, 0x00ff00); // Green stroke
+        } else {
+          // RED GLOW - cannot go here
+          glowCircle.setFillStyle(0xff0000, 0.4);
+          glowCircle.setVisible(true);
+          this.tweens.add({
+            targets: glowCircle,
+            scale: 1.2,
+            alpha: 0,
+            duration: 400,
+            repeat: -1,
+            ease: 'Power2'
+          });
+          bg.setStrokeStyle(3, 0xff0000); // Red stroke
+        }
       });
 
       bg.on('pointerout', () => {
+        // Stop glow animation
+        this.tweens.killTweensOf(glowCircle);
+        glowCircle.setVisible(false);
+        glowCircle.setScale(1);
+        glowCircle.setAlpha(1);
         bg.setScale(1.0);
-        bg.setStrokeStyle(2, 0xffffff);
+        bg.setStrokeStyle(2, 0xffffff, isPastFloor ? 0.3 : 1); // Reset stroke
       });
 
       bg.on('pointerdown', () => {
-        this.onRoomSelected(index);
+        if (isAvailable) {
+          this.onRoomSelected(index);
+        }
       });
     }
 
