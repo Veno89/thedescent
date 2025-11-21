@@ -6,6 +6,7 @@ import { EnemyIntent, EnemyMove } from '@/types';
 export class Enemy {
   public id: string;
   public name: string;
+  public type: string; // 'normal', 'elite', or 'boss'
   public maxHp: number;
   public currentHp: number;
   public block: number = 0;
@@ -25,17 +26,19 @@ export class Enemy {
   constructor(
     id: string,
     name: string,
+    type: string,
     maxHp: number,
     moves: EnemyMove[]
   ) {
     this.id = id;
     this.name = name;
+    this.type = type;
     this.maxHp = maxHp;
     this.currentHp = maxHp;
     this.moves = moves;
     this.intent = { type: 'UNKNOWN' };
 
-    console.log(`Enemy created: ${name} with ${maxHp} HP, isDead=${this.currentHp <= 0}`);
+    console.log(`Enemy created: ${name} (${type}) with ${maxHp} HP, isDead=${this.currentHp <= 0}`);
 
     // Determine first move
     this.rollMove();

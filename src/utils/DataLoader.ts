@@ -160,7 +160,7 @@ export class DataLoader {
   static getEnemiesByType(type: string): Enemy[] {
     if (!this.initialized) this.initialize();
     return Array.from(this.enemyCache.values()).filter(
-      (enemy) => (enemy as any).type === type
+      (enemy) => enemy.type === type
     );
   }
 
@@ -424,6 +424,7 @@ export class DataLoader {
     return new Enemy(
       data.id,
       data.name,
+      data.type, // Add type field!
       data.maxHp,
       data.moves
     );
@@ -439,6 +440,7 @@ export class DataLoader {
     return new Enemy(
       template.id,
       template.name,
+      template.type, // Add type field!
       randomHp,
       [...template.moves]
     );
