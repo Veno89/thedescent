@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { Room, RoomType } from '@/types';
 import { GameStateManager } from '@/systems/GameStateManager';
+import { Theme } from '@/ui/theme';
 
 /**
  * MapScene displays the dungeon map and allows room selection
@@ -27,24 +28,28 @@ export class MapScene extends Phaser.Scene {
 
     // If in view-only mode, add a semi-transparent overlay and close button
     if (this.viewOnly) {
-      const overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.5);
+      const overlay = this.add.rectangle(0, 0, width, height, Theme.colors.overlay, Theme.colors.overlayAlpha);
       overlay.setOrigin(0, 0);
-      overlay.setDepth(0);
+      overlay.setDepth(Theme.layers.overlays);
 
       // Close button (X in top-right corner)
-      const closeButton = this.add.text(width - 60, 30, '✖️', {
-        fontSize: '48px',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-      });
+      const closeButton = this.add.text(
+        width - Theme.spacing.xxxl,
+        Theme.spacing.xl,
+        '✖️',
+        {
+          ...Theme.typography.styles.heading1,
+          color: Theme.colors.text,
+        }
+      );
       closeButton.setInteractive({ useHandCursor: true });
-      closeButton.setDepth(1000);
+      closeButton.setDepth(Theme.layers.modals);
       closeButton.on('pointerover', () => {
-        closeButton.setColor('#ff0000');
+        closeButton.setColor(Theme.colors.danger);
         closeButton.setScale(1.1);
       });
       closeButton.on('pointerout', () => {
-        closeButton.setColor('#ffffff');
+        closeButton.setColor(Theme.colors.text);
         closeButton.setScale(1);
       });
       closeButton.on('pointerdown', () => {
@@ -58,27 +63,36 @@ export class MapScene extends Phaser.Scene {
     }
 
     // Title
-    this.add.text(width / 2, 50, `ACT ${this.gameState.currentAct} - THE DESCENT`, {
-      fontSize: '36px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      Theme.layout.margin.screen,
+      `ACT ${this.gameState.currentAct} - THE DESCENT`,
+      {
+        ...Theme.typography.styles.heading2,
+        color: Theme.colors.text,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
-    // Player stats
-    this.add.text(50, 50, `HP: ${this.gameState.player.currentHp}/${this.gameState.player.maxHp}`, {
-      fontSize: '20px',
-      color: '#ff6b6b',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    });
+    // Player stats (top-left corner)
+    this.add.text(
+      Theme.layout.margin.screen,
+      Theme.layout.margin.screen,
+      `HP: ${this.gameState.player.currentHp}/${this.gameState.player.maxHp}`,
+      {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.danger,
+      }
+    ).setDepth(Theme.layers.ui);
 
-    this.add.text(50, 80, `Gold: ${this.gameState.player.gold}`, {
-      fontSize: '20px',
-      color: '#ffd700',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    });
+    this.add.text(
+      Theme.layout.margin.screen,
+      Theme.layout.margin.screen + Theme.spacing.xl,
+      `Gold: ${this.gameState.player.gold}`,
+      {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.gold,
+      }
+    ).setDepth(Theme.layers.ui);
 
     // Draw the map
     this.renderMap();
