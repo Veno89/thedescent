@@ -322,35 +322,39 @@ export class CombatScene extends Phaser.Scene {
       onClick: () => this.openDeckView('DECK'),
     });
 
-    // Turn/Actions card (top right)
+    // Turn/Actions card (right side, more visible)
     const actionsCard = new UICard({
       scene: this,
-      x: width - 200,
-      y: 150,
-      width: 300,
-      height: 200,
+      x: width - 180,
+      y: height / 2 - 100,
+      width: 280,
+      height: 250,
       title: 'TURN INFO',
       backgroundColor: Theme.helpers.hexToColor(Theme.colors.backgroundLight),
       borderColor: Theme.helpers.hexToColor(Theme.colors.gold),
-      alpha: 0.92,
+      alpha: 0.95,
     });
 
     const turnStartY = actionsCard.getContentStartY();
 
     this.turnText = actionsCard.addText(
       '',
-      -actionsCard.width / 2 + Theme.spacing.lg,
-      turnStartY,
-      Theme.typography.styles.heading2
-    );
+      0,
+      turnStartY + Theme.spacing.md,
+      {
+        ...Theme.typography.styles.heading2,
+        align: 'center',
+      }
+    ).setOrigin(0.5, 0);
 
-    // End Turn Button
+    // End Turn Button - large and prominent
     this.endTurnButton = new Button({
       scene: this,
       x: actionsCard.x,
-      y: actionsCard.y + actionsCard.height / 2 - Theme.spacing.xxxl,
-      text: 'END TURN',
+      y: actionsCard.y + actionsCard.height / 2 - Theme.spacing.xxxl - Theme.spacing.md,
+      text: '⏭️ END TURN',
       width: actionsCard.width - Theme.spacing.xl * 2,
+      height: Theme.dimensions.button.height + Theme.spacing.md,
       style: 'primary',
       onClick: () => {
         if (this.combat.isPlayerTurn && !this.combat.combatEnded) {
@@ -373,7 +377,7 @@ export class CombatScene extends Phaser.Scene {
 
     // Instructions
     this.add
-      .text(width / 2, height - Theme.spacing.xxxl, 'Click cards to play • Click enemies to target', {
+      .text(width / 2, height - Theme.spacing.xxxl, 'Drag cards onto enemies to attack • Click self-target cards to play', {
         ...Theme.typography.styles.small,
         color: Theme.colors.textMuted,
         align: 'center',
@@ -552,19 +556,111 @@ export class CombatScene extends Phaser.Scene {
     const startX = width / 2 - ((hand.length - 1) * actualSpacing) / 2;
 
     hand.forEach((card, index) => {
+      const originalX = startX + index * actualSpacing;
+      const originalY = cardY;
+
       const cardSprite = new CardSprite(
         this,
-        startX + index * actualSpacing,
-        cardY,
+        originalX,
+        originalY,
         card
       );
       this.cardSprites.push(cardSprite);
 
       cardSprite.drawAnimation();
 
-      // Make card clickable
+      // Store original position for returning card to hand
+      cardSprite.setData('originalX', originalX);
+      cardSprite.setData('originalY', originalY);
+      cardSprite.setData('isDragging', false);
+
+      // Enable drag-and-drop
+      this.input.setDraggable(cardSprite);
+
+      // Drag start - lift card and make it larger
+      cardSprite.on('dragstart', () => {
+        const canPlay = this.combat.player.energy >= card.cost && this.combat.isPlayerTurn;
+        if (!canPlay) return;
+
+        cardSprite.setData('isDragging', true);
+        cardSprite.setDepth(1000); // Bring to front
+
+        this.tweens.add({
+          targets: cardSprite,
+          scaleX: 1.2,
+          scaleY: 1.2,
+          duration: 100,
+          ease: 'Power2',
+        });
+      });
+
+      // During drag - follow mouse
+      cardSprite.on('drag', (_pointer: any, dragX: number, dragY: number) => {
+        if (!cardSprite.getData('isDragging')) return;
+
+        cardSprite.x = dragX;
+        cardSprite.y = dragY;
+
+        // Check if hovering over an enemy and highlight them
+        this.enemySprites.forEach((enemySprite) => {
+          const enemy = enemySprite.getEnemy();
+          if (enemy.isDead()) return;
+
+          const bounds = enemySprite.getBounds();
+          if (bounds.contains(dragX, dragY)) {
+            enemySprite.setSelected(true);
+          } else {
+            enemySprite.setSelected(false);
+          }
+        });
+      });
+
+      // Drag end - play card or return to hand
+      cardSprite.on('dragend', (_pointer: any, _dragX: number, _dragY: number, _dropped: boolean) => {
+        if (!cardSprite.getData('isDragging')) return;
+
+        cardSprite.setData('isDragging', false);
+
+        // Check if dropped on an enemy
+        let targetEnemy: EnemySprite | null = null;
+        this.enemySprites.forEach((enemySprite) => {
+          const enemy = enemySprite.getEnemy();
+          if (enemy.isDead()) return;
+
+          const bounds = enemySprite.getBounds();
+          if (bounds.contains(cardSprite.x, cardSprite.y)) {
+            targetEnemy = enemySprite;
+          }
+          enemySprite.setSelected(false);
+        });
+
+        if (targetEnemy && card.targetType === 'SINGLE_ENEMY') {
+          // Play card on target
+          this.playCard(cardSprite, targetEnemy);
+        } else if (!targetEnemy && card.targetType !== 'SINGLE_ENEMY') {
+          // Self-target or AOE card - play it
+          this.playCard(cardSprite, undefined);
+        } else {
+          // Return to hand
+          this.tweens.add({
+            targets: cardSprite,
+            x: cardSprite.getData('originalX'),
+            y: cardSprite.getData('originalY'),
+            scaleX: 1,
+            scaleY: 1,
+            duration: 200,
+            ease: 'Power2',
+          });
+          cardSprite.setDepth(10);
+        }
+      });
+
+      // Keep old click behavior as fallback
       cardSprite.on('pointerdown', () => {
-        this.onCardClicked(cardSprite);
+        // Only trigger if not dragging
+        if (!cardSprite.getData('isDragging')) {
+          this.onCardClicked(cardSprite);
+        }
       });
     });
 
