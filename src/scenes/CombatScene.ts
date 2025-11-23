@@ -131,16 +131,21 @@ export class CombatScene extends Phaser.Scene {
       // Normal: 1-3 random normal enemies
       const enemyCount = Math.floor(Math.random() * 3) + 1; // 1-3 enemies
       const normalEnemies = DataLoader.getEnemiesByType('normal');
+      console.log(`Normal combat: ${enemyCount} enemies needed, ${normalEnemies.length} normal enemies available`);
+      console.log('Normal enemy IDs:', normalEnemies.map(e => `${e.id}(${e.type})`));
 
       for (let i = 0; i < enemyCount; i++) {
         if (normalEnemies.length > 0) {
           const randomEnemy = normalEnemies[Math.floor(Math.random() * normalEnemies.length)];
+          console.log(`Selecting random enemy: ${randomEnemy.id} (${randomEnemy.type})`);
           const enemy = DataLoader.getEnemy(randomEnemy.id);
+          console.log(`Got enemy instance:`, enemy ? `${enemy.name} (${enemy.type})` : 'undefined');
           if (enemy) enemies.push(enemy);
         }
       }
     }
 
+    console.log(`createEnemies returning ${enemies.length} enemies`);
     return enemies;
   }
 
