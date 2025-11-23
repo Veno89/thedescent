@@ -3,6 +3,8 @@ import { CharacterClass } from '@/types';
 import { DataLoader } from '@/utils/DataLoader';
 import { Player } from '@/entities/Player';
 import { GameStateManager } from '@/systems/GameStateManager';
+import { UICard } from '@/ui/UICard';
+import { Theme } from '@/ui/theme';
 
 /**
  * Character Selection Scene - Choose your character before starting a run
@@ -27,26 +29,53 @@ export class CharacterSelectionScene extends Phaser.Scene {
       return;
     }
 
-    // Background
-    this.add.rectangle(width / 2, height / 2, width, height, 0x16213e, 1).setDepth(-1);
+    // Background gradient
+    const bgGraphics = this.add.graphics();
+    bgGraphics.fillGradientStyle(
+      Theme.helpers.hexToColor(Theme.colors.background),
+      Theme.helpers.hexToColor(Theme.colors.background),
+      Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+      Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+      1,
+      1,
+      1,
+      1
+    );
+    bgGraphics.fillRect(0, 0, width, height);
 
     // Title
-    this.add.text(width / 2, 80, 'SELECT YOUR CHARACTER', {
-      fontSize: '64px',
-      color: '#e94560',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
+    this.add.text(width / 2, Theme.spacing.xxxl + Theme.spacing.lg, 'SELECT YOUR CHARACTER', {
+      ...Theme.typography.styles.title,
+      fontSize: '72px',
     }).setOrigin(0.5);
+
+    // Subtitle
+    this.add.text(
+      width / 2,
+      Theme.spacing.xxxl * 2 + Theme.spacing.xl,
+      'Choose wisely - each warrior has unique abilities',
+      {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.textSecondary,
+      }
+    ).setOrigin(0.5);
 
     // Display all characters
     this.displayCharacters();
 
     // Instructions
-    this.add.text(width / 2, height - 50, 'Click on a character to select and begin your journey', {
-      fontSize: '20px',
-      color: '#888888',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    this.add.text(
+      width / 2,
+      height - Theme.spacing.xxxl,
+      'Click on a character to begin your descent',
+      {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.textMuted,
+      }
+    ).setOrigin(0.5);
+
+    // Fade in animation
+    this.cameras.main.fadeIn(Theme.animation.slow);
   }
 
   /**
@@ -56,100 +85,115 @@ export class CharacterSelectionScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    const startX = width / 2 - (this.characters.length - 1) * 250;
-    const centerY = height / 2 + 50;
+    const cardSpacing = 520;
+    const startX = width / 2 - ((this.characters.length - 1) * cardSpacing) / 2;
+    const centerY = height / 2 + Theme.spacing.xxxl;
 
     this.characters.forEach((character, index) => {
-      const x = startX + index * 500;
+      const x = startX + index * cardSpacing;
 
-      // Character card background
-      const cardBg = this.add.rectangle(x, centerY, 380, 500, 0x1a1a2e, 1);
-      cardBg.setStrokeStyle(4, 0x4a5568);
+      // Character card
+      const characterCard = new UICard({
+        scene: this,
+        x: x,
+        y: centerY,
+        width: 450,
+        height: 600,
+        title: character.name.toUpperCase(),
+        backgroundColor: Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+        borderColor: Theme.helpers.hexToColor(Theme.colors.primary),
+        alpha: 0.95,
+      });
 
-      // Character name
-      this.add.text(x, centerY - 210, character.name, {
-        fontSize: '36px',
-        color: '#ffffff',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-      }).setOrigin(0.5);
+      const contentY = characterCard.getContentStartY();
 
       // Character description
-      const descText = this.add.text(x, centerY - 150, character.description, {
-        fontSize: '18px',
-        color: '#cccccc',
-        fontFamily: 'monospace',
-        wordWrap: { width: 340 },
+      characterCard.addText(character.description, 0, contentY, {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.textSecondary,
+        wordWrap: { width: 380 },
         align: 'center',
-      });
-      descText.setOrigin(0.5);
+      }).setOrigin(0.5, 0);
 
-      // Stats section
-      const statsY = centerY - 50;
-      this.add.text(x, statsY, '═══ STATS ═══', {
-        fontSize: '24px',
-        color: '#e94560',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-      }).setOrigin(0.5);
+      // Stats section divider
+      characterCard.addText(
+        Theme.helpers.getSectionDivider('STATS'),
+        0,
+        contentY + Theme.spacing.xxxl * 2,
+        {
+          ...Theme.typography.styles.heading3,
+          color: Theme.colors.gold,
+        }
+      ).setOrigin(0.5, 0);
 
+      // Stats
+      const statsY = contentY + Theme.spacing.xxxl * 2 + Theme.spacing.xxxl;
       const stats = [
-        `HP: ${character.maxHp}`,
-        `Gold: ${character.startingGold}`,
-        `Deck: ${character.startingDeck.length} cards`,
+        { icon: '❤️', label: 'HP', value: character.maxHp, color: Theme.colors.danger },
+        {
+          icon: '💰',
+          label: 'Gold',
+          value: character.startingGold,
+          color: Theme.colors.gold,
+        },
+        {
+          icon: '🎴',
+          label: 'Deck',
+          value: `${character.startingDeck.length} cards`,
+          color: Theme.colors.info,
+        },
       ];
 
       stats.forEach((stat, statIndex) => {
-        this.add.text(x, statsY + 50 + statIndex * 35, stat, {
-          fontSize: '20px',
-          color: '#ffffff',
-          fontFamily: 'monospace',
-        }).setOrigin(0.5);
+        characterCard.addText(
+          `${stat.icon} ${stat.label}: ${stat.value}`,
+          0,
+          statsY + statIndex * Theme.spacing.xl,
+          {
+            ...Theme.typography.styles.body,
+            color: stat.color,
+          }
+        ).setOrigin(0.5, 0);
       });
 
-      // Starting relic info
+      // Starting relic section
       const relic = DataLoader.getRelic(character.startingRelic);
       if (relic) {
-        this.add.text(x, centerY + 130, '═══ STARTING RELIC ═══', {
-          fontSize: '20px',
-          color: '#e94560',
-          fontStyle: 'bold',
-          fontFamily: 'monospace',
-        }).setOrigin(0.5);
+        characterCard.addText(
+          Theme.helpers.getSectionDivider('STARTING RELIC'),
+          0,
+          statsY + stats.length * Theme.spacing.xl + Theme.spacing.xl,
+          {
+            ...Theme.typography.styles.heading3,
+            color: Theme.colors.gold,
+          }
+        ).setOrigin(0.5, 0);
 
-        this.add.text(x, centerY + 170, `🏺 ${relic.name}`, {
-          fontSize: '18px',
-          color: '#ffd700',
-          fontFamily: 'monospace',
-        }).setOrigin(0.5);
+        characterCard.addText(
+          `🏺 ${relic.name}`,
+          0,
+          statsY + stats.length * Theme.spacing.xl + Theme.spacing.xxxl + Theme.spacing.md,
+          {
+            ...Theme.typography.styles.body,
+            color: Theme.colors.legendary,
+          }
+        ).setOrigin(0.5, 0);
+
+        characterCard.addText(
+          relic.description,
+          0,
+          statsY + stats.length * Theme.spacing.xl + Theme.spacing.xxxl * 2,
+          {
+            ...Theme.typography.styles.small,
+            color: Theme.colors.textSecondary,
+            wordWrap: { width: 380 },
+            align: 'center',
+          }
+        ).setOrigin(0.5, 0);
       }
 
       // Make card interactive
-      cardBg.setInteractive({ useHandCursor: true });
-
-      cardBg.on('pointerover', () => {
-        cardBg.setStrokeStyle(4, 0xe94560);
-        this.tweens.add({
-          targets: cardBg,
-          scaleX: 1.05,
-          scaleY: 1.05,
-          duration: 150,
-          ease: 'Power2',
-        });
-      });
-
-      cardBg.on('pointerout', () => {
-        cardBg.setStrokeStyle(4, 0x4a5568);
-        this.tweens.add({
-          targets: cardBg,
-          scaleX: 1.0,
-          scaleY: 1.0,
-          duration: 150,
-          ease: 'Power2',
-        });
-      });
-
-      cardBg.on('pointerdown', () => {
+      characterCard.makeInteractive(() => {
         this.selectCharacter(character);
       });
     });

@@ -8,6 +8,10 @@ import { CardSprite } from '@/ui/CardSprite';
 import { EnemySprite } from '@/ui/EnemySprite';
 import { RelicSprite } from '@/ui/RelicSprite';
 import { PotionSprite } from '@/ui/PotionSprite';
+import { UICard } from '@/ui/UICard';
+import { Button } from '@/ui/Button';
+import { ProgressBar } from '@/ui/ProgressBar';
+import { Theme } from '@/ui/theme';
 
 export class CombatScene extends Phaser.Scene {
   // Game entities
@@ -26,12 +30,13 @@ export class CombatScene extends Phaser.Scene {
   // Selection state
   private selectedPotionIndex: number | null = null;
 
-  // UI Text
-  private playerHpText!: Phaser.GameObjects.Text;
+  // UI Components
+  private playerStatsCard!: UICard;
+  private hpBar!: ProgressBar;
+  private energyBar!: ProgressBar;
   private playerBlockText!: Phaser.GameObjects.Text;
-  private energyText!: Phaser.GameObjects.Text;
   private turnText!: Phaser.GameObjects.Text;
-  private endTurnButton!: Phaser.GameObjects.Text;
+  private endTurnButton!: Button;
   private drawPileText!: Phaser.GameObjects.Text;
   private discardPileText!: Phaser.GameObjects.Text;
 
@@ -181,151 +186,194 @@ export class CombatScene extends Phaser.Scene {
    * Create UI elements
    */
   private createUI(width: number, height: number): void {
-    // Title
-    this.add.text(width / 2, 50, 'COMBAT', {
-      fontSize: '36px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
+    // Combat title with act/floor indicator
+    const combatType = this.isBoss ? 'BOSS' : this.isElite ? 'ELITE COMBAT' : 'COMBAT';
+    this.add.text(width / 2, Theme.spacing.xxxl, combatType, {
+      ...Theme.typography.styles.heading1,
+      color: this.isBoss
+        ? Theme.colors.boss
+        : this.isElite
+        ? Theme.colors.elite
+        : Theme.colors.text,
     }).setOrigin(0.5);
 
-    // Player HP
-    this.playerHpText = this.add.text(100, height - 400, '', {
-      fontSize: '24px',
-      color: '#ff6b6b',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
+    // Player stats card (left side)
+    this.playerStatsCard = new UICard({
+      scene: this,
+      x: 220,
+      y: height / 2 - 50,
+      width: 350,
+      height: 350,
+      title: 'PLAYER',
+      backgroundColor: Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+      borderColor: Theme.helpers.hexToColor(Theme.colors.primary),
+      alpha: 0.92,
     });
 
-    // Player Block
-    this.playerBlockText = this.add.text(100, height - 370, '', {
-      fontSize: '20px',
-      color: '#00ffff',
-      fontFamily: 'monospace',
+    const statsStartY = this.playerStatsCard.getContentStartY();
+
+    // HP Progress Bar
+    this.hpBar = new ProgressBar({
+      scene: this,
+      x: -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      y: statsStartY,
+      width: this.playerStatsCard.width - Theme.spacing.xl * 2,
+      height: Theme.dimensions.progressBar.height,
+      barColor: Theme.helpers.hexToColor(Theme.colors.danger),
+      showLabel: true,
+      labelStyle: 'both',
     });
+    this.playerStatsCard.add(this.hpBar);
 
-    // Energy
-    this.energyText = this.add.text(100, height - 340, '', {
-      fontSize: '24px',
-      color: '#4444ff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    });
-
-    // Turn indicator
-    this.turnText = this.add.text(width - 100, height - 400, '', {
-      fontSize: '20px',
-      color: '#ffffff',
-      fontFamily: 'monospace',
-    }).setOrigin(1, 0);
-
-    // End Turn button
-    this.endTurnButton = this.add.text(
-      width - 100,
-      height - 340,
-      'END TURN',
+    this.playerStatsCard.addText(
+      'HEALTH',
+      -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      statsStartY - Theme.spacing.lg,
       {
-        fontSize: '24px',
-        color: '#ffffff',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-        backgroundColor: '#4a4a4a',
-        padding: { x: 20, y: 10 },
+        ...Theme.typography.styles.label,
+        color: Theme.colors.textSecondary,
       }
     );
-    this.endTurnButton.setOrigin(1, 0);
-    this.endTurnButton.setInteractive({ useHandCursor: true });
 
-    this.endTurnButton.on('pointerover', () => {
-      this.endTurnButton.setStyle({ backgroundColor: '#6a6a6a' });
+    // Energy Progress Bar
+    this.energyBar = new ProgressBar({
+      scene: this,
+      x: -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      y: statsStartY + Theme.spacing.xxxl + Theme.spacing.md,
+      width: this.playerStatsCard.width - Theme.spacing.xl * 2,
+      height: Theme.dimensions.progressBar.height,
+      barColor: Theme.helpers.hexToColor(Theme.colors.info),
+      showLabel: true,
+      labelStyle: 'both',
     });
+    this.playerStatsCard.add(this.energyBar);
 
-    this.endTurnButton.on('pointerout', () => {
-      this.endTurnButton.setStyle({ backgroundColor: '#4a4a4a' });
-    });
-
-    this.endTurnButton.on('pointerdown', () => {
-      if (this.combat.isPlayerTurn && !this.combat.combatEnded) {
-        this.combat.endPlayerTurn();
-        this.updateHand(); // Create cards FIRST
-        this.updateUI();   // Then update UI
+    this.playerStatsCard.addText(
+      'ENERGY',
+      -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      statsStartY + Theme.spacing.xxxl + Theme.spacing.md - Theme.spacing.lg,
+      {
+        ...Theme.typography.styles.label,
+        color: Theme.colors.textSecondary,
       }
-    });
+    );
 
-    // Draw pile counter (clickable)
-    this.drawPileText = this.add.text(100, height - 300, '', {
-      fontSize: '18px',
-      color: '#4a9eff',
-      fontFamily: 'monospace',
-      backgroundColor: '#1a1a1a',
-      padding: { x: 10, y: 5 },
-    });
+    // Block Display
+    this.playerBlockText = this.playerStatsCard.addText(
+      '',
+      -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      statsStartY + (Theme.spacing.xxxl + Theme.spacing.md) * 2,
+      {
+        ...Theme.typography.styles.heading3,
+        color: Theme.colors.info,
+      }
+    );
+
+    // Deck management buttons
+    const deckButtonY = statsStartY + (Theme.spacing.xxxl + Theme.spacing.md) * 2 + Theme.spacing.xxxl;
+
+    this.drawPileText = this.playerStatsCard.addText(
+      '',
+      -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      deckButtonY,
+      Theme.typography.styles.small
+    );
     this.drawPileText.setInteractive({ useHandCursor: true });
     this.drawPileText.on('pointerover', () => {
-      this.drawPileText.setStyle({ backgroundColor: '#2a2a4a', color: '#ffd700' });
+      this.drawPileText.setColor(Theme.colors.gold);
     });
     this.drawPileText.on('pointerout', () => {
-      this.drawPileText.setStyle({ backgroundColor: '#1a1a1a', color: '#4a9eff' });
+      this.drawPileText.setColor(Theme.colors.text);
     });
     this.drawPileText.on('pointerdown', () => {
       this.openDeckView('DRAW');
     });
 
-    // Discard pile counter (clickable)
-    this.discardPileText = this.add.text(100, height - 270, '', {
-      fontSize: '18px',
-      color: '#4a9eff',
-      fontFamily: 'monospace',
-      backgroundColor: '#1a1a1a',
-      padding: { x: 10, y: 5 },
-    });
+    this.discardPileText = this.playerStatsCard.addText(
+      '',
+      -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      deckButtonY + Theme.spacing.lg,
+      Theme.typography.styles.small
+    );
     this.discardPileText.setInteractive({ useHandCursor: true });
     this.discardPileText.on('pointerover', () => {
-      this.discardPileText.setStyle({ backgroundColor: '#2a2a4a', color: '#ffd700' });
+      this.discardPileText.setColor(Theme.colors.gold);
     });
     this.discardPileText.on('pointerout', () => {
-      this.discardPileText.setStyle({ backgroundColor: '#1a1a1a', color: '#4a9eff' });
+      this.discardPileText.setColor(Theme.colors.text);
     });
     this.discardPileText.on('pointerdown', () => {
       this.openDeckView('DISCARD');
     });
 
-    // View Deck button
-    const viewDeckButton = this.add.text(100, height - 240, 'View Deck', {
-      fontSize: '18px',
-      color: '#00ff00',
-      fontFamily: 'monospace',
-      backgroundColor: '#1a1a1a',
-      padding: { x: 10, y: 5 },
-    });
-    viewDeckButton.setInteractive({ useHandCursor: true });
-    viewDeckButton.on('pointerover', () => {
-      viewDeckButton.setStyle({ backgroundColor: '#2a2a4a', color: '#ffd700' });
-    });
-    viewDeckButton.on('pointerout', () => {
-      viewDeckButton.setStyle({ backgroundColor: '#1a1a1a', color: '#00ff00' });
-    });
-    viewDeckButton.on('pointerdown', () => {
-      this.openDeckView('DECK');
+    new Button({
+      scene: this,
+      x: this.playerStatsCard.x,
+      y: this.playerStatsCard.y + this.playerStatsCard.height / 2 - Theme.spacing.xxxl,
+      text: 'VIEW DECK',
+      width: this.playerStatsCard.width - Theme.spacing.xl * 2,
+      height: Theme.dimensions.button.height - Theme.spacing.md,
+      style: 'secondary',
+      onClick: () => this.openDeckView('DECK'),
     });
 
-    // Player area background
+    // Turn/Actions card (top right)
+    const actionsCard = new UICard({
+      scene: this,
+      x: width - 200,
+      y: 150,
+      width: 300,
+      height: 200,
+      title: 'TURN INFO',
+      backgroundColor: Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+      borderColor: Theme.helpers.hexToColor(Theme.colors.gold),
+      alpha: 0.92,
+    });
+
+    const turnStartY = actionsCard.getContentStartY();
+
+    this.turnText = actionsCard.addText(
+      '',
+      -actionsCard.width / 2 + Theme.spacing.lg,
+      turnStartY,
+      Theme.typography.styles.heading2
+    );
+
+    // End Turn Button
+    this.endTurnButton = new Button({
+      scene: this,
+      x: actionsCard.x,
+      y: actionsCard.y + actionsCard.height / 2 - Theme.spacing.xxxl,
+      text: 'END TURN',
+      width: actionsCard.width - Theme.spacing.xl * 2,
+      style: 'primary',
+      onClick: () => {
+        if (this.combat.isPlayerTurn && !this.combat.combatEnded) {
+          this.combat.endPlayerTurn();
+          this.updateHand();
+          this.updateUI();
+        }
+      },
+    });
+
+    // Player area background (hand)
     this.add.rectangle(
       width / 2,
       height - 150,
       width - 100,
       250,
-      0x2a2a4a,
-      0.3
+      Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+      0.4
     );
 
     // Instructions
-    this.add.text(width / 2, height - 50, 'Click a card, then click an enemy to attack', {
-      fontSize: '16px',
-      color: '#888888',
-      fontFamily: 'monospace',
-      align: 'center',
-    }).setOrigin(0.5);
+    this.add
+      .text(width / 2, height - Theme.spacing.xxxl, 'Click cards to play • Click enemies to target', {
+        ...Theme.typography.styles.small,
+        color: Theme.colors.textMuted,
+        align: 'center',
+      })
+      .setOrigin(0.5);
   }
 
   /**
@@ -434,23 +482,49 @@ export class CombatScene extends Phaser.Scene {
   private updateUI(): void {
     const player = this.combat.player;
 
-    // Player stats
-    this.playerHpText.setText(`HP: ${player.currentHp}/${player.maxHp}`);
-    this.playerBlockText.setText(`Block: ${player.block}`);
-    this.energyText.setText(`Energy: ${player.energy}/${player.maxEnergy}`);
+    // Update HP bar with animation
+    this.hpBar.setValues(player.currentHp, player.maxHp, true);
+
+    // Update HP bar color based on percentage
+    const hpPercent = this.hpBar.getPercentage();
+    if (hpPercent < 0.3) {
+      this.hpBar.setBarColor(Theme.helpers.hexToColor(Theme.colors.danger));
+    } else if (hpPercent < 0.6) {
+      this.hpBar.setBarColor(Theme.helpers.hexToColor(Theme.colors.warning));
+    } else {
+      this.hpBar.setBarColor(Theme.helpers.hexToColor(Theme.colors.success));
+    }
+
+    // Update Energy bar with animation
+    this.energyBar.setValues(player.energy, player.maxEnergy, true);
+
+    // Update Block display
+    if (player.block > 0) {
+      this.playerBlockText.setText(`🛡️ Block: ${player.block}`);
+      this.playerBlockText.setVisible(true);
+    } else {
+      this.playerBlockText.setVisible(false);
+    }
 
     // Turn info
     this.turnText.setText(`Turn ${this.combat.turn}`);
 
     // Pile counts
-    this.drawPileText.setText(`Draw: ${this.combat.drawPile.length}`);
-    this.discardPileText.setText(`Discard: ${this.combat.discardPile.length}`);
+    this.drawPileText.setText(`📚 Draw: ${this.combat.drawPile.length}`);
+    this.discardPileText.setText(`🗑️ Discard: ${this.combat.discardPile.length}`);
 
     // Update enemy sprites
     this.enemySprites.forEach((sprite) => sprite.update());
 
     // Update card playability
     this.updateCardPlayability();
+
+    // Update end turn button state
+    if (!this.combat.isPlayerTurn || this.combat.combatEnded) {
+      this.endTurnButton.disable();
+    } else {
+      this.endTurnButton.enable();
+    }
   }
 
   /**
