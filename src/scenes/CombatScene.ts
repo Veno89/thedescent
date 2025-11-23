@@ -342,6 +342,7 @@ export class CombatScene extends Phaser.Scene {
         }
       },
     });
+    this.endTurnButton.setDepth(Theme.layers.panels + 5); // Above the card
 
     // Bottom-left action bar (Draw, Discard, Map, Options buttons)
     this.actionBarCard = new UICard({
@@ -359,8 +360,9 @@ export class CombatScene extends Phaser.Scene {
     const buttonHeight = 60;
     const buttonSpacing = 110;
     const buttonStartX = -this.actionBarCard.width / 2 + Theme.spacing.lg + buttonWidth / 2;
+    const buttonDepth = Theme.layers.panels + 5; // Above the action bar card
 
-    new Button({
+    const drawButton = new Button({
       scene: this,
       x: this.actionBarCard.x + buttonStartX,
       y: this.actionBarCard.y,
@@ -370,8 +372,9 @@ export class CombatScene extends Phaser.Scene {
       style: 'secondary',
       onClick: () => this.openDeckView('DRAW'),
     });
+    drawButton.setDepth(buttonDepth);
 
-    new Button({
+    const discardButton = new Button({
       scene: this,
       x: this.actionBarCard.x + buttonStartX + buttonSpacing,
       y: this.actionBarCard.y,
@@ -381,8 +384,9 @@ export class CombatScene extends Phaser.Scene {
       style: 'secondary',
       onClick: () => this.openDeckView('DISCARD'),
     });
+    discardButton.setDepth(buttonDepth);
 
-    new Button({
+    const mapButton = new Button({
       scene: this,
       x: this.actionBarCard.x + buttonStartX + buttonSpacing * 2,
       y: this.actionBarCard.y,
@@ -392,8 +396,9 @@ export class CombatScene extends Phaser.Scene {
       style: 'secondary',
       onClick: () => this.openMapOverlay(),
     });
+    mapButton.setDepth(buttonDepth);
 
-    new Button({
+    const optionsButton = new Button({
       scene: this,
       x: this.actionBarCard.x + buttonStartX + buttonSpacing * 3,
       y: this.actionBarCard.y,
@@ -403,9 +408,10 @@ export class CombatScene extends Phaser.Scene {
       style: 'secondary',
       onClick: () => this.openOptionsOverlay(),
     });
+    optionsButton.setDepth(buttonDepth);
 
     // Player area background (hand)
-    this.add.rectangle(
+    const handBackground = this.add.rectangle(
       width / 2,
       height - 150,
       width - 100,
@@ -413,6 +419,7 @@ export class CombatScene extends Phaser.Scene {
       Theme.helpers.hexToColor(Theme.colors.backgroundLight),
       0.4
     );
+    handBackground.setDepth(Theme.layers.background + 5); // Behind cards but above scene background
 
     // Instructions - set higher depth to appear above cards
     this.add
@@ -422,7 +429,7 @@ export class CombatScene extends Phaser.Scene {
         align: 'center',
       })
       .setOrigin(0.5)
-      .setDepth(Theme.layers.ui + 10);
+      .setDepth(Theme.layers.tooltips); // Above all UI elements including cards
   }
 
   /**
