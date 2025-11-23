@@ -12,6 +12,7 @@ import { CardSelectionScene } from './scenes/CardSelectionScene';
 import { VictoryScene } from './scenes/VictoryScene';
 import { DefeatScene } from './scenes/DefeatScene';
 import { DeckViewScene } from './scenes/DeckViewScene';
+import { OptionsScene } from './scenes/OptionsScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -23,7 +24,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, MainMenuScene, CharacterSelectionScene, MapScene, CombatScene, RewardScene, RestScene, EventScene, MerchantScene, CardSelectionScene, VictoryScene, DefeatScene, DeckViewScene],
+  scene: [BootScene, MainMenuScene, CharacterSelectionScene, MapScene, CombatScene, RewardScene, RestScene, EventScene, MerchantScene, CardSelectionScene, VictoryScene, DefeatScene, DeckViewScene, OptionsScene],
   physics: {
     default: 'arcade',
     arcade: {

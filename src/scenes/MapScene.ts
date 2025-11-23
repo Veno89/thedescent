@@ -8,17 +8,54 @@ import { GameStateManager } from '@/systems/GameStateManager';
 export class MapScene extends Phaser.Scene {
   private gameState!: GameStateManager;
   private roomNodes: Map<number, Phaser.GameObjects.Container> = new Map();
+  private viewOnly: boolean = false;
+  private returnScene: string = 'MapScene';
 
   constructor() {
     super({ key: 'MapScene' });
   }
 
-  init(data: { gameState: GameStateManager }) {
+  init(data: { gameState: GameStateManager; viewOnly?: boolean; returnScene?: string }) {
     this.gameState = data.gameState;
+    this.viewOnly = data.viewOnly || false;
+    this.returnScene = data.returnScene || 'MapScene';
   }
 
   create(): void {
     const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+
+    // If in view-only mode, add a semi-transparent overlay and close button
+    if (this.viewOnly) {
+      const overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.5);
+      overlay.setOrigin(0, 0);
+      overlay.setDepth(0);
+
+      // Close button (X in top-right corner)
+      const closeButton = this.add.text(width - 60, 30, '✖️', {
+        fontSize: '48px',
+        color: '#ffffff',
+        fontFamily: 'monospace',
+      });
+      closeButton.setInteractive({ useHandCursor: true });
+      closeButton.setDepth(1000);
+      closeButton.on('pointerover', () => {
+        closeButton.setColor('#ff0000');
+        closeButton.setScale(1.1);
+      });
+      closeButton.on('pointerout', () => {
+        closeButton.setColor('#ffffff');
+        closeButton.setScale(1);
+      });
+      closeButton.on('pointerdown', () => {
+        this.closeOverlay();
+      });
+
+      // ESC key to close
+      this.input.keyboard?.on('keydown-ESC', () => {
+        this.closeOverlay();
+      });
+    }
 
     // Title
     this.add.text(width / 2, 50, `ACT ${this.gameState.currentAct} - THE DESCENT`, {
@@ -45,6 +82,14 @@ export class MapScene extends Phaser.Scene {
 
     // Draw the map
     this.renderMap();
+  }
+
+  /**
+   * Close the overlay and return to the previous scene
+   */
+  private closeOverlay(): void {
+    this.scene.stop();
+    this.scene.resume(this.returnScene);
   }
 
   /**
@@ -279,6 +324,12 @@ export class MapScene extends Phaser.Scene {
    * Handle room selection
    */
   private onRoomSelected(roomIndex: number): void {
+    // Prevent room selection in view-only mode
+    if (this.viewOnly) {
+      console.log('Cannot select rooms in view-only mode');
+      return;
+    }
+
     const room = this.gameState.map[roomIndex];
     this.gameState.moveToRoom(roomIndex);
 

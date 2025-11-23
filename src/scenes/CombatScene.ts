@@ -37,8 +37,7 @@ export class CombatScene extends Phaser.Scene {
   private playerBlockText!: Phaser.GameObjects.Text;
   private turnText!: Phaser.GameObjects.Text;
   private endTurnButton!: Button;
-  private drawPileText!: Phaser.GameObjects.Text;
-  private discardPileText!: Phaser.GameObjects.Text;
+  private actionBarCard!: UICard;
 
   constructor() {
     super({ key: 'CombatScene' });
@@ -217,11 +216,21 @@ export class CombatScene extends Phaser.Scene {
 
     const statsStartY = this.playerStatsCard.getContentStartY();
 
-    // HP Progress Bar
+    // HEALTH label and bar
+    this.playerStatsCard.addText(
+      '❤️ HEALTH',
+      -this.playerStatsCard.width / 2 + Theme.spacing.lg,
+      statsStartY,
+      {
+        ...Theme.typography.styles.label,
+        color: Theme.colors.textSecondary,
+      }
+    );
+
     this.hpBar = new ProgressBar({
       scene: this,
       x: -this.playerStatsCard.width / 2 + Theme.spacing.lg,
-      y: statsStartY,
+      y: statsStartY + Theme.spacing.lg + Theme.spacing.sm,
       width: this.playerStatsCard.width - Theme.spacing.xl * 2,
       height: Theme.dimensions.progressBar.height,
       barColor: Theme.helpers.hexToColor(Theme.colors.danger),
@@ -230,21 +239,23 @@ export class CombatScene extends Phaser.Scene {
     });
     this.playerStatsCard.add(this.hpBar);
 
+    // ENERGY label and bar (with proper spacing below HP)
+    const energyLabelY = statsStartY + Theme.spacing.lg + Theme.spacing.sm + Theme.dimensions.progressBar.height + Theme.spacing.xl;
+
     this.playerStatsCard.addText(
-      'HEALTH',
+      '⚡ ENERGY',
       -this.playerStatsCard.width / 2 + Theme.spacing.lg,
-      statsStartY - Theme.spacing.lg,
+      energyLabelY,
       {
         ...Theme.typography.styles.label,
         color: Theme.colors.textSecondary,
       }
     );
 
-    // Energy Progress Bar
     this.energyBar = new ProgressBar({
       scene: this,
       x: -this.playerStatsCard.width / 2 + Theme.spacing.lg,
-      y: statsStartY + Theme.spacing.xxxl + Theme.spacing.md,
+      y: energyLabelY + Theme.spacing.lg + Theme.spacing.sm,
       width: this.playerStatsCard.width - Theme.spacing.xl * 2,
       height: Theme.dimensions.progressBar.height,
       barColor: Theme.helpers.hexToColor(Theme.colors.info),
@@ -253,74 +264,41 @@ export class CombatScene extends Phaser.Scene {
     });
     this.playerStatsCard.add(this.energyBar);
 
-    this.playerStatsCard.addText(
-      'ENERGY',
-      -this.playerStatsCard.width / 2 + Theme.spacing.lg,
-      statsStartY + Theme.spacing.xxxl + Theme.spacing.md - Theme.spacing.lg,
-      {
-        ...Theme.typography.styles.label,
-        color: Theme.colors.textSecondary,
-      }
-    );
+    // Block Display (with proper spacing below Energy)
+    const blockY = energyLabelY + Theme.spacing.lg + Theme.spacing.sm + Theme.dimensions.progressBar.height + Theme.spacing.xl;
 
-    // Block Display
     this.playerBlockText = this.playerStatsCard.addText(
       '',
       -this.playerStatsCard.width / 2 + Theme.spacing.lg,
-      statsStartY + (Theme.spacing.xxxl + Theme.spacing.md) * 2,
+      blockY,
       {
         ...Theme.typography.styles.heading3,
         color: Theme.colors.info,
       }
     );
 
-    // Deck management buttons
-    const deckButtonY = statsStartY + (Theme.spacing.xxxl + Theme.spacing.md) * 2 + Theme.spacing.xxxl;
+    // Pile count displays (informational only, no buttons)
+    const pileInfoY = blockY + Theme.spacing.xxxl + Theme.spacing.md;
 
-    this.drawPileText = this.playerStatsCard.addText(
-      '',
+    this.playerStatsCard.addText(
+      `📚 Draw: ${this.combat.drawPile.length}`,
       -this.playerStatsCard.width / 2 + Theme.spacing.lg,
-      deckButtonY,
-      Theme.typography.styles.small
-    );
-    this.drawPileText.setInteractive({ useHandCursor: true });
-    this.drawPileText.on('pointerover', () => {
-      this.drawPileText.setColor(Theme.colors.gold);
-    });
-    this.drawPileText.on('pointerout', () => {
-      this.drawPileText.setColor(Theme.colors.text);
-    });
-    this.drawPileText.on('pointerdown', () => {
-      this.openDeckView('DRAW');
-    });
+      pileInfoY,
+      {
+        ...Theme.typography.styles.small,
+        color: Theme.colors.textSecondary,
+      }
+    ).setName('drawPileInfo');
 
-    this.discardPileText = this.playerStatsCard.addText(
-      '',
+    this.playerStatsCard.addText(
+      `🗑️ Discard: ${this.combat.discardPile.length}`,
       -this.playerStatsCard.width / 2 + Theme.spacing.lg,
-      deckButtonY + Theme.spacing.lg,
-      Theme.typography.styles.small
-    );
-    this.discardPileText.setInteractive({ useHandCursor: true });
-    this.discardPileText.on('pointerover', () => {
-      this.discardPileText.setColor(Theme.colors.gold);
-    });
-    this.discardPileText.on('pointerout', () => {
-      this.discardPileText.setColor(Theme.colors.text);
-    });
-    this.discardPileText.on('pointerdown', () => {
-      this.openDeckView('DISCARD');
-    });
-
-    new Button({
-      scene: this,
-      x: this.playerStatsCard.x,
-      y: this.playerStatsCard.y + this.playerStatsCard.height / 2 - Theme.spacing.xxxl,
-      text: 'VIEW DECK',
-      width: this.playerStatsCard.width - Theme.spacing.xl * 2,
-      height: Theme.dimensions.button.height - Theme.spacing.md,
-      style: 'secondary',
-      onClick: () => this.openDeckView('DECK'),
-    });
+      pileInfoY + Theme.spacing.lg + Theme.spacing.sm,
+      {
+        ...Theme.typography.styles.small,
+        color: Theme.colors.textSecondary,
+      }
+    ).setName('discardPileInfo');
 
     // Turn/Actions card (right side, more visible and compact)
     const actionsCard = new UICard({
@@ -365,6 +343,67 @@ export class CombatScene extends Phaser.Scene {
       },
     });
 
+    // Bottom-left action bar (Draw, Discard, Map, Options buttons)
+    this.actionBarCard = new UICard({
+      scene: this,
+      x: 250,
+      y: height - 80,
+      width: 450,
+      height: 100,
+      backgroundColor: Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+      borderColor: Theme.helpers.hexToColor(Theme.colors.border),
+      alpha: 0.92,
+    });
+
+    const buttonWidth = 100;
+    const buttonHeight = 60;
+    const buttonSpacing = 110;
+    const buttonStartX = -this.actionBarCard.width / 2 + Theme.spacing.lg + buttonWidth / 2;
+
+    new Button({
+      scene: this,
+      x: this.actionBarCard.x + buttonStartX,
+      y: this.actionBarCard.y,
+      text: '📚',
+      width: buttonWidth,
+      height: buttonHeight,
+      style: 'secondary',
+      onClick: () => this.openDeckView('DRAW'),
+    });
+
+    new Button({
+      scene: this,
+      x: this.actionBarCard.x + buttonStartX + buttonSpacing,
+      y: this.actionBarCard.y,
+      text: '🗑️',
+      width: buttonWidth,
+      height: buttonHeight,
+      style: 'secondary',
+      onClick: () => this.openDeckView('DISCARD'),
+    });
+
+    new Button({
+      scene: this,
+      x: this.actionBarCard.x + buttonStartX + buttonSpacing * 2,
+      y: this.actionBarCard.y,
+      text: '🗺️',
+      width: buttonWidth,
+      height: buttonHeight,
+      style: 'secondary',
+      onClick: () => this.openMapOverlay(),
+    });
+
+    new Button({
+      scene: this,
+      x: this.actionBarCard.x + buttonStartX + buttonSpacing * 3,
+      y: this.actionBarCard.y,
+      text: '⚙️',
+      width: buttonWidth,
+      height: buttonHeight,
+      style: 'secondary',
+      onClick: () => this.openOptionsOverlay(),
+    });
+
     // Player area background (hand)
     this.add.rectangle(
       width / 2,
@@ -375,14 +414,15 @@ export class CombatScene extends Phaser.Scene {
       0.4
     );
 
-    // Instructions
+    // Instructions - set higher depth to appear above cards
     this.add
       .text(width / 2, height - Theme.spacing.xxxl, 'Drag cards onto enemies to attack • Click self-target cards to play', {
         ...Theme.typography.styles.small,
         color: Theme.colors.textMuted,
         align: 'center',
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(Theme.layers.ui + 10);
   }
 
   /**
@@ -518,9 +558,16 @@ export class CombatScene extends Phaser.Scene {
     // Turn info
     this.turnText.setText(`Turn ${this.combat.turn}`);
 
-    // Pile counts
-    this.drawPileText.setText(`📚 Draw: ${this.combat.drawPile.length}`);
-    this.discardPileText.setText(`🗑️ Discard: ${this.combat.discardPile.length}`);
+    // Update pile count displays in player stats card
+    const drawPileInfo = this.playerStatsCard.getByName('drawPileInfo') as Phaser.GameObjects.Text;
+    const discardPileInfo = this.playerStatsCard.getByName('discardPileInfo') as Phaser.GameObjects.Text;
+
+    if (drawPileInfo) {
+      drawPileInfo.setText(`📚 Draw: ${this.combat.drawPile.length}`);
+    }
+    if (discardPileInfo) {
+      discardPileInfo.setText(`🗑️ Discard: ${this.combat.discardPile.length}`);
+    }
 
     // Update enemy sprites
     this.enemySprites.forEach((sprite) => sprite.update());
@@ -868,6 +915,36 @@ export class CombatScene extends Phaser.Scene {
       exhaustPile: this.combat.exhaustPile,
       returnScene: 'CombatScene',
       viewMode: mode,
+    });
+  }
+
+  /**
+   * Open map overlay (view only, no room selection during combat)
+   */
+  private openMapOverlay(): void {
+    if (this.combat.combatEnded) return;
+    if (!this.gameState) {
+      console.log('No game state available - cannot show map');
+      return;
+    }
+
+    this.scene.pause();
+    this.scene.launch('MapScene', {
+      gameState: this.gameState,
+      viewOnly: true,
+      returnScene: 'CombatScene',
+    });
+  }
+
+  /**
+   * Open options overlay
+   */
+  private openOptionsOverlay(): void {
+    if (this.combat.combatEnded) return;
+
+    this.scene.pause();
+    this.scene.launch('OptionsScene', {
+      returnScene: 'CombatScene',
     });
   }
 
