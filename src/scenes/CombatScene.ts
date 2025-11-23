@@ -322,13 +322,13 @@ export class CombatScene extends Phaser.Scene {
       onClick: () => this.openDeckView('DECK'),
     });
 
-    // Turn/Actions card (right side, more visible)
+    // Turn/Actions card (right side, more visible and compact)
     const actionsCard = new UICard({
       scene: this,
       x: width - 180,
       y: height / 2 - 100,
       width: 280,
-      height: 250,
+      height: 180,
       title: 'TURN INFO',
       backgroundColor: Theme.helpers.hexToColor(Theme.colors.backgroundLight),
       borderColor: Theme.helpers.hexToColor(Theme.colors.gold),
@@ -340,21 +340,21 @@ export class CombatScene extends Phaser.Scene {
     this.turnText = actionsCard.addText(
       '',
       0,
-      turnStartY + Theme.spacing.md,
+      turnStartY + Theme.spacing.sm,
       {
         ...Theme.typography.styles.heading2,
         align: 'center',
       }
     ).setOrigin(0.5, 0);
 
-    // End Turn Button - large and prominent
+    // End Turn Button - inside the card, below turn number
     this.endTurnButton = new Button({
       scene: this,
       x: actionsCard.x,
-      y: actionsCard.y + actionsCard.height / 2 - Theme.spacing.xxxl - Theme.spacing.md,
+      y: actionsCard.y + turnStartY + Theme.spacing.xxxl + Theme.spacing.xl,
       text: '⏭️ END TURN',
       width: actionsCard.width - Theme.spacing.xl * 2,
-      height: Theme.dimensions.button.height + Theme.spacing.md,
+      height: Theme.dimensions.button.height,
       style: 'primary',
       onClick: () => {
         if (this.combat.isPlayerTurn && !this.combat.combatEnded) {
