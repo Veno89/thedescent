@@ -622,22 +622,23 @@ export class CombatScene extends Phaser.Scene {
         cardSprite.setData('isDragging', false);
 
         // Check if dropped on an enemy
-        let targetEnemy: EnemySprite | null = null;
+        let targetEnemySprite: EnemySprite | undefined;
         this.enemySprites.forEach((enemySprite) => {
           const enemy = enemySprite.getEnemy();
           if (enemy.isDead()) return;
 
           const bounds = enemySprite.getBounds();
           if (bounds.contains(cardSprite.x, cardSprite.y)) {
-            targetEnemy = enemySprite;
+            targetEnemySprite = enemySprite;
           }
           enemySprite.setSelected(false);
         });
 
-        if (targetEnemy && card.targetType === 'SINGLE_ENEMY') {
-          // Play card on target
+        if (targetEnemySprite && card.targetType === 'SINGLE_ENEMY') {
+          // Play card on target - pass the Enemy entity, not the sprite
+          const targetEnemy = targetEnemySprite.getEnemy();
           this.playCard(cardSprite, targetEnemy);
-        } else if (!targetEnemy && card.targetType !== 'SINGLE_ENEMY') {
+        } else if (!targetEnemySprite && card.targetType !== 'SINGLE_ENEMY') {
           // Self-target or AOE card - play it
           this.playCard(cardSprite, undefined);
         } else {
