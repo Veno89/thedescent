@@ -7,6 +7,8 @@ import { DataLoader } from '@/utils/DataLoader';
 import { CardSprite } from '@/ui/CardSprite';
 import { RelicSprite } from '@/ui/RelicSprite';
 import { PotionSprite } from '@/ui/PotionSprite';
+import { Button } from '@/ui/Button';
+import { Theme } from '@/ui/theme';
 
 /**
  * RewardScene handles post-combat rewards
@@ -39,13 +41,22 @@ export class RewardScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
+    // Background
+    this.add.rectangle(
+      width / 2,
+      height / 2,
+      width,
+      height,
+      Theme.helpers.hexToColor(Theme.colors.background)
+    ).setDepth(Theme.layers.background);
+
     // Title
-    this.add.text(width / 2, 80, this.isTreasure ? 'TREASURE!' : 'VICTORY!', {
-      fontSize: '48px',
-      color: '#ffd700',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      Theme.layout.positions.topMargin,
+      this.isTreasure ? 'TREASURE!' : 'VICTORY!',
+      Theme.typography.styles.heading1
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
     // Generate rewards
     if (!this.isTreasure && this.goldReward === 0) {
@@ -60,141 +71,183 @@ export class RewardScene extends Phaser.Scene {
 
     this.cardRewards = this.generateCardRewards();
 
-    let currentY = 180;
+    // Calculate content start position
+    let currentY = Theme.layout.positions.topMargin + Theme.spacing.xxxl + Theme.spacing.lg;
 
     // Display gold reward
     if (this.goldReward > 0) {
-      const goldText = this.add.text(width / 2, currentY, `+${this.goldReward} Gold`, {
-        fontSize: '32px',
-        color: '#ffd700',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-      });
+      const goldText = this.add.text(
+        Theme.layout.getCenterX(width),
+        currentY,
+        `+${this.goldReward} Gold`,
+        {
+          ...Theme.typography.styles.heading2,
+          color: Theme.colors.gold,
+        }
+      );
       goldText.setOrigin(0.5);
+      goldText.setDepth(Theme.layers.ui);
 
       // Animate gold collection
       this.tweens.add({
         targets: goldText,
-        y: currentY - 20,
+        y: currentY - Theme.spacing.lg,
         scale: 1.2,
-        duration: 200,
+        duration: Theme.animation.fast,
         yoyo: true,
         ease: 'Power2',
       });
 
       // Add gold to player
       this.gameState.player.addGold(this.goldReward);
-      currentY += 80;
+      currentY += Theme.spacing.xxxl + Theme.spacing.lg;
     }
 
     // Display potion drop
     if (this.potionDrop) {
-      this.add.text(width / 2, currentY, 'Potion Found!', {
-        fontSize: '24px',
-        color: '#4a9eff',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-      }).setOrigin(0.5);
+      this.add.text(
+        Theme.layout.getCenterX(width),
+        currentY,
+        'Potion Found!',
+        {
+          ...Theme.typography.styles.heading3,
+          color: Theme.colors.info,
+        }
+      ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
-      currentY += 50;
+      currentY += Theme.spacing.xl + Theme.spacing.md;
 
       // Display potion
-      const potionSprite = new PotionSprite(this, width / 2, currentY, this.potionDrop, 0);
-      potionSprite.setScale(1.5); // Make it bigger for display
+      const potionSprite = new PotionSprite(
+        this,
+        Theme.layout.getCenterX(width),
+        currentY,
+        this.potionDrop,
+        0
+      );
+      potionSprite.setScale(1.5);
+      potionSprite.setDepth(Theme.layers.ui);
 
-      currentY += 60;
+      currentY += Theme.spacing.xxxl + Theme.spacing.md;
 
       // Potion name
-      this.add.text(width / 2, currentY, this.potionDrop.name, {
-        fontSize: '20px',
-        color: '#ffffff',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-      }).setOrigin(0.5);
+      this.add.text(
+        Theme.layout.getCenterX(width),
+        currentY,
+        this.potionDrop.name,
+        Theme.typography.styles.body
+      ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
-      currentY += 30;
+      currentY += Theme.spacing.xl;
 
       // Potion description
-      this.add.text(width / 2, currentY, this.potionDrop.description, {
-        fontSize: '14px',
-        color: '#cccccc',
-        fontFamily: 'monospace',
-        align: 'center',
-        wordWrap: { width: 500 },
-      }).setOrigin(0.5);
+      this.add.text(
+        Theme.layout.getCenterX(width),
+        currentY,
+        this.potionDrop.description,
+        {
+          ...Theme.typography.styles.small,
+          color: Theme.colors.textSecondary,
+          align: 'center',
+          wordWrap: { width: 500 },
+        }
+      ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
       // Add potion to player if there's space
       const success = this.gameState.player.addPotion(this.potionDrop);
       if (!success) {
-        currentY += 25;
-        this.add.text(width / 2, currentY, '(Potion inventory full - discarded)', {
-          fontSize: '12px',
-          color: '#ff6666',
-          fontStyle: 'italic',
-          fontFamily: 'monospace',
-        }).setOrigin(0.5);
+        currentY += Theme.spacing.lg;
+        this.add.text(
+          Theme.layout.getCenterX(width),
+          currentY,
+          '(Potion inventory full - discarded)',
+          {
+            ...Theme.typography.styles.label,
+            color: Theme.colors.danger,
+            fontStyle: 'italic',
+          }
+        ).setOrigin(0.5).setDepth(Theme.layers.ui);
       }
 
-      currentY += 70;
+      currentY += Theme.spacing.xxxl + Theme.spacing.lg;
     }
 
     // Display relic reward (treasure rooms)
     if (this.relicReward) {
-      this.add.text(width / 2, currentY, 'Relic Found!', {
-        fontSize: '28px',
-        color: '#ffd700',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-      }).setOrigin(0.5);
+      this.add.text(
+        Theme.layout.getCenterX(width),
+        currentY,
+        'Relic Found!',
+        {
+          ...Theme.typography.styles.heading2,
+          color: Theme.colors.gold,
+        }
+      ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
-      currentY += 50;
+      currentY += Theme.spacing.xl + Theme.spacing.md;
 
       // Display relic
-      const relicSprite = new RelicSprite(this, width / 2, currentY, this.relicReward);
-      relicSprite.setScale(2); // Make it bigger for display
+      const relicSprite = new RelicSprite(
+        this,
+        Theme.layout.getCenterX(width),
+        currentY,
+        this.relicReward
+      );
+      relicSprite.setScale(2);
+      relicSprite.setDepth(Theme.layers.ui);
 
-      currentY += 100;
+      currentY += Theme.spacing.xxxl * 2;
 
       // Relic name and description
-      this.add.text(width / 2, currentY, this.relicReward.name, {
-        fontSize: '24px',
-        color: '#ffffff',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
-      }).setOrigin(0.5);
+      this.add.text(
+        Theme.layout.getCenterX(width),
+        currentY,
+        this.relicReward.name,
+        {
+          ...Theme.typography.styles.heading3,
+          color: Theme.colors.text,
+        }
+      ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
-      currentY += 35;
+      currentY += Theme.spacing.xl + Theme.spacing.md;
 
-      this.add.text(width / 2, currentY, this.relicReward.description, {
-        fontSize: '16px',
-        color: '#cccccc',
-        fontFamily: 'monospace',
-        align: 'center',
-        wordWrap: { width: 600 },
-      }).setOrigin(0.5);
+      this.add.text(
+        Theme.layout.getCenterX(width),
+        currentY,
+        this.relicReward.description,
+        {
+          ...Theme.typography.styles.small,
+          color: Theme.colors.textSecondary,
+          align: 'center',
+          wordWrap: { width: 600 },
+        }
+      ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
       // Add relic to player
       this.gameState.player.addRelic(this.relicReward);
 
-      currentY += 80;
+      currentY += Theme.spacing.xxxl + Theme.spacing.lg;
     }
 
     // Display card rewards
     if (!this.isTreasure) {
-      this.add.text(width / 2, 250, 'Choose a card to add to your deck:', {
-        fontSize: '24px',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-      }).setOrigin(0.5);
+      // Only show if not too far down the screen
+      const cardPromptY = Math.max(currentY, 250);
+      this.add.text(
+        Theme.layout.getCenterX(width),
+        cardPromptY,
+        'Choose a card to add to your deck:',
+        {
+          ...Theme.typography.styles.heading3,
+          color: Theme.colors.text,
+        }
+      ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
       this.displayCardRewards();
     }
 
-    // Skip button
-    this.createSkipButton(width, height);
-
-    // Continue button (appears after selecting or skipping)
-    this.createContinueButton(width, height);
+    // Skip and Continue buttons
+    this.createActionButtons(width, height);
   }
 
   /**
@@ -261,18 +314,20 @@ export class RewardScene extends Phaser.Scene {
    */
   private displayCardRewards(): void {
     const width = this.cameras.main.width;
-    const cardSpacing = 220;
-    const startX = width / 2 - ((this.cardRewards.length - 1) * cardSpacing) / 2;
+    const cardSpacing = Theme.spacing.xxxl * 3 + Theme.spacing.lg;
+    const startX = Theme.layout.getCenterX(width) - ((this.cardRewards.length - 1) * cardSpacing) / 2;
+    const cardY = 550; // Fixed position for cards to avoid overlap
 
     this.cardRewards.forEach((card, index) => {
       const cardSprite = new CardSprite(
         this,
         startX + index * cardSpacing,
-        550,
+        cardY,
         card
       );
 
       cardSprite.setInteractive({ useHandCursor: true });
+      cardSprite.setDepth(Theme.layers.cards);
 
       cardSprite.on('pointerdown', () => {
         this.onCardSelected(card, cardSprite);
@@ -291,89 +346,64 @@ export class RewardScene extends Phaser.Scene {
     // Visual feedback
     this.tweens.add({
       targets: sprite,
-      y: sprite.y - 50,
+      y: sprite.y - Theme.spacing.xxxl,
       scale: 1.2,
       alpha: 0,
-      duration: 500,
+      duration: Theme.animation.slow,
       ease: 'Power2',
     });
 
     // Show selected message
     const selectedText = this.add.text(
-      this.cameras.main.width / 2,
+      Theme.layout.getCenterX(this.cameras.main.width),
       800,
       `${card.name} added to deck!`,
       {
-        fontSize: '24px',
-        color: '#00ff00',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
+        ...Theme.typography.styles.heading3,
+        color: Theme.colors.successLight,
       }
     );
     selectedText.setOrigin(0.5);
+    selectedText.setDepth(Theme.layers.tooltips);
   }
 
   /**
-   * Create skip button
+   * Create action buttons (Skip and Continue)
    */
-  private createSkipButton(width: number, height: number): void {
-    const skipButton = this.add.text(
-      width / 2 - 150,
-      height - 100,
-      'Skip Reward',
-      {
-        fontSize: '24px',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-        backgroundColor: '#333333',
-        padding: { x: 20, y: 10 },
-      }
-    );
-    skipButton.setOrigin(0.5);
-    skipButton.setInteractive({ useHandCursor: true });
+  private createActionButtons(width: number, height: number): void {
+    const buttonY = height - Theme.layout.positions.bottomMargin;
+    const buttonSpacing = 180;
 
-    skipButton.on('pointerover', () => {
-      skipButton.setStyle({ color: '#ffaa00' });
-    });
+    // Skip button (only for card rewards)
+    if (!this.isTreasure) {
+      new Button({
+        scene: this,
+        x: Theme.layout.getCenterX(width) - buttonSpacing,
+        y: buttonY,
+        text: 'Skip Reward',
+        width: 200,
+        style: 'secondary',
+        onClick: () => {
+          console.log('Skipped card reward');
+        },
+      });
+    }
 
-    skipButton.on('pointerout', () => {
-      skipButton.setStyle({ color: '#ffffff' });
-    });
+    // Continue button
+    const continueX = this.isTreasure
+      ? Theme.layout.getCenterX(width)
+      : Theme.layout.getCenterX(width) + buttonSpacing;
 
-    skipButton.on('pointerdown', () => {
-      console.log('Skipped card reward');
-    });
-  }
-
-  /**
-   * Create continue button
-   */
-  private createContinueButton(width: number, height: number): void {
-    const continueButton = this.add.text(
-      width / 2 + 150,
-      height - 100,
-      'Continue',
-      {
-        fontSize: '24px',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-        backgroundColor: '#006400',
-        padding: { x: 20, y: 10 },
-      }
-    );
-    continueButton.setOrigin(0.5);
-    continueButton.setInteractive({ useHandCursor: true });
-
-    continueButton.on('pointerover', () => {
-      continueButton.setStyle({ backgroundColor: '#228b22' });
-    });
-
-    continueButton.on('pointerout', () => {
-      continueButton.setStyle({ backgroundColor: '#006400' });
-    });
-
-    continueButton.on('pointerdown', () => {
-      this.returnToMap();
+    new Button({
+      scene: this,
+      x: continueX,
+      y: buttonY,
+      text: 'Continue',
+      width: 200,
+      style: 'success',
+      onClick: () => {
+        this.returnToMap();
+      },
     });
   }
 

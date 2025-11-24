@@ -192,14 +192,19 @@ export class CombatScene extends Phaser.Scene {
   private createUI(width: number, height: number): void {
     // Combat title with act/floor indicator
     const combatType = this.isBoss ? 'BOSS' : this.isElite ? 'ELITE COMBAT' : 'COMBAT';
-    this.add.text(width / 2, Theme.spacing.xxxl, combatType, {
-      ...Theme.typography.styles.heading1,
-      color: this.isBoss
-        ? Theme.colors.boss
-        : this.isElite
-        ? Theme.colors.elite
-        : Theme.colors.text,
-    }).setOrigin(0.5);
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      Theme.layout.positions.topMargin,
+      combatType,
+      {
+        ...Theme.typography.styles.heading1,
+        color: this.isBoss
+          ? Theme.colors.boss
+          : this.isElite
+          ? Theme.colors.elite
+          : Theme.colors.text,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
     // Player stats card (left side)
     this.playerStatsCard = new UICard({

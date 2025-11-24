@@ -4,6 +4,8 @@ import { GameStateManager } from '@/systems/GameStateManager';
 import { DataLoader } from '@/utils/DataLoader';
 import { Relic } from '@/entities/Relic';
 import { Potion } from '@/entities/Potion';
+import { Button } from '@/ui/Button';
+import { Theme } from '@/ui/theme';
 
 interface ShopItem {
   type: 'CARD' | 'RELIC' | 'POTION' | 'REMOVE';
@@ -62,30 +64,44 @@ export class MerchantScene extends Phaser.Scene {
     const height = this.cameras.main.height;
 
     // Background
-    this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a2e, 1).setDepth(-1);
+    this.add.rectangle(
+      width / 2,
+      height / 2,
+      width,
+      height,
+      Theme.helpers.hexToColor(Theme.colors.backgroundLight),
+      1
+    ).setDepth(Theme.layers.background);
 
     // Title
-    this.add.text(width / 2, 60, 'THE MERCHANT', {
-      fontSize: '48px',
-      color: '#ffd700',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      Theme.layout.positions.topMargin,
+      'THE MERCHANT',
+      Theme.typography.styles.heading1
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
-    // Player stats
-    this.add.text(50, 50, `HP: ${this.gameState.player.currentHp}/${this.gameState.player.maxHp}`, {
-      fontSize: '20px',
-      color: '#ff6b6b',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    });
+    // Player stats (top-left corner)
+    this.add.text(
+      Theme.layout.margin.screen,
+      Theme.layout.margin.screen,
+      `HP: ${this.gameState.player.currentHp}/${this.gameState.player.maxHp}`,
+      {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.danger,
+      }
+    ).setDepth(Theme.layers.ui);
 
-    this.goldText = this.add.text(50, 80, `Gold: ${this.gameState.player.gold}`, {
-      fontSize: '20px',
-      color: '#ffd700',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    });
+    this.goldText = this.add.text(
+      Theme.layout.margin.screen,
+      Theme.layout.margin.screen + Theme.spacing.xl,
+      `Gold: ${this.gameState.player.gold}`,
+      {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.gold,
+      }
+    );
+    this.goldText.setDepth(Theme.layers.ui);
 
     // Generate shop inventory
     this.generateShopInventory();
@@ -154,71 +170,83 @@ export class MerchantScene extends Phaser.Scene {
    * Display all shop items
    */
   private displayShop(width: number): void {
-    const startY = 150;
+    const startY = Theme.layout.positions.topMargin + Theme.spacing.xxxl + Theme.spacing.lg;
     const cardSpacing = 180;
-    const otherSpacing = 100;
+    const otherSpacing = Theme.spacing.xxxl + Theme.spacing.xl;
 
     let currentY = startY;
 
     // Section: Cards
-    this.add.text(width / 2, currentY, 'CARDS FOR SALE', {
-      fontSize: '24px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
-    currentY += 50;
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      currentY,
+      'CARDS FOR SALE',
+      {
+        ...Theme.typography.styles.heading3,
+        color: Theme.colors.text,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
+    currentY += Theme.spacing.xl + Theme.spacing.md;
 
     const cardItems = this.shopItems.filter(item => item.type === 'CARD');
     this.displayCardGrid(cardItems, width, currentY);
-    currentY += Math.ceil(cardItems.length / 3) * cardSpacing + 30;
+    currentY += Math.ceil(cardItems.length / 3) * cardSpacing + Theme.spacing.xl;
 
     // Section: Relics
-    this.add.text(width / 2, currentY, 'RELICS', {
-      fontSize: '24px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
-    currentY += 50;
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      currentY,
+      'RELICS',
+      {
+        ...Theme.typography.styles.heading3,
+        color: Theme.colors.text,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
+    currentY += Theme.spacing.xl + Theme.spacing.md;
 
     const relicItems = this.shopItems.filter(item => item.type === 'RELIC');
     relicItems.forEach((item) => {
-      this.displayRelicItem(item, width / 2, currentY);
+      this.displayRelicItem(item, Theme.layout.getCenterX(width), currentY);
       currentY += otherSpacing;
     });
 
-    currentY += 20;
+    currentY += Theme.spacing.lg;
 
     // Section: Potions
-    this.add.text(width / 2, currentY, 'POTIONS', {
-      fontSize: '24px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
-    currentY += 50;
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      currentY,
+      'POTIONS',
+      {
+        ...Theme.typography.styles.heading3,
+        color: Theme.colors.text,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
+    currentY += Theme.spacing.xl + Theme.spacing.md;
 
     const potionItems = this.shopItems.filter(item => item.type === 'POTION');
     potionItems.forEach((item) => {
-      this.displayPotionItem(item, width / 2, currentY);
+      this.displayPotionItem(item, Theme.layout.getCenterX(width), currentY);
       currentY += otherSpacing;
     });
 
-    currentY += 20;
+    currentY += Theme.spacing.lg;
 
     // Section: Services
-    this.add.text(width / 2, currentY, 'SERVICES', {
-      fontSize: '24px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
-    currentY += 50;
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      currentY,
+      'SERVICES',
+      {
+        ...Theme.typography.styles.heading3,
+        color: Theme.colors.text,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
+    currentY += Theme.spacing.xl + Theme.spacing.md;
 
     const removeItem = this.shopItems.find(item => item.type === 'REMOVE');
     if (removeItem) {
-      this.displayRemovalService(removeItem, width / 2, currentY);
+      this.displayRemovalService(removeItem, Theme.layout.getCenterX(width), currentY);
     }
   }
 
@@ -682,27 +710,17 @@ export class MerchantScene extends Phaser.Scene {
    * Create leave button
    */
   private createLeaveButton(width: number, height: number): void {
-    const button = this.add.text(width / 2, height - 80, 'Leave Shop', {
-      fontSize: '28px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-      backgroundColor: '#333333',
-      padding: { x: 30, y: 15 },
-    });
-    button.setOrigin(0.5);
-    button.setInteractive({ useHandCursor: true });
-
-    button.on('pointerover', () => {
-      button.setStyle({ backgroundColor: '#555555', color: '#ffd700' });
-    });
-
-    button.on('pointerout', () => {
-      button.setStyle({ backgroundColor: '#333333', color: '#ffffff' });
-    });
-
-    button.on('pointerdown', () => {
-      this.scene.start('MapScene', { gameState: this.gameState });
+    new Button({
+      scene: this,
+      x: Theme.layout.getCenterX(width),
+      y: height - Theme.layout.positions.bottomMargin,
+      text: 'Leave Shop',
+      width: 250,
+      height: Theme.dimensions.button.height + 10,
+      style: 'secondary',
+      onClick: () => {
+        this.scene.start('MapScene', { gameState: this.gameState });
+      },
     });
   }
 

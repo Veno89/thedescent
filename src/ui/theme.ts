@@ -238,6 +238,41 @@ export const Theme: any = {
     },
   },
 
+  // Layout utilities
+  layout: {
+    // Safe margins from screen edges
+    margin: {
+      screen: 50,      // Margin from screen edges
+      section: 40,     // Margin between major sections
+      group: 24,       // Margin between grouped elements
+    },
+
+    // Standard positions (percentages of screen dimensions)
+    positions: {
+      topMargin: 60,      // Top of screen content area
+      bottomMargin: 80,   // Bottom of screen content area
+      centerOffset: 0,    // Center alignment offset
+    },
+
+    // Content area calculations
+    getContentWidth(screenWidth: number): number {
+      return screenWidth - (Theme.layout.margin.screen * 2);
+    },
+
+    getContentHeight(screenHeight: number): number {
+      return screenHeight - Theme.layout.positions.topMargin - Theme.layout.positions.bottomMargin;
+    },
+
+    // Centered position helpers
+    getCenterX(screenWidth: number): number {
+      return screenWidth / 2;
+    },
+
+    getCenterY(screenHeight: number): number {
+      return screenHeight / 2;
+    },
+  },
+
   // Helper functions
   helpers: {
     /**
@@ -296,6 +331,34 @@ export const Theme: any = {
       const padding = '═'.repeat(3);
       return `${padding} ${text} ${padding}`;
     },
+
+    /**
+     * Calculate vertical position with proper spacing
+     */
+    calculateY(baseY: number, index: number, itemHeight: number, spacing: number): number {
+      return baseY + index * (itemHeight + spacing);
+    },
+
+    /**
+     * Calculate grid position
+     */
+    calculateGridPosition(
+      index: number,
+      columns: number,
+      startX: number,
+      startY: number,
+      itemWidth: number,
+      itemHeight: number,
+      spacingX: number,
+      spacingY: number
+    ): { x: number; y: number } {
+      const col = index % columns;
+      const row = Math.floor(index / columns);
+      return {
+        x: startX + col * (itemWidth + spacingX),
+        y: startY + row * (itemHeight + spacingY),
+      };
+    },
   },
 };
 
@@ -307,3 +370,4 @@ export const Dimensions = Theme.dimensions;
 export const Animation = Theme.animation;
 export const Layers = Theme.layers;
 export const Effects = Theme.effects;
+export const Layout = Theme.layout;

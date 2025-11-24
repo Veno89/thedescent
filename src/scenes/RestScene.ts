@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import { GameStateManager } from '@/systems/GameStateManager';
 import { Card } from '@/types';
+import { Button } from '@/ui/Button';
+import { UICard } from '@/ui/UICard';
+import { Theme } from '@/ui/theme';
 
 /**
  * RestScene handles rest site choices (Heal or Upgrade)
@@ -41,15 +44,21 @@ export class RestScene extends Phaser.Scene {
     const height = this.cameras.main.height;
 
     // Background
-    this.add.rectangle(width / 2, height / 2, width, height, 0x1a1a1a);
+    this.add.rectangle(
+      width / 2,
+      height / 2,
+      width,
+      height,
+      Theme.helpers.hexToColor(Theme.colors.background)
+    ).setDepth(Theme.layers.background);
 
     // Title
-    this.add.text(width / 2, 100, 'REST SITE', {
-      fontSize: '48px',
-      color: '#ffd700',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      Theme.layout.positions.topMargin,
+      'REST SITE',
+      Theme.typography.styles.heading1
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
     // If returning from card selection with a card upgraded
     if (this.choiceMade && this.selectedCardIndex >= 0) {
@@ -57,17 +66,16 @@ export class RestScene extends Phaser.Scene {
       if (card) {
         // Show feedback
         const feedback = this.add.text(
-          width / 2,
-          300,
+          Theme.layout.getCenterX(width),
+          Theme.layout.getCenterY(height),
           `Upgraded ${card.name}!`,
           {
-            fontSize: '32px',
-            color: '#00ff00',
-            fontStyle: 'bold',
-            fontFamily: 'monospace',
+            ...Theme.typography.styles.heading2,
+            color: Theme.colors.successLight,
           }
         );
         feedback.setOrigin(0.5);
+        feedback.setDepth(Theme.layers.ui);
 
         this.showContinueButton();
         return;
@@ -75,28 +83,42 @@ export class RestScene extends Phaser.Scene {
     }
 
     // Show normal rest site UI if no choice made yet
+    const descY = Theme.layout.positions.topMargin + Theme.spacing.xxxl + Theme.spacing.lg;
+
     // Description
-    this.add.text(width / 2, 180, 'Choose one:', {
-      fontSize: '24px',
-      color: '#ffffff',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      descY,
+      'Choose one:',
+      {
+        ...Theme.typography.styles.heading3,
+        color: Theme.colors.text,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
 
     // Player stats
     const healAmount = Math.floor(this.gameState.player.maxHp * 0.3);
     const canHeal = this.gameState.player.currentHp < this.gameState.player.maxHp;
     const hasUpgradeableCards = this.getUpgradeableCards().length > 0;
 
-    this.add.text(width / 2, 220, `Current HP: ${this.gameState.player.currentHp}/${this.gameState.player.maxHp}`, {
-      fontSize: '20px',
-      color: '#ff6b6b',
-      fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    this.add.text(
+      Theme.layout.getCenterX(width),
+      descY + Theme.spacing.xl + Theme.spacing.md,
+      `Current HP: ${this.gameState.player.currentHp}/${this.gameState.player.maxHp}`,
+      {
+        ...Theme.typography.styles.body,
+        color: Theme.colors.danger,
+      }
+    ).setOrigin(0.5).setDepth(Theme.layers.ui);
+
+    // Options positioned side by side with proper spacing
+    const optionsY = Theme.layout.getCenterY(height);
+    const optionSpacing = 300;
 
     // Heal option
-    this.createOptionButton(
-      width / 2 - 200,
-      400,
+    this.createOptionCard(
+      Theme.layout.getCenterX(width) - optionSpacing,
+      optionsY,
       '🔥 Rest',
       `Heal ${healAmount} HP`,
       canHeal,
@@ -104,86 +126,88 @@ export class RestScene extends Phaser.Scene {
     );
 
     // Upgrade option
-    this.createOptionButton(
-      width / 2 + 200,
-      400,
+    this.createOptionCard(
+      Theme.layout.getCenterX(width) + optionSpacing,
+      optionsY,
       '⚒️ Smith',
       'Upgrade a card',
       hasUpgradeableCards,
       () => this.onUpgradeSelected()
     );
-
-    // Continue button (initially hidden, shows after selection)
   }
 
   /**
-   * Create an option button
+   * Create an option card using UICard component
    */
-  private createOptionButton(
+  private createOptionCard(
     x: number,
     y: number,
     title: string,
     description: string,
     enabled: boolean,
     callback: () => void
-  ): Phaser.GameObjects.Container {
-    const container = this.add.container(x, y);
-
-    // Background
-    const bg = this.add.rectangle(0, 0, 300, 200, enabled ? 0x2a4a2a : 0x4a4a4a, 0.9);
-    bg.setStrokeStyle(3, enabled ? 0x00ff00 : 0x666666);
-    container.add(bg);
-
-    // Title
-    const titleText = this.add.text(0, -50, title, {
-      fontSize: '32px',
-      color: enabled ? '#ffffff' : '#888888',
-      fontStyle: 'bold',
-      fontFamily: 'monospace',
-      align: 'center',
+  ): UICard {
+    const card = new UICard({
+      scene: this,
+      x,
+      y,
+      width: 320,
+      height: 220,
+      title: title,
+      backgroundColor: enabled
+        ? Theme.helpers.hexToColor(Theme.colors.rest)
+        : Theme.helpers.hexToColor(Theme.colors.disabled),
+      borderColor: enabled
+        ? Theme.helpers.hexToColor(Theme.colors.successLight)
+        : Theme.helpers.hexToColor(Theme.colors.border),
+      alpha: enabled ? 0.95 : 0.6,
     });
-    titleText.setOrigin(0.5);
-    container.add(titleText);
 
-    // Description
-    const descText = this.add.text(0, 20, description, {
-      fontSize: '18px',
-      color: enabled ? '#cccccc' : '#666666',
-      fontFamily: 'monospace',
-      align: 'center',
-      wordWrap: { width: 260 },
-    });
-    descText.setOrigin(0.5);
-    container.add(descText);
+    // Add description text
+    const descY = card.getContentStartY() + Theme.spacing.lg;
+    card.addText(
+      description,
+      0,
+      descY,
+      {
+        ...Theme.typography.styles.body,
+        color: enabled ? Theme.colors.textSecondary : Theme.colors.textMuted,
+        align: 'center',
+      }
+    ).setOrigin(0.5, 0);
 
+    // Make interactive if enabled
     if (enabled) {
-      bg.setInteractive({ useHandCursor: true });
+      card.setInteractive(new Phaser.Geom.Rectangle(-160, -110, 320, 220), Phaser.Geom.Rectangle.Contains);
+      card.input!.cursor = 'pointer';
 
-      bg.on('pointerover', () => {
-        bg.setStrokeStyle(4, 0xffff00);
+      card.on('pointerover', () => {
+        card.setBorderColor(Theme.helpers.hexToColor(Theme.colors.hover));
         this.tweens.add({
-          targets: container,
+          targets: card,
           scale: 1.05,
-          duration: 100,
+          duration: Theme.animation.fast,
+          ease: 'Power2',
         });
       });
 
-      bg.on('pointerout', () => {
-        bg.setStrokeStyle(3, 0x00ff00);
+      card.on('pointerout', () => {
+        card.setBorderColor(Theme.helpers.hexToColor(Theme.colors.successLight));
         this.tweens.add({
-          targets: container,
+          targets: card,
           scale: 1.0,
-          duration: 100,
+          duration: Theme.animation.fast,
+          ease: 'Power2',
         });
       });
 
-      bg.on('pointerdown', () => {
+      card.on('pointerdown', () => {
         callback();
-        bg.disableInteractive();
+        card.disableInteractive();
       });
     }
 
-    return container;
+    return card;
   }
 
   /**
@@ -192,20 +216,22 @@ export class RestScene extends Phaser.Scene {
   private onHealSelected(amount: number): void {
     this.gameState.player.heal(amount);
 
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+
     // Show feedback
     const feedback = this.add.text(
-      this.cameras.main.width / 2,
-      600,
+      Theme.layout.getCenterX(width),
+      height - Theme.spacing.xxxl * 3,
       `Healed ${amount} HP!\nHP: ${this.gameState.player.currentHp}/${this.gameState.player.maxHp}`,
       {
-        fontSize: '28px',
-        color: '#00ff00',
-        fontStyle: 'bold',
-        fontFamily: 'monospace',
+        ...Theme.typography.styles.heading2,
+        color: Theme.colors.successLight,
         align: 'center',
       }
     );
     feedback.setOrigin(0.5);
+    feedback.setDepth(Theme.layers.ui);
 
     this.showContinueButton();
   }
@@ -241,31 +267,17 @@ export class RestScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    const continueButton = this.add.text(
-      width / 2,
-      height - 100,
-      'Continue',
-      {
-        fontSize: '32px',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-        backgroundColor: '#006400',
-        padding: { x: 30, y: 15 },
-      }
-    );
-    continueButton.setOrigin(0.5);
-    continueButton.setInteractive({ useHandCursor: true });
-
-    continueButton.on('pointerover', () => {
-      continueButton.setStyle({ backgroundColor: '#228b22' });
-    });
-
-    continueButton.on('pointerout', () => {
-      continueButton.setStyle({ backgroundColor: '#006400' });
-    });
-
-    continueButton.on('pointerdown', () => {
-      this.scene.start('MapScene', { gameState: this.gameState });
+    new Button({
+      scene: this,
+      x: Theme.layout.getCenterX(width),
+      y: height - Theme.layout.positions.bottomMargin,
+      text: 'Continue',
+      width: 250,
+      height: Theme.dimensions.button.height + 10,
+      style: 'success',
+      onClick: () => {
+        this.scene.start('MapScene', { gameState: this.gameState });
+      },
     });
   }
 }
