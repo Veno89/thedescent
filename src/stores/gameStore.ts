@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import type { 
-  GameScreen, 
-  Player, 
-  Card, 
-  Relic, 
-  Potion, 
-  Room, 
+import type {
+  GameScreen,
+  Player,
+  Card,
+  Relic,
+  Potion,
+  Room,
   Enemy,
   CombatState,
   CharacterClass,
@@ -83,7 +83,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
       { type: 'APPLY_VULNERABLE', value: 2 },
     ],
   },
-  
+
   // ============================================
   // === COMMON ATTACKS ===
   // ============================================
@@ -227,7 +227,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
       { type: 'BLOCK', value: 5 },
     ],
   },
-  
+
   // ============================================
   // === COMMON SKILLS ===
   // ============================================
@@ -377,7 +377,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
       { type: 'DRAW', value: 1 },
     ],
   },
-  
+
   // ============================================
   // === UNCOMMON ATTACKS ===
   // ============================================
@@ -520,7 +520,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
       { type: 'DAMAGE', value: 6 },
     ],
   },
-  
+
   // ============================================
   // === UNCOMMON SKILLS ===
   // ============================================
@@ -670,7 +670,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
     targetType: 'SELF',
     effects: [{ type: 'BLOCK_PER_CARD_IN_HAND', value: 3 }],
   },
-  
+
   // ============================================
   // === UNCOMMON POWERS ===
   // ============================================
@@ -754,7 +754,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
     targetType: 'SELF',
     effects: [{ type: 'START_TURN_PLATED', value: 2 }],
   },
-  
+
   // ============================================
   // === RARE ATTACKS ===
   // ============================================
@@ -849,7 +849,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
       { type: 'APPLY_WEAK', value: 2 },
     ],
   },
-  
+
   // ============================================
   // === RARE SKILLS ===
   // ============================================
@@ -937,7 +937,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
       { type: 'DRAW', value: 3 },
     ],
   },
-  
+
   // ============================================
   // === RARE POWERS ===
   // ============================================
@@ -1014,7 +1014,7 @@ const CARD_TEMPLATES: Record<string, Omit<Card, 'upgraded'>> = {
     targetType: 'SELF',
     effects: [{ type: 'FIRST_CARD_TWICE', value: 1 }],
   },
-  
+
   // ============================================
   // === STATUS/CURSE CARDS ===
   // ============================================
@@ -1086,7 +1086,7 @@ const RELIC_TEMPLATES: Record<string, Relic> = {
     rarity: 'STARTER',
     effects: [{ trigger: 'START_COMBAT', action: 'BLOCK', value: 10 }],
   },
-  
+
   // ============================================
   // === COMMON RELICS ===
   // ============================================
@@ -1167,7 +1167,7 @@ const RELIC_TEMPLATES: Record<string, Relic> = {
     rarity: 'COMMON',
     effects: [{ trigger: 'ENTER_EVENT', action: 'BLOCK', value: 3 }],
   },
-  
+
   // ============================================
   // === UNCOMMON RELICS ===
   // ============================================
@@ -1279,7 +1279,7 @@ const RELIC_TEMPLATES: Record<string, Relic> = {
       { trigger: 'START_COMBAT', action: 'ENEMY_STRENGTH', value: 1 },
     ],
   },
-  
+
   // ============================================
   // === RARE RELICS ===
   // ============================================
@@ -1384,7 +1384,7 @@ const RELIC_TEMPLATES: Record<string, Relic> = {
       { trigger: 'START_COMBAT', action: 'SELF_VULNERABLE', value: 1 },
     ],
   },
-  
+
   // ============================================
   // === BOSS RELICS ===
   // ============================================
@@ -1443,7 +1443,7 @@ interface GameState {
   // Screen management
   screen: GameScreen;
   previousScreen: GameScreen | null;
-  
+
   // Run state
   player: Player;
   currentAct: number;
@@ -1451,24 +1451,24 @@ interface GameState {
   map: Room[];
   currentRoomIndex: number;
   seed: string;
-  
+
   // Combat state
   combat: CombatState | null;
-  
+
   // UI state
   showDeckView: boolean;
   deckViewMode: 'DECK' | 'DRAW' | 'DISCARD' | 'EXHAUST';
   showMap: boolean;
   selectedCardIndex: number | null;
   hoveredCard: Card | null;
-  
+
   // Current event (for event rooms)
   currentEvent: GameEvent | null;
-  
+
   // Actions
   setScreen: (screen: GameScreen) => void;
   startNewRun: (character: CharacterClass) => void;
-  
+
   // Player actions
   updatePlayer: (updates: Partial<Player>) => void;
   addCardToDeck: (card: Card) => void;
@@ -1481,26 +1481,28 @@ interface GameState {
   spendGold: (amount: number) => boolean;
   heal: (amount: number) => void;
   takeDamage: (amount: number) => number;
-  
+
   // Map actions
   setMap: (map: Room[]) => void;
   moveToRoom: (roomIndex: number) => void;
-  
+
   // Combat actions
   startCombat: (enemies: Enemy[]) => void;
   endCombat: (victory: boolean) => void;
   setCombat: (combat: CombatState | null) => void;
   updateCombat: (updates: Partial<CombatState>) => void;
-  
+  playCard: (cardIndex: number, targetIndex: number | null) => void;
+  endPlayerTurn: () => void;
+
   // UI actions
   setShowDeckView: (show: boolean, mode?: 'DECK' | 'DRAW' | 'DISCARD' | 'EXHAUST') => void;
   setShowMap: (show: boolean) => void;
   setSelectedCard: (index: number | null) => void;
   setHoveredCard: (card: Card | null) => void;
-  
+
   // Event actions
   setCurrentEvent: (event: GameEvent | null) => void;
-  
+
   // Reset
   resetGame: () => void;
 }
@@ -1525,21 +1527,21 @@ export const useGameStore = create<GameState>()(
     currentEvent: null,
 
     // Screen management
-    setScreen: (screen) => set((state) => ({ 
-      screen, 
-      previousScreen: state.screen 
+    setScreen: (screen) => set((state) => ({
+      screen,
+      previousScreen: state.screen
     })),
 
     // Start new run
     startNewRun: (character) => {
       const seed = Math.random().toString(36).substring(2, 15);
-      
+
       // Create starter deck from character's starting cards
       const starterDeck = createStarterDeck(character.startingDeck);
-      
+
       // Create the starting relic
       const startingRelic = createStarterRelic(character.startingRelic);
-      
+
       set({
         screen: 'MAP',
         player: {
@@ -1604,7 +1606,7 @@ export const useGameStore = create<GameState>()(
       const state = get();
       const emptySlot = state.player.potions.findIndex(p => p === null);
       if (emptySlot === -1) return false;
-      
+
       const potions = [...state.player.potions];
       potions[emptySlot] = potion;
       set({ player: { ...state.player, potions } });
@@ -1615,7 +1617,7 @@ export const useGameStore = create<GameState>()(
       const state = get();
       const potion = state.player.potions[index];
       if (!potion) return null;
-      
+
       const potions = [...state.player.potions];
       potions[index] = null;
       set({ player: { ...state.player, potions } });
@@ -1643,18 +1645,18 @@ export const useGameStore = create<GameState>()(
     takeDamage: (amount) => {
       const state = get();
       const { player } = state;
-      
+
       // Apply vulnerable
       let damage = amount;
       if (player.statusEffects.vulnerable > 0) {
         damage = Math.floor(damage * 1.5);
       }
-      
+
       // Block absorbs damage
       const damageAfterBlock = Math.max(0, damage - player.block);
       const newBlock = Math.max(0, player.block - damage);
       const newHp = Math.max(0, player.currentHp - damageAfterBlock);
-      
+
       set({
         player: {
           ...player,
@@ -1662,7 +1664,7 @@ export const useGameStore = create<GameState>()(
           block: newBlock
         }
       });
-      
+
       return damageAfterBlock;
     },
 
@@ -1682,15 +1684,15 @@ export const useGameStore = create<GameState>()(
     // Combat actions
     startCombat: (enemies) => {
       const state = get();
-      
+
       // Shuffle deck into draw pile
       const shuffledDeck = [...state.player.deck].sort(() => Math.random() - 0.5);
-      
+
       // Draw initial hand (5 cards)
       const handSize = 5;
       const hand = shuffledDeck.slice(0, handSize);
       const drawPile = shuffledDeck.slice(handSize);
-      
+
       set({
         screen: 'COMBAT',
         player: {
@@ -1728,10 +1730,312 @@ export const useGameStore = create<GameState>()(
       combat: state.combat ? { ...state.combat, ...updates } : null
     })),
 
+    playCard: (cardIndex, targetIndex) => {
+      const state = get();
+      const { combat, player } = state;
+
+      if (!combat || !combat.isPlayerTurn) return;
+
+      const card = combat.hand[cardIndex];
+      if (!card) return;
+
+      // Check energy cost
+      if (card.cost > player.energy && !card.isXCost) return;
+
+      // Calculate energy cost
+      const energyCost = card.isXCost ? player.energy : card.cost;
+
+      // Apply card effects
+      let newPlayer = { ...player, energy: player.energy - energyCost };
+      let newEnemies = [...combat.enemies];
+
+      // Process each effect in the card
+      for (const effect of card.effects) {
+        switch (effect.type) {
+          case 'DAMAGE': {
+            if (targetIndex !== null && newEnemies[targetIndex]) {
+              let damage = effect.value;
+
+              // Apply strength bonus
+              damage += newPlayer.statusEffects.strength;
+
+              // Apply vulnerable multiplier (50% more damage)
+              if (newEnemies[targetIndex].statusEffects.vulnerable > 0) {
+                damage = Math.floor(damage * 1.5);
+              }
+
+              // Apply weak  penalty (25% less damage)
+              if (newPlayer.statusEffects.weak > 0) {
+                damage = Math.floor(damage * 0.75);
+              }
+
+              // Apply damage after block
+              const enemy = newEnemies[targetIndex];
+              const damageAfterBlock = Math.max(0, damage - enemy.block);
+              enemy.currentHp = Math.max(0, enemy.currentHp - damageAfterBlock);
+              enemy.block = Math.max(0, enemy.block - damage);
+            }
+            break;
+          }
+
+          case 'BLOCK': {
+            let blockGained = effect.value;
+
+            // Apply dexterity bonus
+            blockGained += newPlayer.statusEffects.dexterity;
+
+            // Apply frail penalty (25% less block)
+            if (newPlayer.statusEffects.frail > 0) {
+              blockGained = Math.floor(blockGained * 0.75);
+            }
+
+            newPlayer.block += blockGained;
+            break;
+          }
+
+          case 'APPLY_VULNERABLE': {
+            if (targetIndex !== null && newEnemies[targetIndex]) {
+              newEnemies[targetIndex].statusEffects.vulnerable += effect.value;
+            }
+            break;
+          }
+
+          case 'APPLY_WEAK': {
+            if (targetIndex !== null && newEnemies[targetIndex]) {
+              newEnemies[targetIndex].statusEffects.weak += effect.value;
+            }
+            break;
+          }
+
+          case 'APPLY_STRENGTH': {
+            newPlayer.statusEffects.strength += effect.value;
+            break;
+          }
+
+          case 'APPLY_DEXTERITY': {
+            newPlayer.statusEffects.dexterity += effect.value;
+            break;
+          }
+
+          case 'DRAW': {
+            // Will handle drawing cards below
+            break;
+          }
+
+          case 'HEAL': {
+            newPlayer.currentHp = Math.min(newPlayer.maxHp, newPlayer.currentHp + effect.value);
+            break;
+          }
+
+          case 'APPLY_POISON': {
+            if (targetIndex !== null && newEnemies[targetIndex]) {
+              newEnemies[targetIndex].statusEffects.poison += effect.value;
+            }
+            break;
+          }
+        }
+      }
+
+      // Remove dead enemies
+      newEnemies = newEnemies.filter(e => e.currentHp > 0);
+
+      // Move card to appropriate pile
+      const newHand = [...combat.hand];
+      const playedCard = newHand.splice(cardIndex, 1)[0];
+      const newExhaustPile = card.exhaust ? [...combat.exhaustPile, playedCard] : combat.exhaustPile;
+      const newDiscardPile = !card.exhaust ? [...combat.discardPile, playedCard] : combat.discardPile;
+
+      // Draw cards if card has draw effect
+      const drawEffect = card.effects.find(e => e.type === 'DRAW');
+      let newDrawPile = [...combat.drawPile];
+      if (drawEffect) {
+        for (let i = 0; i < drawEffect.value; i++) {
+          if (newDrawPile.length === 0) {
+            // Shuffle discard back into draw
+            newDrawPile = [...newDiscardPile].sort(() => Math.random() - 0.5);
+            newDiscardPile.length = 0;
+          }
+          if (newDrawPile.length > 0) {
+            newHand.push(newDrawPile.shift()!);
+          }
+        }
+      }
+
+      // Check victory
+      if (newEnemies.length === 0) {
+        set({
+          player: newPlayer,
+          screen: 'REWARD',
+          combat: null
+        });
+        return;
+      }
+
+      set({
+        player: newPlayer,
+        combat: {
+          ...combat,
+          hand: newHand,
+          drawPile: newDrawPile,
+          discardPile: newDiscardPile,
+          exhaustPile: newExhaustPile,
+          enemies: newEnemies
+        }
+      });
+    },
+
+    endPlayerTurn: () => {
+      const state = get();
+      const { combat, player } = state;
+
+      if (!combat || !combat.isPlayerTurn) return;
+
+      // Set to enemy turn
+      set({
+        combat: {
+          ...combat,
+          isPlayerTurn: false
+        }
+      });
+
+      // Execute enemy turn after a delay (for animation)
+      setTimeout(() => {
+        const currentState = get();
+        if (!currentState.combat) return;
+
+        let newPlayer = { ...currentState.player };
+        const newEnemies = [...currentState.combat.enemies];
+
+        // Each enemy executes their intent
+        for (const enemy of newEnemies) {
+          const intent = enemy.currentIntent;
+
+          switch (intent.type) {
+            case 'ATTACK': {
+              let damage = intent.value || 0;
+
+              // Apply enemy strength
+              damage += enemy.statusEffects.strength;
+
+              // Apply player vulnerable (50% more damage taken)
+              if (newPlayer.statusEffects.vulnerable > 0) {
+                damage = Math.floor(damage * 1.5);
+              }
+
+              // Apply enemy weak (25% less damage dealt)
+              if (enemy.statusEffects.weak > 0) {
+                damage = Math.floor(damage * 0.75);
+              }
+
+              // Apply damage through block
+              const damageAfterBlock = Math.max(0, damage - newPlayer.block);
+              newPlayer.currentHp = Math.max(0, newPlayer.currentHp - damageAfterBlock);
+              newPlayer.block = Math.max(0, newPlayer.block - damage);
+              break;
+            }
+
+            case 'DEFEND': {
+              enemy.block += intent.value || 0;
+              break;
+            }
+
+            case 'BUFF': {
+              enemy.statusEffects.strength += 1;
+              break;
+            }
+
+            case 'DEBUFF': {
+              newPlayer.statusEffects.weak += 1;
+              break;
+            }
+          }
+
+          // Choose next intent randomly from enemy moves
+          if (enemy.moves && enemy.moves.length > 0) {
+            const totalWeight = enemy.moves.reduce((sum, move) => sum + move.weight, 0);
+            let random = Math.random() * totalWeight;
+
+            for (const move of enemy.moves) {
+              random -= move.weight;
+              if (random <= 0) {
+                enemy.currentIntent = move.intent;
+                break;
+              }
+            }
+          }
+        }
+
+        // Check defeat
+        if (newPlayer.currentHp <= 0) {
+          set({
+            player: newPlayer,
+            screen: 'DEFEAT',
+            combat: null
+          });
+          return;
+        }
+
+        // Start new turn
+        // Decrement status effects
+        if (newPlayer.statusEffects.weak > 0) newPlayer.statusEffects.weak--;
+        if (newPlayer.statusEffects.vulnerable > 0) newPlayer.statusEffects.vulnerable--;
+        if (newPlayer.statusEffects.frail > 0) newPlayer.statusEffects.frail--;
+
+        for (const enemy of newEnemies) {
+          if (enemy.statusEffects.weak > 0) enemy.statusEffects.weak--;
+          if (enemy.statusEffects.vulnerable > 0) enemy.statusEffects.vulnerable--;
+
+          // Apply poison damage
+          if (enemy.statusEffects.poison > 0) {
+            enemy.currentHp = Math.max(0, enemy.currentHp - enemy.statusEffects.poison);
+          }
+
+          // Reset enemy block
+          enemy.block = 0;
+        }
+
+        // Reset player block and energy
+        newPlayer.block = 0;
+        newPlayer.energy = newPlayer.maxEnergy;
+
+        // Draw new hand
+        let newDrawPile = [...currentState.combat.drawPile];
+        let newDiscardPile = [...currentState.combat.discardPile];
+
+        // Discard all remaining cards in hand first
+        newDiscardPile.push(...currentState.combat.hand);
+        const newHand: typeof currentState.combat.hand = [];
+
+        for (let i = 0; i < 5; i++) {
+          if (newDrawPile.length === 0) {
+            // Shuffle discard into draw
+            newDrawPile = [...newDiscardPile].sort(() => Math.random() - 0.5);
+            newDiscardPile = [];
+          }
+          if (newDrawPile.length > 0) {
+            newHand.push(newDrawPile.shift()!);
+          }
+        }
+
+        set({
+          player: newPlayer,
+          combat: {
+            ...currentState.combat,
+            enemies: newEnemies.filter(e => e.currentHp > 0),
+            hand: newHand,
+            drawPile: newDrawPile,
+            discardPile: newDiscardPile,
+            turn: currentState.combat.turn + 1,
+            isPlayerTurn: true
+          }
+        });
+      }, 1500);
+    },
+
     // UI actions
-    setShowDeckView: (show, mode = 'DECK') => set({ 
-      showDeckView: show, 
-      deckViewMode: mode 
+    setShowDeckView: (show, mode = 'DECK') => set({
+      showDeckView: show,
+      deckViewMode: mode
     }),
 
     setShowMap: (show) => set({ showMap: show }),
@@ -1764,7 +2068,7 @@ export const useGameStore = create<GameState>()(
 );
 
 // Selectors for common derived state
-export const selectCurrentRoom = (state: GameState) => 
+export const selectCurrentRoom = (state: GameState) =>
   state.map[state.currentRoomIndex];
 
 export const selectAvailableRooms = (state: GameState) => {

@@ -10,17 +10,18 @@ import { useGameStore } from '@/stores/gameStore';
 import type { Card as CardType, Enemy, Player } from '@/types';
 
 export function CombatScreen() {
-  const { 
-    player, 
-    combat, 
-    updateCombat,
-    setShowDeckView 
+  const {
+    player,
+    combat,
+    playCard,
+    endPlayerTurn,
+    setShowDeckView
   } = useGameStore();
-  
-  const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null);
-  const [animatingCard, setAnimatingCard] = useState<number | null>(null);
 
-  // Handle card selection
+  const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null);
+  const [draggingCardIndex, setDraggingCardIndex] = useState<number | null>(null);
+
+  // Handle card selection (click)
   const handleCardClick = useCallback((card: CardType, index: number) => {
     if (!combat?.isPlayerTurn) return;
     if (card.cost > player.energy && !card.isXCost) return;
@@ -30,53 +31,52 @@ export function CombatScreen() {
       // If only one enemy, auto-target
       if (combat.enemies.length === 1) {
         playCard(index, 0);
+        setSelectedCardIndex(null);
       }
     } else {
       playCard(index, null);
+      setSelectedCardIndex(null);
     }
-  }, [combat, player.energy]);
+  }, [combat, player.energy, playCard]);
 
-  // Handle enemy targeting
+  // Handle card drag start
+  const handleCardDragStart = useCallback((index: number, card: CardType) => {
+    if (!combat?.isPlayerTurn) return;
+    if (card.cost > player.energy && !card.isXCost) return;
+
+    setDraggingCardIndex(index);
+  }, [combat?.isPlayerTurn, player.energy]);
+
+  // Handle card drag end
+  const handleCardDragEnd = useCallback(() => {
+    setDraggingCardIndex(null);
+  }, []);
+
+  // Handle drop on enemy
+  const handleDropOnEnemy = useCallback((enemyIndex: number) => {
+    if (draggingCardIndex !== null && combat) {
+      const card = combat.hand[draggingCardIndex];
+      if (card.targetType === 'SINGLE_ENEMY' || card.targetType === 'ALL_ENEMIES') {
+        playCard(draggingCardIndex, enemyIndex);
+        setDraggingCardIndex(null);
+        setSelectedCardIndex(null);
+      }
+    }
+  }, [draggingCardIndex, combat, playCard]);
+
+  // Handle enemy targeting (click)
   const handleEnemyClick = useCallback((enemyIndex: number) => {
     if (selectedCardIndex !== null) {
       playCard(selectedCardIndex, enemyIndex);
-    }
-  }, [selectedCardIndex]);
-
-  // Play a card
-  const playCard = useCallback((cardIndex: number, _targetIndex: number | null) => {
-    if (!combat) return;
-    
-    setAnimatingCard(cardIndex);
-    
-    // Simulate card play animation
-    setTimeout(() => {
-      // TODO: Implement actual card effect execution
-      const hand = [...combat.hand];
-      const playedCard = hand.splice(cardIndex, 1)[0];
-      const discardPile = [...combat.discardPile, playedCard];
-      
-      updateCombat({ hand, discardPile });
       setSelectedCardIndex(null);
-      setAnimatingCard(null);
-    }, 300);
-  }, [combat, updateCombat]);
+    }
+  }, [selectedCardIndex, playCard]);
 
   // End turn
   const handleEndTurn = useCallback(() => {
     if (!combat) return;
-    
-    updateCombat({ isPlayerTurn: false });
-    
-    // Simulate enemy turn
-    setTimeout(() => {
-      // TODO: Implement enemy AI
-      updateCombat({ 
-        isPlayerTurn: true,
-        turn: combat.turn + 1 
-      });
-    }, 1500);
-  }, [combat, updateCombat]);
+    endPlayerTurn();
+  }, [combat, endPlayerTurn]);
 
   // Cancel targeting
   const handleCancelTarget = useCallback(() => {
@@ -100,7 +100,7 @@ export function CombatScreen() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-panel-dark to-black flex flex-col overflow-hidden">
       {/* Top Bar - Player Info */}
-      <TopBar 
+      <TopBar
         player={player}
         onShowDeck={() => setShowDeckView(true, 'DECK')}
         onShowDraw={() => setShowDeckView(true, 'DRAW')}
@@ -119,7 +119,9 @@ export function CombatScreen() {
               enemy={enemy}
               index={index}
               isTargetable={selectedCardIndex !== null}
+              isDragTarget={draggingCardIndex !== null}
               onClick={() => handleEnemyClick(index)}
+              onDrop={() => handleDropOnEnemy(index)}
             />
           ))}
         </div>
@@ -128,9 +130,9 @@ export function CombatScreen() {
         <div className="flex justify-center items-center py-4">
           <Panel className="px-8 py-4 flex items-center gap-8" border="blue">
             <EnergyDisplay current={player.energy} max={player.maxEnergy} />
-            
+
             <div className="h-12 w-px bg-gray-700" />
-            
+
             <div className="text-center">
               <p className="text-gray-400 text-sm">Turn {combat.turn}</p>
               <p className={clsx(
@@ -145,7 +147,7 @@ export function CombatScreen() {
 
             <Button
               variant="primary"
-              onClick={handleEndTurn}
+              onClick={endPlayerTurn}
               disabled={!combat.isPlayerTurn}
             >
               End Turn
@@ -159,8 +161,10 @@ export function CombatScreen() {
             hand={combat.hand}
             energy={player.energy}
             selectedIndex={selectedCardIndex}
-            animatingIndex={animatingCard}
+            draggingIndex={draggingCardIndex}
             onCardClick={handleCardClick}
+            onCardDragStart={handleCardDragStart}
+            onCardDragEnd={handleCardDragEnd}
             isPlayerTurn={combat.isPlayerTurn}
           />
         </div>
@@ -168,7 +172,7 @@ export function CombatScreen() {
 
       {/* Targeting Overlay */}
       {selectedCardIndex !== null && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/30 z-40"
           onClick={handleCancelTarget}
         >
@@ -232,7 +236,7 @@ function TopBar({ player, onShowDeck, onShowDraw, onShowDiscard, drawCount, disc
             <span className="text-blue-400">📚</span>
             <span className="text-white font-mono">{drawCount}</span>
           </button>
-          
+
           <button
             onClick={onShowDiscard}
             className="flex items-center gap-2 px-3 py-2 rounded bg-panel hover:bg-panel-light transition-colors"
@@ -240,7 +244,7 @@ function TopBar({ player, onShowDeck, onShowDraw, onShowDiscard, drawCount, disc
             <span className="text-gray-400">🗑️</span>
             <span className="text-white font-mono">{discardCount}</span>
           </button>
-          
+
           <button
             onClick={onShowDeck}
             className="flex items-center gap-2 px-3 py-2 rounded bg-panel hover:bg-panel-light transition-colors"
@@ -250,7 +254,7 @@ function TopBar({ player, onShowDeck, onShowDraw, onShowDiscard, drawCount, disc
           </button>
 
           <div className="h-8 w-px bg-gray-700" />
-          
+
           <GoldDisplay amount={player.gold} />
         </div>
       </div>
@@ -263,19 +267,29 @@ interface EnemyDisplayProps {
   enemy: Enemy;
   index: number;
   isTargetable: boolean;
+  isDragTarget: boolean;
   onClick: () => void;
+  onDrop: () => void;
 }
 
-function EnemyDisplay({ enemy, isTargetable, onClick }: EnemyDisplayProps) {
+function EnemyDisplay({ enemy, isTargetable, isDragTarget, onClick, onDrop }: EnemyDisplayProps) {
   const hpPercent = enemy.currentHp / enemy.maxHp;
-  
+
   return (
     <div
       className={clsx(
         'relative transition-all duration-200',
-        isTargetable && 'cursor-crosshair hover:scale-105'
+        isTargetable && 'cursor-crosshair hover:scale-105',
+        isDragTarget && 'ring-4 ring-yellow-400'
       )}
       onClick={isTargetable ? onClick : undefined}
+      onDragOver={(e) => {
+        e.preventDefault();
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        onDrop();
+      }}
     >
       {/* Enemy sprite placeholder */}
       <div
@@ -359,18 +373,22 @@ interface HandDisplayProps {
   hand: CardType[];
   energy: number;
   selectedIndex: number | null;
-  animatingIndex: number | null;
+  draggingIndex: number | null;
   onCardClick: (card: CardType, index: number) => void;
+  onCardDragStart: (index: number, card: CardType) => void;
+  onCardDragEnd: () => void;
   isPlayerTurn: boolean;
 }
 
-function HandDisplay({ 
-  hand, 
-  energy, 
-  selectedIndex, 
-  animatingIndex,
+function HandDisplay({
+  hand,
+  energy,
+  selectedIndex,
+  draggingIndex,
   onCardClick,
-  isPlayerTurn 
+  onCardDragStart,
+  onCardDragEnd,
+  isPlayerTurn
 }: HandDisplayProps) {
   // Calculate card positions in a fan layout
   const getCardStyle = (index: number, total: number) => {
@@ -379,7 +397,7 @@ function HandDisplay({
     const rotation = offset * 5; // degrees
     const translateY = Math.abs(offset) * 10; // pixels
     const translateX = offset * 100; // pixels
-    
+
     return {
       transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
       zIndex: index,
@@ -391,17 +409,21 @@ function HandDisplay({
       {hand.map((card, index) => {
         const isPlayable = isPlayerTurn && (card.cost <= energy || card.isXCost);
         const isSelected = selectedIndex === index;
-        const isAnimating = animatingIndex === index;
+        const isDragging = draggingIndex === index;
+        const canDrag = isPlayable && (card.targetType === 'SINGLE_ENEMY' || card.targetType === 'ALL_ENEMIES');
 
         return (
           <div
             key={`hand-${index}`}
             className={clsx(
               'transition-all duration-200 ease-out',
-              isAnimating && 'opacity-0 scale-75 -translate-y-32',
-              isSelected && '-translate-y-8'
+              isSelected && '-translate-y-8',
+              isDragging && 'opacity-50'
             )}
             style={getCardStyle(index, hand.length)}
+            draggable={canDrag}
+            onDragStart={() => canDrag && onCardDragStart(index, card)}
+            onDragEnd={onCardDragEnd}
           >
             <Card
               card={card}
