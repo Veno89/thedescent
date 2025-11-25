@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -39,15 +39,15 @@ function createDefaultStatusEffects(): StatusEffects {
 // Generate enemies based on room type and floor
 function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
   const baseHp = 20 + floor * 5;
-  
+
   if (roomType === 'BOSS') {
     // Different bosses based on which "act" you're in (floors 1-5, 6-10, 11-15)
     const bossIndex = Math.floor(floor / 5);
     const bosses = [
-      { 
-        id: 'hollow_guardian', 
-        name: 'Hollow Guardian', 
-        hp: 140, 
+      {
+        id: 'hollow_guardian',
+        name: 'Hollow Guardian',
+        hp: 140,
         moves: [
           { name: 'Guardian Strike', intent: { type: 'ATTACK' as const, value: 22 }, weight: 2, actions: [{ type: 'DAMAGE', value: 22 }] },
           { name: 'Fortify', intent: { type: 'DEFEND' as const, value: 20 }, weight: 1, actions: [{ type: 'BLOCK', value: 20 }] },
@@ -55,10 +55,10 @@ function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
           { name: 'Crushing Slam', intent: { type: 'ATTACK' as const, value: 32 }, weight: 1, actions: [{ type: 'DAMAGE', value: 32 }, { type: 'VULNERABLE', value: 2 }] },
         ]
       },
-      { 
-        id: 'crystal_wyrm', 
-        name: 'Crystal Wyrm', 
-        hp: 180, 
+      {
+        id: 'crystal_wyrm',
+        name: 'Crystal Wyrm',
+        hp: 180,
         moves: [
           { name: 'Crystal Fang', intent: { type: 'ATTACK' as const, value: 18 }, weight: 2, actions: [{ type: 'DAMAGE', value: 18 }] },
           { name: 'Shed Scales', intent: { type: 'DEFEND' as const, value: 15 }, weight: 1, actions: [{ type: 'BLOCK', value: 15 }, { type: 'PLATED_ARMOR', value: 5 }] },
@@ -66,10 +66,10 @@ function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
           { name: 'Crystal Breath', intent: { type: 'ATTACK' as const, value: 28 }, weight: 1, actions: [{ type: 'DAMAGE', value: 28 }] },
         ]
       },
-      { 
-        id: 'the_forgotten', 
-        name: 'The Forgotten', 
-        hp: 220, 
+      {
+        id: 'the_forgotten',
+        name: 'The Forgotten',
+        hp: 220,
         moves: [
           { name: 'Echoing Strike', intent: { type: 'ATTACK' as const, value: 15 }, weight: 2, actions: [{ type: 'DAMAGE', value: 15 }, { type: 'DAMAGE', value: 15 }] },
           { name: 'Memory Drain', intent: { type: 'DEBUFF' as const }, weight: 1, actions: [{ type: 'REMOVE_STRENGTH', value: 2 }, { type: 'STRENGTH', value: 2 }] },
@@ -79,7 +79,7 @@ function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
       },
     ];
     const boss = bosses[Math.min(bossIndex, bosses.length - 1)];
-    
+
     return [{
       id: boss.id,
       name: boss.name,
@@ -92,45 +92,51 @@ function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
       moves: boss.moves,
     }];
   }
-  
+
   if (roomType === 'ELITE') {
     const elites = [
-      { id: 'tunnel_brute', name: 'Tunnel Brute', hp: 85,
+      {
+        id: 'tunnel_brute', name: 'Tunnel Brute', hp: 85,
         moves: [
           { name: 'War Cry', intent: { type: 'BUFF' as const }, weight: 1, actions: [{ type: 'STRENGTH', value: 2 }] },
           { name: 'Charge', intent: { type: 'ATTACK' as const, value: 14 }, weight: 2, actions: [{ type: 'DAMAGE', value: 14 }] },
           { name: 'Ground Pound', intent: { type: 'ATTACK' as const, value: 8 }, weight: 1, actions: [{ type: 'DAMAGE', value: 8 }, { type: 'VULNERABLE', value: 2 }] },
         ]
       },
-      { id: 'ore_golem', name: 'Ore Golem', hp: 100,
+      {
+        id: 'ore_golem', name: 'Ore Golem', hp: 100,
         moves: [
           { name: 'Reinforce', intent: { type: 'DEFEND' as const, value: 15 }, weight: 1, actions: [{ type: 'BLOCK', value: 15 }] },
           { name: 'Boulder Toss', intent: { type: 'ATTACK' as const, value: 11 }, weight: 2, actions: [{ type: 'DAMAGE', value: 11 }] },
           { name: 'Quake', intent: { type: 'ATTACK' as const, value: 7 }, weight: 1, actions: [{ type: 'DAMAGE', value: 7 }, { type: 'WEAK', value: 2 }] },
         ]
       },
-      { id: 'echo_wraith', name: 'Echo Wraith', hp: 70,
+      {
+        id: 'echo_wraith', name: 'Echo Wraith', hp: 70,
         moves: [
           { name: 'Phase', intent: { type: 'BUFF' as const }, weight: 1, actions: [{ type: 'INTANGIBLE', value: 1 }] },
           { name: 'Soul Rend', intent: { type: 'ATTACK' as const, value: 18 }, weight: 2, actions: [{ type: 'DAMAGE', value: 18 }] },
           { name: 'Drain', intent: { type: 'ATTACK' as const, value: 10 }, weight: 1, actions: [{ type: 'DAMAGE', value: 10 }, { type: 'HEAL', value: 5 }] },
         ]
       },
-      { id: 'crystal_sentinel', name: 'Crystal Sentinel', hp: 90,
+      {
+        id: 'crystal_sentinel', name: 'Crystal Sentinel', hp: 90,
         moves: [
           { name: 'Crystal Barrage', intent: { type: 'ATTACK' as const, value: 6 }, weight: 2, actions: [{ type: 'DAMAGE', value: 6 }, { type: 'DAMAGE', value: 6 }, { type: 'DAMAGE', value: 6 }] },
           { name: 'Resonance Shield', intent: { type: 'DEFEND' as const, value: 12 }, weight: 1, actions: [{ type: 'BLOCK', value: 12 }, { type: 'PLATED_ARMOR', value: 3 }] },
           { name: 'Shatter', intent: { type: 'ATTACK' as const, value: 16 }, weight: 1, actions: [{ type: 'DAMAGE', value: 16 }, { type: 'VULNERABLE', value: 1 }] },
         ]
       },
-      { id: 'corrupted_miner', name: 'Corrupted Miner', hp: 75,
+      {
+        id: 'corrupted_miner', name: 'Corrupted Miner', hp: 75,
         moves: [
           { name: 'Wild Swing', intent: { type: 'ATTACK' as const, value: 12 }, weight: 2, actions: [{ type: 'DAMAGE', value: 12 }] },
           { name: 'Toxic Gas', intent: { type: 'DEBUFF' as const }, weight: 1, actions: [{ type: 'POISON', value: 6 }] },
           { name: 'Desperate Strike', intent: { type: 'ATTACK' as const, value: 20 }, weight: 1, actions: [{ type: 'DAMAGE', value: 20 }] },
         ]
       },
-      { id: 'ancient_automaton', name: 'Ancient Automaton', hp: 110,
+      {
+        id: 'ancient_automaton', name: 'Ancient Automaton', hp: 110,
         moves: [
           { name: 'Laser Beam', intent: { type: 'ATTACK' as const, value: 15 }, weight: 2, actions: [{ type: 'DAMAGE', value: 15 }] },
           { name: 'Energy Shield', intent: { type: 'DEFEND' as const, value: 20 }, weight: 1, actions: [{ type: 'BLOCK', value: 20 }] },
@@ -138,7 +144,7 @@ function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
         ]
       },
     ];
-    
+
     const elite = elites[Math.floor(Math.random() * elites.length)];
     return [{
       id: elite.id,
@@ -152,91 +158,103 @@ function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
       moves: elite.moves,
     }];
   }
-  
+
   // Normal combat - 1-3 enemies
   const numEnemies = 1 + Math.floor(Math.random() * 2);
   const enemies: Enemy[] = [];
-  
+
   const enemyTypes = [
     // Weak enemies (swarm types)
-    { id: 'cave_crawler', name: 'Cave Crawler', hp: baseHp - 5, damage: 6, 
+    {
+      id: 'cave_crawler', name: 'Cave Crawler', hp: baseHp - 5, damage: 6,
       moves: [
         { name: 'Bite', intent: { type: 'ATTACK' as const, value: 6 }, weight: 2, actions: [{ type: 'DAMAGE', value: 6 }] },
         { name: 'Web', intent: { type: 'DEBUFF' as const }, weight: 1, actions: [{ type: 'WEAK', value: 1 }] },
       ]
     },
-    { id: 'mine_rat', name: 'Mine Rat', hp: baseHp - 10, damage: 4, 
+    {
+      id: 'mine_rat', name: 'Mine Rat', hp: baseHp - 10, damage: 4,
       moves: [
         { name: 'Gnaw', intent: { type: 'ATTACK' as const, value: 4 }, weight: 3, actions: [{ type: 'DAMAGE', value: 4 }] },
         { name: 'Scurry', intent: { type: 'DEFEND' as const, value: 4 }, weight: 1, actions: [{ type: 'BLOCK', value: 4 }] },
       ]
     },
-    { id: 'crystal_bat', name: 'Crystal Bat', hp: baseHp - 8, damage: 7, 
+    {
+      id: 'crystal_bat', name: 'Crystal Bat', hp: baseHp - 8, damage: 7,
       moves: [
         { name: 'Sonic Screech', intent: { type: 'ATTACK' as const, value: 7 }, weight: 2, actions: [{ type: 'DAMAGE', value: 7 }] },
         { name: 'Echolocation', intent: { type: 'BUFF' as const }, weight: 1, actions: [{ type: 'STRENGTH', value: 1 }] },
       ]
     },
-    
+
     // Medium enemies
-    { id: 'depth_lurker', name: 'Depth Lurker', hp: baseHp + 5, damage: 8, 
+    {
+      id: 'depth_lurker', name: 'Depth Lurker', hp: baseHp + 5, damage: 8,
       moves: [
         { name: 'Ambush', intent: { type: 'ATTACK' as const, value: 8 }, weight: 2, actions: [{ type: 'DAMAGE', value: 8 }] },
         { name: 'Hide', intent: { type: 'DEFEND' as const, value: 8 }, weight: 1, actions: [{ type: 'BLOCK', value: 8 }] },
       ]
     },
-    { id: 'fungal_host', name: 'Fungal Host', hp: baseHp, damage: 5, 
+    {
+      id: 'fungal_host', name: 'Fungal Host', hp: baseHp, damage: 5,
       moves: [
         { name: 'Spore Cloud', intent: { type: 'ATTACK' as const, value: 5 }, weight: 2, actions: [{ type: 'DAMAGE', value: 5 }, { type: 'POISON', value: 2 }] },
         { name: 'Regenerate', intent: { type: 'BUFF' as const }, weight: 1, actions: [{ type: 'HEAL', value: 5 }] },
       ]
     },
-    { id: 'shadow_wisp', name: 'Shadow Wisp', hp: baseHp - 3, damage: 9, 
+    {
+      id: 'shadow_wisp', name: 'Shadow Wisp', hp: baseHp - 3, damage: 9,
       moves: [
         { name: 'Shadow Bolt', intent: { type: 'ATTACK' as const, value: 9 }, weight: 2, actions: [{ type: 'DAMAGE', value: 9 }] },
         { name: 'Fade', intent: { type: 'BUFF' as const }, weight: 1, actions: [{ type: 'INTANGIBLE', value: 1 }] },
       ]
     },
-    { id: 'ore_beetle', name: 'Ore Beetle', hp: baseHp + 2, damage: 6, 
+    {
+      id: 'ore_beetle', name: 'Ore Beetle', hp: baseHp + 2, damage: 6,
       moves: [
         { name: 'Ram', intent: { type: 'ATTACK' as const, value: 6 }, weight: 2, actions: [{ type: 'DAMAGE', value: 6 }] },
         { name: 'Burrow', intent: { type: 'DEFEND' as const, value: 10 }, weight: 1, actions: [{ type: 'BLOCK', value: 10 }] },
       ]
     },
-    { id: 'tunnel_snake', name: 'Tunnel Snake', hp: baseHp - 2, damage: 7, 
+    {
+      id: 'tunnel_snake', name: 'Tunnel Snake', hp: baseHp - 2, damage: 7,
       moves: [
         { name: 'Venomous Bite', intent: { type: 'ATTACK' as const, value: 7 }, weight: 2, actions: [{ type: 'DAMAGE', value: 7 }, { type: 'POISON', value: 3 }] },
         { name: 'Coil', intent: { type: 'DEFEND' as const, value: 5 }, weight: 1, actions: [{ type: 'BLOCK', value: 5 }] },
       ]
     },
-    
+
     // Strong enemies
-    { id: 'rock_elemental', name: 'Rock Elemental', hp: baseHp + 10, damage: 10, 
+    {
+      id: 'rock_elemental', name: 'Rock Elemental', hp: baseHp + 10, damage: 10,
       moves: [
         { name: 'Stone Fist', intent: { type: 'ATTACK' as const, value: 10 }, weight: 2, actions: [{ type: 'DAMAGE', value: 10 }] },
         { name: 'Harden', intent: { type: 'DEFEND' as const, value: 12 }, weight: 1, actions: [{ type: 'BLOCK', value: 12 }] },
       ]
     },
-    { id: 'corrupted_crystal', name: 'Corrupted Crystal', hp: baseHp + 8, damage: 12, 
+    {
+      id: 'corrupted_crystal', name: 'Corrupted Crystal', hp: baseHp + 8, damage: 12,
       moves: [
         { name: 'Refract', intent: { type: 'ATTACK' as const, value: 6 }, weight: 2, actions: [{ type: 'DAMAGE', value: 6 }, { type: 'DAMAGE', value: 6 }] },
         { name: 'Pulse', intent: { type: 'DEBUFF' as const }, weight: 1, actions: [{ type: 'VULNERABLE', value: 2 }] },
       ]
     },
-    { id: 'ancient_sentinel', name: 'Ancient Sentinel', hp: baseHp + 12, damage: 9, 
+    {
+      id: 'ancient_sentinel', name: 'Ancient Sentinel', hp: baseHp + 12, damage: 9,
       moves: [
         { name: 'Cleave', intent: { type: 'ATTACK' as const, value: 9 }, weight: 2, actions: [{ type: 'DAMAGE', value: 9 }] },
         { name: 'Guard Protocol', intent: { type: 'DEFEND' as const, value: 15 }, weight: 1, actions: [{ type: 'BLOCK', value: 15 }] },
       ]
     },
-    { id: 'void_touched', name: 'Void Touched', hp: baseHp, damage: 11, 
+    {
+      id: 'void_touched', name: 'Void Touched', hp: baseHp, damage: 11,
       moves: [
         { name: 'Void Strike', intent: { type: 'ATTACK' as const, value: 11 }, weight: 2, actions: [{ type: 'DAMAGE', value: 11 }] },
         { name: 'Entropy', intent: { type: 'DEBUFF' as const }, weight: 1, actions: [{ type: 'WEAK', value: 1 }, { type: 'FRAIL', value: 1 }] },
       ]
     },
   ];
-  
+
   for (let i = 0; i < numEnemies; i++) {
     const template = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
     enemies.push({
@@ -251,18 +269,18 @@ function generateEnemies(roomType: RoomType, floor: number): Enemy[] {
       moves: template.moves,
     });
   }
-  
+
   return enemies;
 }
 
 // Simple map generator
 function generateMap(): Room[] {
   const newMap: Room[] = [];
-  
+
   // Create 15 floors with 3-4 rooms each
   for (let y = 0; y < 15; y++) {
     const roomsOnFloor = y === 14 ? 1 : (3 + Math.floor(Math.random() * 2)); // Boss floor has 1 room
-    
+
     for (let x = 0; x < roomsOnFloor; x++) {
       let type: RoomType;
       if (y === 14) type = 'BOSS';
@@ -292,11 +310,11 @@ function generateMap(): Room[] {
   for (let y = 0; y < 14; y++) {
     const currentFloorRooms = newMap.filter(r => r.y === y);
     const nextFloorRooms = newMap.filter(r => r.y === y + 1);
-    
+
     currentFloorRooms.forEach((room) => {
       const roomIndex = newMap.indexOf(room);
       const connections: number[] = [];
-      
+
       if (nextFloorRooms.length === 1) {
         connections.push(newMap.indexOf(nextFloorRooms[0]));
       } else {
@@ -305,7 +323,7 @@ function generateMap(): Room[] {
           .map((r) => ({ room: r, dist: Math.abs(r.x - room.x) }))
           .sort((a, b) => a.dist - b.dist)
           .slice(0, 2); // Connect to 2 closest rooms
-        
+
         nearbyRooms.forEach(nr => {
           const targetIdx = newMap.indexOf(nr.room);
           if (!connections.includes(targetIdx)) {
@@ -313,7 +331,7 @@ function generateMap(): Room[] {
           }
         });
       }
-      
+
       newMap[roomIndex].connections = connections;
     });
   }
@@ -322,10 +340,10 @@ function generateMap(): Room[] {
 }
 
 export function MapScreen() {
-  const { 
-    player, 
-    map, 
-    currentRoomIndex, 
+  const {
+    player,
+    map,
+    currentRoomIndex,
     currentFloor,
     currentAct,
     moveToRoom,
@@ -336,6 +354,7 @@ export function MapScreen() {
   } = useGameStore();
 
   const [hoveredRoom, setHoveredRoom] = useState<number | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
 
   // Generate map on mount if empty
   useEffect(() => {
@@ -345,10 +364,21 @@ export function MapScreen() {
     }
   }, [map.length, setMap]);
 
+  // Auto-scroll to starting position when map loads and currentRoomIndex is -1
+  useEffect(() => {
+    if (map.length > 0 && currentRoomIndex === -1 && mapContainerRef.current) {
+      // Scroll to bottom to show floor 0 (starting rooms)
+      mapContainerRef.current.scrollTo({
+        top: mapContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [map.length, currentRoomIndex]);
+
   // Get available rooms to move to
   const availableRooms = useMemo((): number[] => {
     if (map.length === 0) return [];
-    
+
     if (currentRoomIndex === -1) {
       // Starting position - can go to any room on floor 0
       return map
@@ -356,7 +386,7 @@ export function MapScreen() {
         .filter(({ room }) => room.y === 0)
         .map(({ index }) => index);
     }
-    
+
     const currentRoom = map[currentRoomIndex];
     return currentRoom?.connections || [];
   }, [map, currentRoomIndex]);
@@ -364,10 +394,10 @@ export function MapScreen() {
   // Handle room click
   const handleRoomClick = useCallback((roomIndex: number) => {
     if (!availableRooms.includes(roomIndex)) return;
-    
+
     const room = map[roomIndex];
     moveToRoom(roomIndex);
-    
+
     // Navigate to appropriate screen
     switch (room.type) {
       case 'COMBAT':
@@ -418,8 +448,8 @@ export function MapScreen() {
 
           <div className="flex items-center gap-4">
             <RelicBar relics={player.relics} />
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               onClick={() => setShowDeckView(true, 'DECK')}
             >
@@ -430,7 +460,7 @@ export function MapScreen() {
       </div>
 
       {/* Map Area */}
-      <div className="flex-1 overflow-auto p-8">
+      <div ref={mapContainerRef} className="flex-1 overflow-auto p-8">
         <div className="max-w-4xl mx-auto">
           {/* Render floors from top (boss) to bottom (start) */}
           {roomsByFloor.map((floorRooms, floorIndex) => (
@@ -454,7 +484,7 @@ export function MapScreen() {
                       {room.connections.map((connIdx, i) => {
                         const targetRoom = map[connIdx];
                         if (!targetRoom) return null;
-                        
+
                         return (
                           <svg
                             key={i}
