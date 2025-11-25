@@ -1,26 +1,13 @@
 // Core game types
 
-export enum CardType {
-  ATTACK = 'ATTACK',
-  SKILL = 'SKILL',
-  POWER = 'POWER',
-  STATUS = 'STATUS',
-  CURSE = 'CURSE',
-}
+export type CardType = 'ATTACK' | 'SKILL' | 'POWER' | 'STATUS' | 'CURSE';
+export type CardRarity = 'STARTER' | 'COMMON' | 'UNCOMMON' | 'RARE' | 'SPECIAL';
+export type TargetType = 'SELF' | 'SINGLE_ENEMY' | 'ALL_ENEMIES' | 'RANDOM_ENEMY';
 
-export enum CardRarity {
-  STARTER = 'STARTER',
-  COMMON = 'COMMON',
-  UNCOMMON = 'UNCOMMON',
-  RARE = 'RARE',
-  SPECIAL = 'SPECIAL',
-}
-
-export enum TargetType {
-  SELF = 'SELF',
-  SINGLE_ENEMY = 'SINGLE_ENEMY',
-  ALL_ENEMIES = 'ALL_ENEMIES',
-  RANDOM_ENEMY = 'RANDOM_ENEMY',
+export interface CardEffect {
+  type: string;
+  value: number;
+  target?: TargetType;
 }
 
 export interface Card {
@@ -33,19 +20,33 @@ export interface Card {
   upgraded: boolean;
   targetType: TargetType;
   effects: CardEffect[];
-
-  // Card keywords/mechanics
-  exhaust?: boolean;      // Card is removed from combat when played
-  retain?: boolean;       // Card is kept in hand at end of turn
-  innate?: boolean;       // Card starts in your hand
-  ethereal?: boolean;     // Card is exhausted if not played this turn
-  isXCost?: boolean;      // Card costs all remaining energy
+  exhaust?: boolean;
+  retain?: boolean;
+  innate?: boolean;
+  ethereal?: boolean;
+  isXCost?: boolean;
+  upgradedStats?: Partial<Card>;
 }
 
-export interface CardEffect {
-  type: string;
-  value: number;
-  target?: TargetType;
+export interface StatusEffects {
+  strength: number;
+  dexterity: number;
+  weak: number;
+  vulnerable: number;
+  frail: number;
+  poison: number;
+  artifact: number;
+  platedArmor: number;
+  thorns: number;
+  ritual: number;
+  intangible: number;
+  block: number;
+}
+
+export interface RelicEffect {
+  trigger: string;
+  action: string;
+  value?: number;
 }
 
 export interface Relic {
@@ -54,55 +55,7 @@ export interface Relic {
   description: string;
   rarity: CardRarity;
   effects: RelicEffect[];
-}
-
-export interface RelicEffect {
-  trigger: string; // e.g., 'onCombatStart', 'onCardPlayed', 'onTurnEnd'
-  action: string;
-  value?: number;
-}
-
-export interface Character {
-  id: string;
-  name: string;
-  maxHp: number;
-  currentHp: number;
-  gold: number;
-  deck: Card[];
-  relics: Relic[];
-  potions: Potion[];
-}
-
-export interface CharacterClass {
-  id: string;
-  name: string;
-  description: string;
-  maxHp: number;
-  startingGold: number;
-  startingDeck: string[]; // Card IDs
-  startingRelic: string; // Relic ID
-}
-
-export interface Enemy {
-  id: string;
-  name: string;
-  maxHp: number;
-  currentHp: number;
-  block: number;
-  intent: EnemyIntent;
-  moves: EnemyMove[];
-}
-
-export interface EnemyIntent {
-  type: 'ATTACK' | 'DEFEND' | 'BUFF' | 'DEBUFF' | 'UNKNOWN';
-  value?: number;
-}
-
-export interface EnemyMove {
-  name: string;
-  intent: EnemyIntent;
-  weight: number;
-  actions: string[];
+  counter?: number;
 }
 
 export interface Potion {
@@ -114,73 +67,119 @@ export interface Potion {
   effects: CardEffect[];
 }
 
-export interface GameState {
-  character: Character;
-  floor: number;
-  act: number;
-  seed: string;
-  ascensionLevel: number;
+export interface EnemyIntent {
+  type: 'ATTACK' | 'DEFEND' | 'BUFF' | 'DEBUFF' | 'UNKNOWN' | 'STUN';
+  value?: number;
+  times?: number;
 }
 
-export interface CombatState {
-  player: {
-    hp: number;
-    maxHp: number;
-    block: number;
-    energy: number;
-    maxEnergy: number;
-  };
-  enemies: Enemy[];
-  drawPile: Card[];
-  hand: Card[];
-  discardPile: Card[];
-  exhaustPile: Card[];
-  turn: number;
-  playerTurn: boolean;
+export interface EnemyAction {
+  type: string;
+  value: number;
 }
 
-export enum RoomType {
-  COMBAT = 'COMBAT',
-  ELITE = 'ELITE',
-  BOSS = 'BOSS',
-  REST = 'REST',
-  MERCHANT = 'MERCHANT',
-  TREASURE = 'TREASURE',
-  EVENT = 'EVENT',
+export interface EnemyMove {
+  name: string;
+  intent: EnemyIntent;
+  weight: number;
+  actions: EnemyAction[];
 }
+
+export interface EnemyData {
+  id: string;
+  name: string;
+  maxHp: number;
+  type: 'normal' | 'elite' | 'boss';
+  moves: EnemyMove[];
+}
+
+export interface Enemy extends EnemyData {
+  currentHp: number;
+  block: number;
+  statusEffects: StatusEffects;
+  currentIntent: EnemyIntent;
+}
+
+export interface Player {
+  maxHp: number;
+  currentHp: number;
+  gold: number;
+  block: number;
+  energy: number;
+  maxEnergy: number;
+  statusEffects: StatusEffects;
+  deck: Card[];
+  relics: Relic[];
+  potions: (Potion | null)[];
+  maxPotions: number;
+}
+
+export type RoomType = 'COMBAT' | 'ELITE' | 'BOSS' | 'REST' | 'MERCHANT' | 'TREASURE' | 'EVENT';
 
 export interface Room {
   type: RoomType;
   x: number;
   y: number;
-  connections: number[]; // Indices of connected rooms
+  connections: number[];
   visited: boolean;
 }
 
-export interface MapNode {
-  room: Room;
-  availablePaths: number[];
-}
-
-// Event system types
 export interface EventChoice {
   text: string;
   outcomes: EventOutcome[];
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
 export interface EventOutcome {
-  type: string; // e.g., 'HEAL', 'LOSE_HP', 'GAIN_GOLD', 'LOSE_GOLD', 'ADD_CARD', 'REMOVE_CARD', 'GAIN_RELIC', 'TRANSFORM_CARD', 'UPGRADE_CARD'
+  type: string;
   value?: number;
-  text: string; // Description of what happens
-  cardId?: string; // For ADD_CARD outcome
-  relicId?: string; // For GAIN_RELIC outcome
-  weight?: number; // For random outcomes (default: 1)
+  text: string;
+  cardId?: string;
+  relicId?: string;
+  weight?: number;
 }
 
 export interface GameEvent {
   id: string;
   name: string;
   description: string;
-  image?: string; // Placeholder for future image support
+  image?: string;
   choices: EventChoice[];
+}
+
+export interface CharacterClass {
+  id: string;
+  name: string;
+  description: string;
+  maxHp: number;
+  startingGold: number;
+  startingDeck: string[];
+  startingRelic: string;
+}
+
+// Game state types
+export type GameScreen = 
+  | 'MAIN_MENU'
+  | 'CHARACTER_SELECT'
+  | 'MAP'
+  | 'COMBAT'
+  | 'REWARD'
+  | 'REST'
+  | 'MERCHANT'
+  | 'EVENT'
+  | 'CARD_SELECT'
+  | 'VICTORY'
+  | 'DEFEAT';
+
+export interface CombatState {
+  enemies: Enemy[];
+  hand: Card[];
+  drawPile: Card[];
+  discardPile: Card[];
+  exhaustPile: Card[];
+  turn: number;
+  isPlayerTurn: boolean;
+  selectedCard: Card | null;
+  targetingMode: boolean;
 }
