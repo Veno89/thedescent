@@ -1,487 +1,142 @@
 {
   "enemies": [
     {
-      "id": "cultist",
-      "name": "Cultist",
-      "maxHp": 50,
+      "id": "cave_crawler",
+      "name": "Cave Crawler",
+      "maxHp": 25,
       "type": "normal",
       "moves": [
-        {
-          "name": "Incantation",
-          "intent": {
-            "type": "BUFF",
-            "value": 3
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_RITUAL",
-              "value": 3
-            }
-          ]
-        },
-        {
-          "name": "Dark Strike",
-          "intent": {
-            "type": "ATTACK",
-            "value": 6
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 6
-            }
-          ]
-        }
+        { "name": "Bite", "intent": { "type": "ATTACK", "value": 6 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 6 }] },
+        { "name": "Skitter", "intent": { "type": "DEFEND" }, "weight": 1, "actions": [{ "type": "APPLY_BLOCK_SELF", "value": 5 }] }
       ]
     },
     {
-      "id": "jaw_worm",
-      "name": "Jaw Worm",
-      "maxHp": 42,
+      "id": "mine_rat",
+      "name": "Mine Rat",
+      "maxHp": 20,
       "type": "normal",
       "moves": [
-        {
-          "name": "Chomp",
-          "intent": {
-            "type": "ATTACK",
-            "value": 11
-          },
-          "weight": 3,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 11
-            }
-          ]
-        },
-        {
-          "name": "Thrash",
-          "intent": {
-            "type": "ATTACK",
-            "value": 7
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 7
-            },
-            {
-              "type": "APPLY_BLOCK_SELF",
-              "value": 5
-            }
-          ]
-        },
-        {
-          "name": "Bellow",
-          "intent": {
-            "type": "BUFF",
-            "value": 3
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_STRENGTH_SELF",
-              "value": 3
-            },
-            {
-              "type": "APPLY_BLOCK_SELF",
-              "value": 6
-            }
-          ]
-        }
+        { "name": "Gnaw", "intent": { "type": "ATTACK", "value": 4 }, "weight": 3, "actions": [{ "type": "DAMAGE", "value": 4 }] },
+        { "name": "Swarm", "intent": { "type": "ATTACK", "value": 3, "times": 2 }, "weight": 1, "actions": [{ "type": "DAMAGE", "value": 3 }, { "type": "DAMAGE", "value": 3 }] }
       ]
     },
     {
-      "id": "louse_red",
-      "name": "Red Louse",
-      "maxHp": 16,
+      "id": "crystal_bat",
+      "name": "Crystal Bat",
+      "maxHp": 22,
       "type": "normal",
       "moves": [
-        {
-          "name": "Bite",
-          "intent": {
-            "type": "ATTACK",
-            "value": 6
-          },
-          "weight": 3,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 6
-            }
-          ]
-        },
-        {
-          "name": "Grow",
-          "intent": {
-            "type": "BUFF",
-            "value": 3
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_STRENGTH_SELF",
-              "value": 3
-            }
-          ]
-        }
+        { "name": "Sonic Screech", "intent": { "type": "ATTACK", "value": 7 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 7 }] },
+        { "name": "Echolocate", "intent": { "type": "DEBUFF" }, "weight": 1, "actions": [{ "type": "APPLY_WEAK", "value": 1 }] }
       ]
     },
     {
-      "id": "louse_green",
-      "name": "Green Louse",
-      "maxHp": 15,
+      "id": "depth_lurker",
+      "name": "Depth Lurker",
+      "maxHp": 35,
       "type": "normal",
       "moves": [
-        {
-          "name": "Bite",
-          "intent": {
-            "type": "ATTACK",
-            "value": 5
-          },
-          "weight": 3,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 5
-            }
-          ]
-        },
-        {
-          "name": "Spit Web",
-          "intent": {
-            "type": "DEBUFF",
-            "value": 2
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_WEAK",
-              "value": 2
-            }
-          ]
-        }
+        { "name": "Ambush", "intent": { "type": "ATTACK", "value": 8 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 8 }] },
+        { "name": "Lurk", "intent": { "type": "BUFF" }, "weight": 1, "actions": [{ "type": "APPLY_STRENGTH_SELF", "value": 1 }] }
       ]
     },
     {
-      "id": "fungi_beast",
-      "name": "Fungi Beast",
-      "maxHp": 30,
+      "id": "tunnel_snake",
+      "name": "Tunnel Snake",
+      "maxHp": 28,
       "type": "normal",
       "moves": [
-        {
-          "name": "Bite",
-          "intent": {
-            "type": "ATTACK",
-            "value": 6
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 6
-            }
-          ]
-        },
-        {
-          "name": "Grow",
-          "intent": {
-            "type": "BUFF",
-            "value": 3
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_STRENGTH_SELF",
-              "value": 3
-            }
-          ]
-        }
+        { "name": "Venom Strike", "intent": { "type": "ATTACK", "value": 7 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 7 }, { "type": "APPLY_POISON", "value": 2 }] },
+        { "name": "Coil", "intent": { "type": "DEFEND" }, "weight": 1, "actions": [{ "type": "APPLY_BLOCK_SELF", "value": 6 }] }
       ]
     },
     {
-      "id": "gremlin_nob",
-      "name": "Gremlin Nob",
+      "id": "rock_elemental",
+      "name": "Rock Elemental",
+      "maxHp": 40,
+      "type": "normal",
+      "moves": [
+        { "name": "Boulder Slam", "intent": { "type": "ATTACK", "value": 10 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 10 }] },
+        { "name": "Harden", "intent": { "type": "DEFEND" }, "weight": 1, "actions": [{ "type": "APPLY_BLOCK_SELF", "value": 10 }] }
+      ]
+    },
+    {
+      "id": "corrupted_crystal",
+      "name": "Corrupted Crystal",
+      "maxHp": 38,
+      "type": "normal",
+      "moves": [
+        { "name": "Refract", "intent": { "type": "ATTACK", "value": 12 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 12 }] },
+        { "name": "Pulse", "intent": { "type": "DEBUFF" }, "weight": 1, "actions": [{ "type": "APPLY_VULNERABLE", "value": 1 }] }
+      ]
+    },
+    {
+      "id": "tunnel_brute",
+      "name": "Tunnel Brute",
       "maxHp": 85,
       "type": "elite",
       "moves": [
-        {
-          "name": "Skull Bash",
-          "intent": {
-            "type": "ATTACK",
-            "value": 6
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 6
-            },
-            {
-              "type": "APPLY_VULNERABLE",
-              "value": 2
-            }
-          ]
-        },
-        {
-          "name": "Bellow",
-          "intent": {
-            "type": "BUFF",
-            "value": 2
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_STRENGTH_SELF",
-              "value": 2
-            }
-          ]
-        },
-        {
-          "name": "Rush",
-          "intent": {
-            "type": "ATTACK",
-            "value": 14
-          },
-          "weight": 3,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 14
-            }
-          ]
-        }
+        { "name": "War Cry", "intent": { "type": "BUFF" }, "weight": 1, "actions": [{ "type": "APPLY_STRENGTH_SELF", "value": 2 }] },
+        { "name": "Skull Bash", "intent": { "type": "ATTACK", "value": 16 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 16 }] },
+        { "name": "Rush", "intent": { "type": "ATTACK", "value": 12 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 12 }, { "type": "APPLY_VULNERABLE", "value": 2 }] }
       ]
     },
     {
-      "id": "lagavulin",
-      "name": "Lagavulin",
-      "maxHp": 109,
+      "id": "ore_golem",
+      "name": "Ore Golem",
+      "maxHp": 100,
       "type": "elite",
       "moves": [
-        {
-          "name": "Attack",
-          "intent": {
-            "type": "ATTACK",
-            "value": 18
-          },
-          "weight": 3,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 18
-            }
-          ]
-        },
-        {
-          "name": "Siphon Soul",
-          "intent": {
-            "type": "DEBUFF",
-            "value": 1
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_STRENGTH",
-              "value": -1
-            },
-            {
-              "type": "APPLY_DEXTERITY",
-              "value": -1
-            }
-          ]
-        },
-        {
-          "name": "Stunned",
-          "intent": {
-            "type": "STUN",
-            "value": 0
-          },
-          "weight": 1,
-          "actions": []
-        }
+        { "name": "Reinforce", "intent": { "type": "DEFEND" }, "weight": 1, "actions": [{ "type": "APPLY_BLOCK_SELF", "value": 15 }] },
+        { "name": "Pulverize", "intent": { "type": "ATTACK", "value": 18 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 18 }] },
+        { "name": "Tremor", "intent": { "type": "ATTACK", "value": 8 }, "weight": 1, "actions": [{ "type": "DAMAGE", "value": 8 }, { "type": "APPLY_WEAK", "value": 1 }] }
       ]
     },
     {
-      "id": "sentry",
-      "name": "Sentry",
-      "maxHp": 38,
+      "id": "echo_wraith",
+      "name": "Echo Wraith",
+      "maxHp": 70,
       "type": "elite",
       "moves": [
-        {
-          "name": "Beam",
-          "intent": {
-            "type": "ATTACK",
-            "value": 9
-          },
-          "weight": 3,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 9
-            }
-          ]
-        },
-        {
-          "name": "Bolt",
-          "intent": {
-            "type": "ATTACK",
-            "value": 7
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 7
-            },
-            {
-              "type": "APPLY_WEAK",
-              "value": 1
-            }
-          ]
-        }
+        { "name": "Phase", "intent": { "type": "BUFF" }, "weight": 1, "actions": [{ "type": "INTANGIBLE", "value": 1 }] },
+        { "name": "Life Drain", "intent": { "type": "ATTACK", "value": 10 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 10 }] },
+        { "name": "Haunt", "intent": { "type": "DEBUFF" }, "weight": 1, "actions": [{ "type": "APPLY_WEAK", "value": 2 }, { "type": "APPLY_VULNERABLE", "value": 1 }] }
       ]
     },
     {
-      "id": "slime_boss",
-      "name": "Slime Boss",
+      "id": "hollow_guardian",
+      "name": "Hollow Guardian",
       "maxHp": 140,
       "type": "boss",
       "moves": [
-        {
-          "name": "Slam",
-          "intent": {
-            "type": "ATTACK",
-            "value": 35
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 35
-            }
-          ]
-        },
-        {
-          "name": "Corrosive Spit",
-          "intent": {
-            "type": "ATTACK",
-            "value": 11
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 11
-            },
-            {
-              "type": "APPLY_WEAK",
-              "value": 2
-            },
-            {
-              "type": "APPLY_VULNERABLE",
-              "value": 2
-            }
-          ]
-        },
-        {
-          "name": "Preparing",
-          "intent": {
-            "type": "UNKNOWN",
-            "value": 0
-          },
-          "weight": 1,
-          "actions": []
-        },
-        {
-          "name": "Goop Spray",
-          "intent": {
-            "type": "DEBUFF",
-            "value": 3
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_WEAK",
-              "value": 3
-            }
-          ]
-        }
+        { "name": "Defensive Mode", "intent": { "type": "DEFEND" }, "weight": 1, "actions": [{ "type": "APPLY_BLOCK_SELF", "value": 25 }] },
+        { "name": "Core Strike", "intent": { "type": "ATTACK", "value": 22 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 22 }] },
+        { "name": "Energy Surge", "intent": { "type": "BUFF" }, "weight": 1, "actions": [{ "type": "APPLY_STRENGTH_SELF", "value": 3 }] },
+        { "name": "Annihilate", "intent": { "type": "ATTACK", "value": 30 }, "weight": 1, "actions": [{ "type": "DAMAGE", "value": 30 }] }
       ]
     },
     {
-      "id": "the_guardian",
-      "name": "The Guardian",
-      "maxHp": 240,
+      "id": "crystal_wyrm",
+      "name": "Crystal Wyrm",
+      "maxHp": 180,
       "type": "boss",
       "moves": [
-        {
-          "name": "Fierce Bash",
-          "intent": {
-            "type": "ATTACK",
-            "value": 32
-          },
-          "weight": 2,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 32
-            }
-          ]
-        },
-        {
-          "name": "Vent Steam",
-          "intent": {
-            "type": "ATTACK",
-            "value": 6
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "DAMAGE",
-              "value": 6
-            },
-            {
-              "type": "APPLY_WEAK",
-              "value": 2
-            },
-            {
-              "type": "APPLY_VULNERABLE",
-              "value": 2
-            }
-          ]
-        },
-        {
-          "name": "Charging Up",
-          "intent": {
-            "type": "BUFF",
-            "value": 4
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_STRENGTH_SELF",
-              "value": 4
-            }
-          ]
-        },
-        {
-          "name": "Defensive Mode",
-          "intent": {
-            "type": "BUFF",
-            "value": 9
-          },
-          "weight": 1,
-          "actions": [
-            {
-              "type": "APPLY_BLOCK_SELF",
-              "value": 9
-            }
-          ]
-        }
+        { "name": "Crystal Breath", "intent": { "type": "ATTACK", "value": 18 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 18 }, { "type": "APPLY_WEAK", "value": 1 }] },
+        { "name": "Tail Swipe", "intent": { "type": "ATTACK", "value": 12 }, "weight": 1, "actions": [{ "type": "DAMAGE", "value": 12 }] },
+        { "name": "Crystallize", "intent": { "type": "DEFEND" }, "weight": 1, "actions": [{ "type": "APPLY_BLOCK_SELF", "value": 20 }] },
+        { "name": "Devastation", "intent": { "type": "ATTACK", "value": 35 }, "weight": 1, "actions": [{ "type": "DAMAGE", "value": 35 }] }
+      ]
+    },
+    {
+      "id": "the_forgotten",
+      "name": "The Forgotten",
+      "maxHp": 220,
+      "type": "boss",
+      "moves": [
+        { "name": "Memory Drain", "intent": { "type": "ATTACK", "value": 15 }, "weight": 2, "actions": [{ "type": "DAMAGE", "value": 15 }, { "type": "APPLY_VULNERABLE", "value": 1 }] },
+        { "name": "Fade", "intent": { "type": "BUFF" }, "weight": 1, "actions": [{ "type": "INTANGIBLE", "value": 1 }] },
+        { "name": "Crushing Despair", "intent": { "type": "DEBUFF" }, "weight": 1, "actions": [{ "type": "APPLY_WEAK", "value": 2 }, { "type": "APPLY_VULNERABLE", "value": 2 }] },
+        { "name": "Oblivion", "intent": { "type": "ATTACK", "value": 40 }, "weight": 1, "actions": [{ "type": "DAMAGE", "value": 40 }] }
       ]
     }
   ]

@@ -1,68 +1,68 @@
 {
   "characters": [
     {
-      "id": "warrior",
-      "name": "The Warrior",
-      "description": "A balanced fighter with solid attack and defense capabilities.",
+      "id": "excavator",
+      "name": "The Excavator",
+      "description": "A veteran miner who strikes hard and can take a beating. Balanced offense and defense.",
       "maxHp": 80,
       "startingGold": 99,
       "startingDeck": [
-        "strike",
-        "strike",
-        "strike",
-        "strike",
-        "strike",
-        "defend",
-        "defend",
-        "defend",
-        "defend",
-        "defend",
-        "bash"
+        "delve",
+        "delve",
+        "delve",
+        "delve",
+        "delve",
+        "brace",
+        "brace",
+        "brace",
+        "brace",
+        "brace",
+        "sunder"
       ],
-      "startingRelic": "burning_blood"
+      "startingRelic": "miners_resolve"
     },
     {
-      "id": "rogue",
-      "name": "The Rogue",
-      "description": "A nimble fighter who excels at drawing cards and dealing quick damage.",
+      "id": "scout",
+      "name": "The Scout",
+      "description": "A swift explorer who relies on agility and card draw to outmaneuver foes.",
       "maxHp": 70,
       "startingGold": 99,
       "startingDeck": [
-        "strike",
-        "strike",
-        "strike",
-        "strike",
-        "strike",
-        "defend",
-        "defend",
-        "defend",
-        "defend",
-        "shrug_it_off",
-        "quick_slash"
+        "delve",
+        "delve",
+        "delve",
+        "delve",
+        "delve",
+        "brace",
+        "brace",
+        "brace",
+        "brace",
+        "tunnel_vision",
+        "pickaxe_swing"
       ],
-      "startingRelic": "ring_of_the_snake"
+      "startingRelic": "serpent_ring"
     },
     {
-      "id": "guardian",
-      "name": "The Guardian",
-      "description": "A defensive tank who starts with more HP and focuses on blocking damage.",
+      "id": "bulwark",
+      "name": "The Bulwark",
+      "description": "A stalwart defender with high HP who specializes in outlasting enemies.",
       "maxHp": 95,
       "startingGold": 99,
       "startingDeck": [
-        "strike",
-        "strike",
-        "strike",
-        "strike",
-        "defend",
-        "defend",
-        "defend",
-        "defend",
-        "defend",
-        "defend",
-        "iron_wave",
-        "armaments"
+        "delve",
+        "delve",
+        "delve",
+        "delve",
+        "brace",
+        "brace",
+        "brace",
+        "brace",
+        "brace",
+        "brace",
+        "lantern_bash",
+        "gear_up"
       ],
-      "startingRelic": "anchor"
+      "startingRelic": "iron_anchor"
     }
   ]
 }

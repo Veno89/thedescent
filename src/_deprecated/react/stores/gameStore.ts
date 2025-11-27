@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
+import { DataLoader } from '@/utils/DataLoader';
 import type {
   GameScreen,
   Player,
@@ -13,7 +14,6 @@ import type {
   GameEvent,
   StatusEffects
 } from '@/types';
-import { DataLoader } from '@/utils/DataLoader';
 
 // Helper to create default status effects
 const createDefaultStatusEffects = (): StatusEffects => ({
@@ -408,24 +408,30 @@ const RELIC_TEMPLATES: Record<string, Omit<Relic, 'counter'>> = {
 
 // Create starter deck from card IDs
 function createStarterDeck(cardIds: string[]): Card[] {
+  // Ensure DataLoader is initialized
+  DataLoader.initialize();
+  
   return cardIds.map(id => {
-    const card = DataLoader.createCard(id);
-    if (!card) {
+    const template = DataLoader.getCardById(id);
+    if (!template) {
       console.warn(`Unknown card ID: ${id}`);
       return null;
     }
-    return card;
+    return { ...template, upgraded: false };
   }).filter((card): card is Card => card !== null);
 }
 
 // Create starter relic
 function createStarterRelic(relicId: string): Relic | null {
-  const relic = RELIC_TEMPLATES[relicId];
-  if (!relic) {
+  // Ensure DataLoader is initialized
+  DataLoader.initialize();
+  
+  const relicData = DataLoader.getRelicById(relicId);
+  if (!relicData) {
     console.warn(`Unknown relic ID: ${relicId}`);
     return null;
   }
-  return { ...relic, counter: 0 };
+  return { ...relicData, counter: 0 };
 }
 
 interface GameState {

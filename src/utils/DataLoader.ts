@@ -368,35 +368,35 @@ export class DataLoader {
   static createStarterDeck(): Card[] {
     const deck: Card[] = [];
 
-    // 5 Strikes, 4 Defends (reduced to make room for advanced cards)
+    // 5 Delves, 4 Braces (reduced to make room for advanced cards)
     for (let i = 0; i < 5; i++) {
-      const strike = this.createCard('strike');
-      if (strike) deck.push(strike);
+      const delve = this.createCard('delve');
+      if (delve) deck.push(delve);
     }
 
     for (let i = 0; i < 4; i++) {
-      const defend = this.createCard('defend');
-      if (defend) deck.push(defend);
+      const brace = this.createCard('brace');
+      if (brace) deck.push(brace);
     }
 
     // Add some advanced cards for testing different mechanics
-    const bash = this.createCard('bash');
-    if (bash) deck.push(bash);
+    const sunder = this.createCard('sunder');
+    if (sunder) deck.push(sunder);
 
-    const battleTrance = this.createCard('battle_trance');
-    if (battleTrance) deck.push(battleTrance);
-
-    const sentinel = this.createCard('sentinel');
-    if (sentinel) deck.push(sentinel);
-
-    const deepBreath = this.createCard('deep_breath'); // Retain
+    const deepBreath = this.createCard('deep_breath');
     if (deepBreath) deck.push(deepBreath);
 
-    const carnage = this.createCard('carnage'); // Ethereal
-    if (carnage) deck.push(carnage);
+    const caveIn = this.createCard('cave_in');
+    if (caveIn) deck.push(caveIn);
 
-    const dramaticEntrance = this.createCard('dramatic_entrance'); // Innate + Exhaust
-    if (dramaticEntrance) deck.push(dramaticEntrance);
+    const tunnelVision = this.createCard('tunnel_vision');
+    if (tunnelVision) deck.push(tunnelVision);
+
+    const crushingBlow = this.createCard('crushing_blow');
+    if (crushingBlow) deck.push(crushingBlow);
+
+    const depthAdaptation = this.createCard('depth_adaptation');
+    if (depthAdaptation) deck.push(depthAdaptation);
 
     const whirlwind = this.createCard('whirlwind'); // X-cost
     if (whirlwind) deck.push(whirlwind);

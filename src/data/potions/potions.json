@@ -1,208 +1,124 @@
 {
   "potions": [
     {
-      "id": "healing_potion",
-      "name": "Healing Potion",
+      "id": "miners_tonic",
+      "name": "Miner's Tonic",
       "description": "Heal 20 HP.",
       "rarity": "COMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "HEAL",
-          "value": 20
-        }
-      ]
+      "effects": [{ "type": "HEAL", "value": 20 }]
     },
     {
-      "id": "block_potion",
-      "name": "Block Potion",
+      "id": "stone_brew",
+      "name": "Stone Brew",
       "description": "Gain 12 Block.",
       "rarity": "COMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 12
-        }
-      ]
+      "effects": [{ "type": "BLOCK", "value": 12 }]
     },
     {
-      "id": "energy_potion",
-      "name": "Energy Potion",
+      "id": "cave_moss_extract",
+      "name": "Cave Moss Extract",
       "description": "Gain 2 Energy.",
-      "rarity": "COMMON",
+      "rarity": "UNCOMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "GAIN_ENERGY",
-          "value": 2
-        }
-      ]
+      "effects": [{ "type": "ENERGY", "value": 2 }]
     },
     {
-      "id": "fire_potion",
-      "name": "Fire Potion",
-      "description": "Deal 20 damage to a target enemy.",
+      "id": "magma_vial",
+      "name": "Magma Vial",
+      "description": "Deal 20 damage to an enemy.",
       "rarity": "COMMON",
       "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 20
-        }
-      ]
+      "effects": [{ "type": "DAMAGE", "value": 20 }]
     },
     {
-      "id": "explosive_potion",
-      "name": "Explosive Potion",
+      "id": "blast_powder",
+      "name": "Blast Powder",
       "description": "Deal 10 damage to ALL enemies.",
       "rarity": "UNCOMMON",
       "targetType": "ALL_ENEMIES",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 10,
-          "target": "ALL_ENEMIES"
-        }
-      ]
+      "effects": [{ "type": "DAMAGE", "value": 10 }]
     },
     {
-      "id": "strength_potion",
-      "name": "Strength Potion",
-      "description": "Gain 2 Strength.",
+      "id": "might_elixir",
+      "name": "Might Elixir",
+      "description": "Gain 2 Might.",
       "rarity": "COMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "APPLY_STRENGTH",
-          "value": 2
-        }
-      ]
+      "effects": [{ "type": "STRENGTH", "value": 2 }]
     },
     {
-      "id": "dexterity_potion",
-      "name": "Dexterity Potion",
-      "description": "Gain 2 Dexterity.",
+      "id": "agility_serum",
+      "name": "Agility Serum",
+      "description": "Gain 2 Agility.",
       "rarity": "COMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "GAIN_DEXTERITY",
-          "value": 2
-        }
-      ]
+      "effects": [{ "type": "DEXTERITY", "value": 2 }]
     },
     {
-      "id": "poison_potion",
-      "name": "Poison Potion",
-      "description": "Apply 6 Poison to a target enemy.",
+      "id": "blight_flask",
+      "name": "Blight Flask",
+      "description": "Apply 6 Poison to an enemy.",
       "rarity": "COMMON",
       "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "APPLY_POISON",
-          "value": 6
-        }
-      ]
+      "effects": [{ "type": "POISON", "value": 6 }]
     },
     {
-      "id": "weak_potion",
-      "name": "Weak Potion",
-      "description": "Apply 3 Weak to a target enemy.",
-      "rarity": "COMMON",
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "APPLY_WEAK",
-          "value": 3
-        }
-      ]
-    },
-    {
-      "id": "vulnerable_potion",
-      "name": "Vulnerable Potion",
-      "description": "Apply 3 Vulnerable to a target enemy.",
-      "rarity": "COMMON",
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "APPLY_VULNERABLE",
-          "value": 3
-        }
-      ]
-    },
-    {
-      "id": "greater_healing_potion",
-      "name": "Greater Healing Potion",
-      "description": "Heal 40 HP.",
+      "id": "dim_lantern_oil",
+      "name": "Dim Lantern Oil",
+      "description": "Apply 3 Weak to an enemy.",
       "rarity": "UNCOMMON",
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "HEAL",
-          "value": 40
-        }
-      ]
+      "targetType": "SINGLE_ENEMY",
+      "effects": [{ "type": "WEAK", "value": 3 }]
     },
     {
-      "id": "ancient_potion",
-      "name": "Ancient Potion",
-      "description": "Gain 1 Artifact.",
+      "id": "crumbling_ore",
+      "name": "Crumbling Ore",
+      "description": "Apply 3 Vulnerable to an enemy.",
+      "rarity": "UNCOMMON",
+      "targetType": "SINGLE_ENEMY",
+      "effects": [{ "type": "VULNERABLE", "value": 3 }]
+    },
+    {
+      "id": "crystal_essence",
+      "name": "Crystal Essence",
+      "description": "Heal 40 HP.",
       "rarity": "RARE",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "GAIN_ARTIFACT",
-          "value": 1
-        }
-      ]
+      "effects": [{ "type": "HEAL", "value": 40 }]
     },
     {
-      "id": "focus_potion",
-      "name": "Focus Potion",
+      "id": "ancient_tincture",
+      "name": "Ancient Tincture",
+      "description": "Gain 1 Warding.",
+      "rarity": "RARE",
+      "targetType": "SELF",
+      "effects": [{ "type": "ARTIFACT", "value": 1 }]
+    },
+    {
+      "id": "echo_draught",
+      "name": "Echo Draught",
       "description": "Draw 3 cards.",
       "rarity": "UNCOMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "DRAW",
-          "value": 3
-        }
-      ]
+      "effects": [{ "type": "DRAW", "value": 3 }]
     },
     {
-      "id": "swift_potion",
-      "name": "Swift Potion",
-      "description": "Draw 2 cards and gain 1 Energy.",
-      "rarity": "RARE",
+      "id": "speed_tonic",
+      "name": "Speed Tonic",
+      "description": "Draw 2 cards.",
+      "rarity": "COMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "DRAW",
-          "value": 2
-        },
-        {
-          "type": "GAIN_ENERGY",
-          "value": 1
-        }
-      ]
+      "effects": [{ "type": "DRAW", "value": 2 }]
     },
     {
-      "id": "liquid_bronze",
-      "name": "Liquid Bronze",
-      "description": "Gain 15 Block and 3 Plated Armor.",
+      "id": "ore_plating",
+      "name": "Ore Plating",
+      "description": "Gain 3 Plated Armor.",
       "rarity": "UNCOMMON",
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 15
-        },
-        {
-          "type": "GAIN_PLATED_ARMOR",
-          "value": 3
-        }
-      ]
+      "effects": [{ "type": "PLATED_ARMOR", "value": 3 }]
     }
   ]
 }

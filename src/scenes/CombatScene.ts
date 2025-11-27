@@ -113,14 +113,14 @@ export class CombatScene extends Phaser.Scene {
         enemies.push(boss);
       }
     } else if (this.isElite) {
-      // Elite: 1-3 elite enemies (sentries come in packs)
+      // Elite: 1-3 elite enemies (crystal sentinels come in packs)
       const elite = DataLoader.getRandomEnemyByType('elite');
       if (elite) {
-        if (elite.id === 'sentry') {
-          // Sentries come in groups of 3
-          for (let i = 0; i < 3; i++) {
-            const sentry = DataLoader.getEnemy('sentry');
-            if (sentry) enemies.push(sentry);
+        if (elite.id === 'crystal_sentinel') {
+          // Crystal Sentinels come in groups of 2
+          for (let i = 0; i < 2; i++) {
+            const sentinel = DataLoader.getEnemy('crystal_sentinel');
+            if (sentinel) enemies.push(sentinel);
           }
         } else {
           enemies.push(elite);

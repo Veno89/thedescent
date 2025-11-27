@@ -47,7 +47,7 @@ export class UnlockSystem {
     this.data = {
       unlockedCards: this.getStarterCards(),
       unlockedRelics: this.getStarterRelics(),
-      unlockedCharacters: ['warrior', 'rogue', 'guardian'], // All characters unlocked by default
+      unlockedCharacters: ['excavator', 'scout', 'bulwark'], // All characters unlocked by default
       stats: {
         runsCompleted: 0,
         runsAttempted: 0,
@@ -74,22 +74,18 @@ export class UnlockSystem {
   private static getStarterCards(): string[] {
     return [
       // Starter cards - always unlocked
-      'strike',
-      'defend',
-      'bash',
-      'cleave',
-      'iron_wave',
-      'shrug_it_off',
-      'pommel_strike',
-      'armaments',
-      'headbutt',
-      'flex',
-      'warcry',
+      'delve',
+      'brace',
+      'sunder',
+      'tunnel_vision',
+      'pickaxe_swing',
+      'lantern_bash',
+      'gear_up',
       // Some common cards unlocked by default
-      'twin_strike',
-      'thunder_strike',
-      'wild_strike',
-      'quick_slash',
+      'echo_strike',
+      'cave_in',
+      'stone_skin',
+      'miners_grit',
     ];
   }
 
@@ -97,7 +93,7 @@ export class UnlockSystem {
    * Get the list of starter relics
    */
   private static getStarterRelics(): string[] {
-    return ['burning_blood', 'ring_of_the_snake', 'anchor'];
+    return ['miners_resolve', 'serpent_ring', 'iron_anchor'];
   }
 
   /**
@@ -268,34 +264,34 @@ export class UnlockSystem {
 
     // Example unlock conditions
 
-    // Unlock Inflame after defeating 10 enemies
-    if (stats.enemiesDefeated >= 10 && !this.isCardUnlocked('inflame')) {
-      this.unlockCard('inflame');
-      newUnlocks.push('Card: Inflame');
+    // Unlock Depth Adaptation after defeating 10 enemies
+    if (stats.enemiesDefeated >= 10 && !this.isCardUnlocked('depth_adaptation')) {
+      this.unlockCard('depth_adaptation');
+      newUnlocks.push('Card: Depth Adaptation');
     }
 
-    // Unlock Body Slam after dealing 1000 damage
-    if (stats.damageDealt >= 1000 && !this.isCardUnlocked('body_slam')) {
-      this.unlockCard('body_slam');
-      newUnlocks.push('Card: Body Slam');
+    // Unlock Abyssal Strike after dealing 1000 damage
+    if (stats.damageDealt >= 1000 && !this.isCardUnlocked('abyssal_strike')) {
+      this.unlockCard('abyssal_strike');
+      newUnlocks.push('Card: Abyssal Strike');
     }
 
-    // Unlock Offering after completing 1 run
-    if (stats.runsCompleted >= 1 && !this.isCardUnlocked('offering')) {
-      this.unlockCard('offering');
-      newUnlocks.push('Card: Offering');
+    // Unlock Impenetrable after completing 1 run
+    if (stats.runsCompleted >= 1 && !this.isCardUnlocked('impenetrable')) {
+      this.unlockCard('impenetrable');
+      newUnlocks.push('Card: Impenetrable');
     }
 
-    // Unlock Demon Form after defeating 5 elites
-    if (stats.elitesDefeated >= 5 && !this.isCardUnlocked('demon_form')) {
-      this.unlockCard('demon_form');
-      newUnlocks.push('Card: Demon Form');
+    // Unlock Heart of Stone after defeating 5 elites
+    if (stats.elitesDefeated >= 5 && !this.isCardUnlocked('heart_of_stone')) {
+      this.unlockCard('heart_of_stone');
+      newUnlocks.push('Card: Heart of Stone');
     }
 
-    // Unlock Barricade after blocking 500 damage (would need to track this)
-    if (stats.runsCompleted >= 2 && !this.isCardUnlocked('barricade')) {
-      this.unlockCard('barricade');
-      newUnlocks.push('Card: Barricade');
+    // Unlock Ancient Fortress after completing 2 runs
+    if (stats.runsCompleted >= 2 && !this.isCardUnlocked('ancient_fortress')) {
+      this.unlockCard('ancient_fortress');
+      newUnlocks.push('Card: Ancient Fortress');
     }
 
     return newUnlocks;

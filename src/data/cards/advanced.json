@@ -1,1150 +1,362 @@
 {
   "cards": [
     {
-      "id": "havoc",
-      "name": "Havoc",
-      "description": "Play the top card of your draw pile and Exhaust it.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 1,
-      "targetType": "SELF",
-      "effects": [],
-      "exhaust": false,
-      "upgraded": false,
-      "upgradedStats": {
-        "cost": 0
-      }
-    },
-    {
-      "id": "burning_pact",
-      "name": "Burning Pact",
-      "description": "Exhaust 1 card. Draw 2 cards.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 1,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "DRAW",
-          "value": 2
-        }
-      ],
-      "exhaust": false,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DRAW",
-            "value": 3
-          }
-        ]
-      }
-    },
-    {
-      "id": "true_grit",
-      "name": "True Grit",
-      "description": "Gain {0} Block. Exhaust a random card from your hand.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 1,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 7
-        }
-      ],
-      "exhaust": false,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 9
-          }
-        ]
-      }
-    },
-    {
-      "id": "finesse",
-      "name": "Finesse",
-      "description": "Gain {0} Block. Draw 1 card.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 2
-        },
-        {
-          "type": "DRAW",
-          "value": 1
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 4
-          },
-          {
-            "type": "DRAW",
-            "value": 1
-          }
-        ]
-      }
-    },
-    {
-      "id": "deep_breath",
-      "name": "Deep Breath",
-      "description": "Draw {0} cards.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "DRAW",
-          "value": 1
-        }
-      ],
-      "retain": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DRAW",
-            "value": 2
-          }
-        ]
-      }
-    },
-    {
-      "id": "battle_trance",
-      "name": "Battle Trance",
-      "description": "Draw {0} cards.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "DRAW",
-          "value": 3
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DRAW",
-            "value": 4
-          }
-        ]
-      }
-    },
-    {
-      "id": "sentinel",
-      "name": "Sentinel",
-      "description": "Gain {0} Block.",
-      "type": "SKILL",
-      "rarity": "RARE",
-      "cost": 1,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 5
-        },
-        {
-          "type": "GAIN_ENERGY",
-          "value": 2
-        }
-      ],
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 8
-          },
-          {
-            "type": "GAIN_ENERGY",
-            "value": 3
-          }
-        ]
-      }
-    },
-    {
-      "id": "dagger_spray",
-      "name": "Dagger Spray",
-      "description": "Deal {0} damage to ALL enemies twice.",
-      "type": "ATTACK",
-      "rarity": "COMMON",
-      "cost": 1,
-      "targetType": "ALL_ENEMIES",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 4,
-          "target": "ALL_ENEMIES"
-        },
-        {
-          "type": "DAMAGE",
-          "value": 4,
-          "target": "ALL_ENEMIES"
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 6,
-            "target": "ALL_ENEMIES"
-          },
-          {
-            "type": "DAMAGE",
-            "value": 6,
-            "target": "ALL_ENEMIES"
-          }
-        ]
-      }
-    },
-    {
-      "id": "dramatic_entrance",
-      "name": "Dramatic Entrance",
-      "description": "Deal {0} damage to ALL enemies.",
-      "type": "ATTACK",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "ALL_ENEMIES",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 8,
-          "target": "ALL_ENEMIES"
-        }
-      ],
-      "innate": true,
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 12,
-            "target": "ALL_ENEMIES"
-          }
-        ]
-      }
-    },
-    {
-      "id": "expunge",
-      "name": "Expunge",
-      "description": "Deal {0} damage X times.",
-      "type": "ATTACK",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "isXCost": true,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 9
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 12
-          }
-        ]
-      }
-    },
-    {
-      "id": "whirlwind",
-      "name": "Whirlwind",
-      "description": "Deal {0} damage to ALL enemies X times.",
-      "type": "ATTACK",
-      "rarity": "RARE",
-      "cost": 0,
-      "isXCost": true,
-      "targetType": "ALL_ENEMIES",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 5,
-          "target": "ALL_ENEMIES"
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 8,
-            "target": "ALL_ENEMIES"
-          }
-        ]
-      }
-    },
-    {
-      "id": "flash_of_steel",
-      "name": "Flash of Steel",
-      "description": "Deal {0} damage. Draw 1 card.",
-      "type": "ATTACK",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 3
-        },
-        {
-          "type": "DRAW",
-          "value": 1
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 6
-          },
-          {
-            "type": "DRAW",
-            "value": 1
-          }
-        ]
-      }
-    },
-    {
-      "id": "fiend_fire",
-      "name": "Fiend Fire",
-      "description": "Exhaust your hand. Deal {0} damage for each card exhausted.",
-      "type": "ATTACK",
-      "rarity": "RARE",
-      "cost": 2,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 7
-        }
-      ],
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 10
-          }
-        ]
-      }
-    },
-    {
-      "id": "reckless_charge",
-      "name": "Reckless Charge",
-      "description": "Deal {0} damage.",
-      "type": "ATTACK",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 7
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 10
-          }
-        ]
-      }
-    },
-    {
-      "id": "seeing_red",
-      "name": "Seeing Red",
-      "description": "Gain {0} energy.",
-      "type": "SKILL",
-      "rarity": "RARE",
-      "cost": 0,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "GAIN_ENERGY",
-          "value": 2
-        }
-      ],
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "exhaust": false
-      }
-    },
-    {
-      "id": "wild_strike",
-      "name": "Wild Strike",
-      "description": "Deal {0} damage.",
-      "type": "ATTACK",
-      "rarity": "COMMON",
-      "cost": 1,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 12
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 17
-          }
-        ]
-      }
-    },
-    {
-      "id": "bloodletting",
-      "name": "Bloodletting",
-      "description": "Lose 3 HP. Gain {0} Energy.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "LOSE_HP",
-          "value": 3
-        },
-        {
-          "type": "GAIN_ENERGY",
-          "value": 2
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "LOSE_HP",
-            "value": 3
-          },
-          {
-            "type": "GAIN_ENERGY",
-            "value": 3
-          }
-        ]
-      }
-    },
-    {
-      "id": "carnage",
-      "name": "Carnage",
-      "description": "Deal {0} damage.",
-      "type": "ATTACK",
-      "rarity": "UNCOMMON",
-      "cost": 2,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 20
-        }
-      ],
-      "ethereal": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 28
-          }
-        ]
-      }
-    },
-    {
-      "id": "quick_slash",
-      "name": "Quick Slash",
-      "description": "Deal {0} damage. Draw 1 card.",
-      "type": "ATTACK",
-      "rarity": "COMMON",
-      "cost": 1,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 8
-        },
-        {
-          "type": "DRAW",
-          "value": 1
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 12
-          },
-          {
-            "type": "DRAW",
-            "value": 1
-          }
-        ]
-      }
-    },
-    {
-      "id": "blind",
-      "name": "Blind",
-      "description": "Apply {0} Weak.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "APPLY_WEAK",
-          "value": 2
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "cost": 0,
-        "effects": [
-          {
-            "type": "APPLY_WEAK",
-            "value": 3
-          }
-        ]
-      }
-    },
-    {
-      "id": "twin_strike",
-      "name": "Twin Strike",
+      "id": "echo_strike",
+      "name": "Echo Strike",
       "description": "Deal {0} damage twice.",
       "type": "ATTACK",
       "rarity": "COMMON",
       "cost": 1,
       "targetType": "SINGLE_ENEMY",
       "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 5
-        },
-        {
-          "type": "DAMAGE",
-          "value": 5
-        }
+        { "type": "DAMAGE", "value": 4 },
+        { "type": "DAMAGE", "value": 4 }
       ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 7
-          },
-          {
-            "type": "DAMAGE",
-            "value": 7
-          }
-        ]
-      }
+      "upgraded": false
     },
     {
-      "id": "anger",
-      "name": "Anger",
-      "description": "Deal {0} damage. Add a copy of this card to your discard pile.",
+      "id": "cave_in",
+      "name": "Cave In",
+      "description": "Deal {0} damage to ALL enemies.",
       "type": "ATTACK",
       "rarity": "COMMON",
-      "cost": 0,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 6
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 8
-          }
-        ]
-      }
+      "cost": 1,
+      "targetType": "ALL_ENEMIES",
+      "effects": [{ "type": "DAMAGE", "value": 8 }],
+      "upgraded": false
     },
     {
-      "id": "heavy_blade",
-      "name": "Heavy Blade",
-      "description": "Deal {0} damage. Strength affects this card 3 times.",
+      "id": "crushing_blow",
+      "name": "Crushing Blow",
+      "description": "Deal {0} damage. Apply 1 Weak.",
       "type": "ATTACK",
-      "rarity": "COMMON",
+      "rarity": "UNCOMMON",
       "cost": 2,
       "targetType": "SINGLE_ENEMY",
       "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 14
-        }
+        { "type": "DAMAGE", "value": 14 },
+        { "type": "APPLY_WEAK", "value": 1 }
       ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 18
-          }
-        ]
-      }
+      "upgraded": false
     },
     {
-      "id": "sword_boomerang",
-      "name": "Sword Boomerang",
-      "description": "Deal {0} damage 3 times to random enemies.",
+      "id": "abyssal_strike",
+      "name": "Abyssal Strike",
+      "description": "Deal {0} damage. Exhaust.",
       "type": "ATTACK",
-      "rarity": "COMMON",
-      "cost": 1,
-      "targetType": "RANDOM",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 3
-        },
-        {
-          "type": "DAMAGE",
-          "value": 3
-        },
-        {
-          "type": "DAMAGE",
-          "value": 3
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 4
-          },
-          {
-            "type": "DAMAGE",
-            "value": 4
-          },
-          {
-            "type": "DAMAGE",
-            "value": 4
-          }
-        ]
-      }
-    },
-    {
-      "id": "thunder_strike",
-      "name": "Thunder Strike",
-      "description": "Deal {0} damage.",
-      "type": "ATTACK",
-      "rarity": "COMMON",
-      "cost": 1,
+      "rarity": "RARE",
+      "cost": 2,
       "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 7
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 10
-          }
-        ]
-      }
-    },
-    {
-      "id": "hemokinesis",
-      "name": "Hemokinesis",
-      "description": "Lose {0} HP. Deal {1} damage.",
-      "type": "ATTACK",
-      "rarity": "COMMON",
-      "cost": 1,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "LOSE_HP",
-          "value": 2
-        },
-        {
-          "type": "DAMAGE",
-          "value": 15
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "LOSE_HP",
-            "value": 2
-          },
-          {
-            "type": "DAMAGE",
-            "value": 20
-          }
-        ]
-      }
-    },
-    {
-      "id": "headbutt",
-      "name": "Headbutt",
-      "description": "Deal {0} damage.",
-      "type": "ATTACK",
-      "rarity": "COMMON",
-      "cost": 1,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 9
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 12
-          }
-        ]
-      }
-    },
-    {
-      "id": "warcry",
-      "name": "Warcry",
-      "description": "Draw {0} cards.",
-      "type": "SKILL",
-      "rarity": "COMMON",
-      "cost": 0,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "DRAW",
-          "value": 2
-        }
-      ],
+      "effects": [{ "type": "DAMAGE", "value": 30 }],
       "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DRAW",
-            "value": 3
-          }
-        ]
-      }
+      "upgraded": false
     },
     {
-      "id": "flex",
-      "name": "Flex",
-      "description": "Gain {0} Strength.",
+      "id": "void_cleave",
+      "name": "Void Cleave",
+      "description": "Deal {0} damage to ALL enemies.",
+      "type": "ATTACK",
+      "rarity": "RARE",
+      "cost": 3,
+      "targetType": "ALL_ENEMIES",
+      "effects": [{ "type": "DAMAGE", "value": 18 }],
+      "upgraded": false
+    },
+    {
+      "id": "stone_skin",
+      "name": "Stone Skin",
+      "description": "Gain {0} Block.",
       "type": "SKILL",
       "rarity": "COMMON",
-      "cost": 0,
+      "cost": 2,
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "APPLY_STRENGTH",
-          "value": 2
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "APPLY_STRENGTH",
-            "value": 4
-          }
-        ]
-      }
+      "effects": [{ "type": "BLOCK", "value": 15 }],
+      "upgraded": false
     },
     {
-      "id": "armaments",
-      "name": "Armaments",
-      "description": "Gain {0} Block.",
+      "id": "miners_grit",
+      "name": "Miner's Grit",
+      "description": "Gain {0} Block. Gain 1 Might.",
       "type": "SKILL",
       "rarity": "COMMON",
       "cost": 1,
       "targetType": "SELF",
       "effects": [
-        {
-          "type": "BLOCK",
-          "value": 5
-        }
+        { "type": "BLOCK", "value": 6 },
+        { "type": "APPLY_STRENGTH", "value": 1 }
       ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 8
-          }
-        ]
-      }
+      "upgraded": false
     },
     {
-      "id": "entrench",
-      "name": "Entrench",
-      "description": "Double your Block.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 2,
-      "targetType": "SELF",
-      "effects": [],
-      "upgraded": false,
-      "upgradedStats": {
-        "cost": 1
-      }
-    },
-    {
-      "id": "second_wind",
-      "name": "Second Wind",
-      "description": "Exhaust all non-Attack cards in hand. Gain {0} Block for each.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 1,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 5
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 7
-          }
-        ]
-      }
-    },
-    {
-      "id": "flame_barrier",
-      "name": "Flame Barrier",
-      "description": "Gain {0} Block. Whenever you lose HP this turn, deal 4 damage to ALL enemies.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 2,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 12
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 16
-          }
-        ]
-      }
-    },
-    {
-      "id": "ghostly_armor",
-      "name": "Ghostly Armor",
+      "id": "ancient_ward",
+      "name": "Ancient Ward",
       "description": "Gain {0} Block.",
       "type": "SKILL",
       "rarity": "UNCOMMON",
-      "cost": 1,
+      "cost": 2,
       "targetType": "SELF",
-      "effects": [
-        {
-          "type": "BLOCK",
-          "value": 10
-        }
-      ],
-      "ethereal": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 13
-          }
-        ]
-      }
+      "effects": [{ "type": "BLOCK", "value": 12 }],
+      "upgraded": false
     },
     {
-      "id": "intimidate",
-      "name": "Intimidate",
+      "id": "deep_breath",
+      "name": "Deep Breath",
+      "description": "Draw {0} cards. Exhaust.",
+      "type": "SKILL",
+      "rarity": "UNCOMMON",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [{ "type": "DRAW", "value": 3 }],
+      "exhaust": true,
+      "upgraded": false
+    },
+    {
+      "id": "impenetrable",
+      "name": "Impenetrable",
+      "description": "Gain {0} Block.",
+      "type": "SKILL",
+      "rarity": "RARE",
+      "cost": 3,
+      "targetType": "SELF",
+      "effects": [{ "type": "BLOCK", "value": 25 }],
+      "upgraded": false
+    },
+    {
+      "id": "depth_adaptation",
+      "name": "Depth Adaptation",
+      "description": "Gain {0} Might.",
+      "type": "POWER",
+      "rarity": "UNCOMMON",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [{ "type": "APPLY_STRENGTH", "value": 2 }],
+      "upgraded": false
+    },
+    {
+      "id": "delvers_instinct",
+      "name": "Delver's Instinct",
+      "description": "Gain {0} Block per turn.",
+      "type": "POWER",
+      "rarity": "UNCOMMON",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [{ "type": "START_TURN_BLOCK", "value": 4 }],
+      "upgraded": false
+    },
+    {
+      "id": "echoing_presence",
+      "name": "Echoing Presence",
+      "description": "Draw {0} extra card each turn.",
+      "type": "POWER",
+      "rarity": "UNCOMMON",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [{ "type": "DRAW_PER_TURN", "value": 1 }],
+      "upgraded": false
+    },
+    {
+      "id": "heart_of_stone",
+      "name": "Heart of Stone",
+      "description": "Gain {0} Might per turn.",
+      "type": "POWER",
+      "rarity": "RARE",
+      "cost": 2,
+      "targetType": "SELF",
+      "effects": [{ "type": "RITUAL_STRENGTH", "value": 1 }],
+      "upgraded": false
+    },
+    {
+      "id": "ancient_fortress",
+      "name": "Ancient Fortress",
+      "description": "Gain {0} Block per turn.",
+      "type": "POWER",
+      "rarity": "RARE",
+      "cost": 2,
+      "targetType": "SELF",
+      "effects": [{ "type": "START_TURN_BLOCK", "value": 8 }],
+      "upgraded": false
+    },
+    {
+      "id": "ore_smash",
+      "name": "Ore Smash",
+      "description": "Deal {0} damage. If enemy has Vulnerable, deal {1} more.",
+      "type": "ATTACK",
+      "rarity": "COMMON",
+      "cost": 1,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [{ "type": "DAMAGE", "value": 8 }],
+      "upgraded": false
+    },
+    {
+      "id": "shaft_collapse",
+      "name": "Shaft Collapse",
+      "description": "Deal {0} damage to ALL. Apply 1 Vulnerable to ALL.",
+      "type": "ATTACK",
+      "rarity": "UNCOMMON",
+      "cost": 2,
+      "targetType": "ALL_ENEMIES",
+      "effects": [
+        { "type": "DAMAGE", "value": 10 },
+        { "type": "APPLY_VULNERABLE", "value": 1 }
+      ],
+      "upgraded": false
+    },
+    {
+      "id": "vein_strike",
+      "name": "Vein Strike",
+      "description": "Deal {0} damage. Gain {1} gold.",
+      "type": "ATTACK",
+      "rarity": "COMMON",
+      "cost": 1,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [
+        { "type": "DAMAGE", "value": 6 },
+        { "type": "GAIN_GOLD", "value": 3 }
+      ],
+      "upgraded": false
+    },
+    {
+      "id": "headlamp_flash",
+      "name": "Headlamp Flash",
       "description": "Apply {0} Weak to ALL enemies.",
       "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 0,
+      "rarity": "COMMON",
+      "cost": 1,
       "targetType": "ALL_ENEMIES",
-      "effects": [
-        {
-          "type": "APPLY_WEAK",
-          "value": 1,
-          "target": "ALL_ENEMIES"
-        }
-      ],
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "APPLY_WEAK",
-            "value": 2,
-            "target": "ALL_ENEMIES"
-          }
-        ]
-      }
+      "effects": [{ "type": "APPLY_WEAK", "value": 1 }],
+      "upgraded": false
     },
     {
-      "id": "dropkick",
-      "name": "Dropkick",
-      "description": "Deal {0} damage. If enemy has Vulnerable, gain 1 Energy and draw 1 card.",
-      "type": "ATTACK",
-      "rarity": "UNCOMMON",
-      "cost": 1,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 5
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 8
-          }
-        ]
-      }
-    },
-    {
-      "id": "dual_wield",
-      "name": "Dual Wield",
-      "description": "This turn, your next Attack is played twice.",
+      "id": "crystal_shield",
+      "name": "Crystal Shield",
+      "description": "Gain {0} Block. Retain.",
       "type": "SKILL",
       "rarity": "UNCOMMON",
       "cost": 1,
       "targetType": "SELF",
-      "effects": [],
-      "upgraded": false,
-      "upgradedStats": {
-        "cost": 0
-      }
+      "effects": [{ "type": "BLOCK", "value": 8 }],
+      "retain": true,
+      "upgraded": false
     },
     {
-      "id": "disarm",
-      "name": "Disarm",
-      "description": "Enemy loses {0} Strength.",
+      "id": "excavate",
+      "name": "Excavate",
+      "description": "Draw {0} cards. Discard 1.",
       "type": "SKILL",
-      "rarity": "UNCOMMON",
+      "rarity": "COMMON",
       "cost": 1,
-      "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "APPLY_STRENGTH",
-          "value": -2
-        }
-      ],
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "APPLY_STRENGTH",
-            "value": -3
-          }
-        ]
-      }
+      "targetType": "SELF",
+      "effects": [{ "type": "DRAW", "value": 3 }],
+      "upgraded": false
     },
     {
-      "id": "power_through",
-      "name": "Power Through",
-      "description": "Gain {0} Block.",
+      "id": "depths_embrace",
+      "name": "Depth's Embrace",
+      "description": "Gain {0} Block. Draw 1 card.",
       "type": "SKILL",
-      "rarity": "UNCOMMON",
+      "rarity": "COMMON",
       "cost": 1,
       "targetType": "SELF",
       "effects": [
-        {
-          "type": "BLOCK",
-          "value": 15
-        }
+        { "type": "BLOCK", "value": 5 },
+        { "type": "DRAW", "value": 1 }
       ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 20
-          }
-        ]
-      }
+      "upgraded": false
     },
     {
-      "id": "sword_dance",
-      "name": "Sword Dance",
-      "description": "Gain {0} Dexterity.",
-      "type": "SKILL",
-      "rarity": "UNCOMMON",
-      "cost": 0,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "APPLY_DEXTERITY",
-          "value": 2
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "APPLY_DEXTERITY",
-            "value": 3
-          }
-        ]
-      }
-    },
-    {
-      "id": "demon_form",
-      "name": "Demon Form",
-      "description": "At the start of each turn, gain {0} Strength.",
+      "id": "miners_determination",
+      "name": "Miner's Determination",
+      "description": "Gain {0} Might. Gain {1} Resilience.",
       "type": "POWER",
-      "rarity": "RARE",
-      "cost": 3,
-      "targetType": "SELF",
-      "effects": [
-        {
-          "type": "APPLY_STRENGTH",
-          "value": 2
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "APPLY_STRENGTH",
-            "value": 3
-          }
-        ]
-      }
-    },
-    {
-      "id": "barricade",
-      "name": "Barricade",
-      "description": "Block is not removed at the start of your turn.",
-      "type": "POWER",
-      "rarity": "RARE",
-      "cost": 3,
-      "targetType": "SELF",
-      "effects": [],
-      "upgraded": false,
-      "upgradedStats": {
-        "cost": 2
-      }
-    },
-    {
-      "id": "reaper",
-      "name": "Reaper",
-      "description": "Deal {0} damage to ALL enemies. Heal HP equal to unblocked damage dealt.",
-      "type": "ATTACK",
-      "rarity": "RARE",
-      "cost": 2,
-      "targetType": "ALL_ENEMIES",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 4,
-          "target": "ALL_ENEMIES"
-        }
-      ],
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 5,
-            "target": "ALL_ENEMIES"
-          }
-        ]
-      }
-    },
-    {
-      "id": "impervious",
-      "name": "Impervious",
-      "description": "Gain {0} Block.",
-      "type": "SKILL",
       "rarity": "RARE",
       "cost": 2,
       "targetType": "SELF",
       "effects": [
-        {
-          "type": "BLOCK",
-          "value": 30
-        }
+        { "type": "APPLY_STRENGTH", "value": 2 },
+        { "type": "APPLY_DEXTERITY", "value": 2 }
       ],
-      "exhaust": true,
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "BLOCK",
-            "value": 40
-          }
-        ]
-      }
+      "upgraded": false
     },
     {
-      "id": "bludgeon",
-      "name": "Bludgeon",
-      "description": "Deal {0} damage.",
+      "id": "rock_solid",
+      "name": "Rock Solid",
+      "description": "Gain {0} Block. If you have 15+ Block, gain {1} Might.",
+      "type": "SKILL",
+      "rarity": "UNCOMMON",
+      "cost": 1,
+      "targetType": "SELF",
+      "effects": [{ "type": "BLOCK", "value": 10 }],
+      "upgraded": false
+    },
+    {
+      "id": "tunnel_collapse",
+      "name": "Tunnel Collapse",
+      "description": "Deal {0} damage. Exhaust a random card from hand.",
+      "type": "ATTACK",
+      "rarity": "UNCOMMON",
+      "cost": 1,
+      "targetType": "SINGLE_ENEMY",
+      "effects": [{ "type": "DAMAGE", "value": 18 }],
+      "upgraded": false
+    },
+    {
+      "id": "gem_finder",
+      "name": "Gem Finder",
+      "description": "Gain {0} gold. Draw 1 card.",
+      "type": "SKILL",
+      "rarity": "COMMON",
+      "cost": 0,
+      "targetType": "SELF",
+      "effects": [
+        { "type": "GAIN_GOLD", "value": 5 },
+        { "type": "DRAW", "value": 1 }
+      ],
+      "upgraded": false
+    },
+    {
+      "id": "reinforced_armor",
+      "name": "Reinforced Armor",
+      "description": "Gain {0} Block. Block is not removed at turn start.",
+      "type": "SKILL",
+      "rarity": "RARE",
+      "cost": 2,
+      "targetType": "SELF",
+      "effects": [{ "type": "BLOCK", "value": 16 }],
+      "upgraded": false
+    },
+    {
+      "id": "fury_of_the_deep",
+      "name": "Fury of the Deep",
+      "description": "Deal {0} damage X times.",
       "type": "ATTACK",
       "rarity": "RARE",
-      "cost": 3,
+      "cost": -1,
       "targetType": "SINGLE_ENEMY",
-      "effects": [
-        {
-          "type": "DAMAGE",
-          "value": 32
-        }
-      ],
-      "upgraded": false,
-      "upgradedStats": {
-        "effects": [
-          {
-            "type": "DAMAGE",
-            "value": 42
-          }
-        ]
-      }
+      "effects": [{ "type": "DAMAGE", "value": 7 }],
+      "isXCost": true,
+      "upgraded": false
+    },
+    {
+      "id": "depths_regret",
+      "name": "Depth's Regret",
+      "description": "Unplayable.",
+      "type": "CURSE",
+      "rarity": "SPECIAL",
+      "cost": -1,
+      "targetType": "SELF",
+      "effects": [],
+      "upgraded": false
+    },
+    {
+      "id": "cave_wound",
+      "name": "Cave Wound",
+      "description": "Unplayable. At turn end, take 1 damage.",
+      "type": "CURSE",
+      "rarity": "SPECIAL",
+      "cost": -1,
+      "targetType": "SELF",
+      "effects": [],
+      "upgraded": false
     }
   ]
 }

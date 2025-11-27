@@ -338,7 +338,7 @@ export class EventScene extends Phaser.Scene {
 
       case 'UPGRADE_STRIKES_AND_DEFENDS':
         player.deck.forEach(card => {
-          if ((card.id === 'strike' || card.id === 'defend') && !card.upgraded) {
+          if ((card.id === 'delve' || card.id === 'brace') && !card.upgraded) {
             card.upgraded = true;
             card.name = `${card.name}+`;
           }
@@ -346,7 +346,7 @@ export class EventScene extends Phaser.Scene {
         break;
 
       case 'REMOVE_ALL_STRIKES':
-        player.deck = player.deck.filter(c => c.id !== 'strike');
+        player.deck = player.deck.filter(c => c.id !== 'delve');
         break;
 
       case 'ADD_CARD':
